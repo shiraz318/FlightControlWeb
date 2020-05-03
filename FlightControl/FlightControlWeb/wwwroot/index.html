@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles/site.css" />
+
+    <title>shiraz and nili</title>
+</head>
+<body>
+    <header><h1 class="display-4">Flight Board</h1></header>
+
+    <main id="main">
+        <div id="board-section">
+            <div id="flights-map">
+                <div class="mapouter">
+                    <div class="gmap_canvas"><iframe width="600" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://www.whatismyip-address.com">whatismyip-address.com</a></div>
+                </div>
+            </div>
+            <div id="flight-details-wrapper">
+                <h2>Flight Details</h2>
+                <dl id="flight-details">
+                    <dt id="company-name-label">Company Name: </dt>
+                    <dd id="company-name-definition"></dd>
+                    <dt id="number-of-passangers-label">number of passangers: </dt>
+                    <dd id="number-of-passangers-definition"></dd>
+                    <dt id="start-location-label">start location: </dt>
+                    <dd id="start-location-definition"></dd>
+                </dl>
+            </div>
+        </div>
+
+        <div id="flight-lists-section">
+            <div id="my-flights-wrapper">
+                <h2>My Flights</h2>
+                <ul id="my-flights-list">
+                </ul>
+            </div>
+            <div id="external-flights"></div>
+        </div>
+
+    </main>
+    <script src="../lib/jquery/dist/jquery.min.js"></script>
+    <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>cript>
+    <script src="../js/site.js" asp-append-version="true"></script>
+</body>
+</html>

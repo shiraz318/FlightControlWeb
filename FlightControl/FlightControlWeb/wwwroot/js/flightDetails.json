@@ -1,0 +1,22 @@
+[
+
+  {
+    "flight_id": "1234",
+    "longitude": 33.244,
+    "latitude": 31.12,
+    "passengers": 216,
+    "company_name": "SwissAir",
+    "date_time": "2020-12-26T23:56:21Z",
+    "is_external": false
+  },
+
+  {
+    "flight_id": "5678",
+    "longitude": 47.356,
+    "latitude": 56.71,
+    "passengers": 300,
+    "company_name": "El-Al",
+    "date_time": "2020-11-21T21:40:20Z",
+    "is_external": false
+  }
+]
