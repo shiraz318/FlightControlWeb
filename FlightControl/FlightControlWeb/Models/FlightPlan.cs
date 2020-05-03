@@ -7,7 +7,6 @@ namespace FlightControlWeb.Models
 {
 	public class FlightPlan
 	{
-		// nili
 		private int passengers;
 
 		public int Passengers
@@ -62,7 +61,16 @@ namespace FlightControlWeb.Models
 			public override string ToString() => $"({Latitude}, {Longitude})";
 		}
 
-		ArraySegment<Segment> segments = new ArraySegment<Segment>();
+		//private ArraySegment<Segment> segments = new ArraySegment<FlightPlan.Segment>();
+
+		//public ArraySegment<Segment> Segments
+		//{
+		//	get { return segments; }
+		//	set { segments = value; }
+		//}
+
+
+		//ArraySegment<Segment> segments = new ArraySegment<Segment>();
 
 		private string id;
 
@@ -71,6 +79,12 @@ namespace FlightControlWeb.Models
 			get { return id; }
 			set { id = value; }
 		}
+
+		public FlightPlan(string id)
+		{
+			Id = id;
+		}
+
 	}
 
 

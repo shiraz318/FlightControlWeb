@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FlightControlWeb.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Flights")]
     [ApiController]
     public class FlightsController : ControllerBase
     {

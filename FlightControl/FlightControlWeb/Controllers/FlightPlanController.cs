@@ -7,12 +7,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace FlightControlWeb.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/FlightPlan")]
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
-        private Dictionary<string, FlightPlan> idToItem;
-
+        private Dictionary<string, FlightPlan> idToItem = new Dictionary<string, FlightPlan>();
+       
+        public FlightPlanController()
+        {
+            InsertToDictionary();
+        }
         // GET /api/FlightPlan/{id}.
         [HttpGet("{id}", Name = "GetItem")]
         public ActionResult<FlightPlan> GetItem(string id)
@@ -40,6 +44,12 @@ namespace FlightControlWeb.Controllers
         private string IdAlgorithm()
         {
             return "shiraz318";
+        }
+
+        private void InsertToDictionary()
+        {
+            FlightPlan fp = new FlightPlan("1");
+            idToItem.Add("1", fp);
         }
     }
 
