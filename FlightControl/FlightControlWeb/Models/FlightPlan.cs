@@ -7,6 +7,7 @@ namespace FlightControlWeb.Models
 {
 	public class FlightPlan
 	{
+		// nili
 		private int passengers;
 
 		public int Passengers
