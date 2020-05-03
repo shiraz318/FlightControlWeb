@@ -22,7 +22,9 @@ $.getJSON("/js/flightDetails.json", (data) => {
     data.filter(flight => {
         // create an item in the list with the flight id
         let newflight = $("<li class='my-flight-list-item'>" + flight.flight_id + "</li>");
-        $("#my-flights-list").append(newflight);
+        if (flight.is_external == false) {
+            $("#my-flights-list").append(newflight);
+        }
         // when clicked go the function
         newflight.on("click", DisplayFlightDetails);
     });
