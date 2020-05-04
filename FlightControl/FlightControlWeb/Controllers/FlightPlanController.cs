@@ -11,6 +11,8 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
+        IFlightPlanManager manager = new DummyFPManager();
+
         private Dictionary<string, FlightPlan> idToItem = new Dictionary<string, FlightPlan>();
        
         public FlightPlanController()
@@ -19,8 +21,15 @@ namespace FlightControlWeb.Controllers
         }
         // GET /api/FlightPlan/{id}.
         [HttpGet("{id}", Name = "GetItem")]
-        public ActionResult<FlightPlan> GetItem(string id)
+        public ActionResult GetItem(string id)
         {
+            FlightPlan fp;
+            if ((fp = manager.GetFlightPlan(id)) != null)
+            {
+                return Ok(fp);
+            }
+            return NotFound(id);
+
             bool isOK = idToItem.TryGetValue(id, out FlightPlan flightPlan);
             if (!isOK)
             {
@@ -35,8 +44,11 @@ namespace FlightControlWeb.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] FlightPlan flightPlan)
         {
-            flightPlan.Id = IdAlgorithm();
-            idToItem[flightPlan.Id] = flightPlan;
+            //flightPlan.Id = IdAlgorithm();
+            //idToItem[flightPlan.Id] = flightPlan;
+            
+            manager.AddFlightPlan(flightPlan);
+            //manager.AddFlightPlan(new FlightPlan("2"));
             // Status 201 - created.
             return CreatedAtAction(actionName: "GetItem", new { id = flightPlan.Id }, flightPlan);
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using FlightControlWeb.Data;
 
 namespace FlightControlWeb
 {
@@ -26,6 +28,9 @@ namespace FlightControlWeb
         {
             services.AddRouting();
             services.AddControllers();
+
+            services.AddDbContext<FlightControlWebContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("FlightControlWebContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +51,22 @@ namespace FlightControlWeb
             {
                 endpoints.MapControllers();
             });
+            SQLiteDb.InitializeDatabase();
         }
     }
 }
+
+/*
+ * TODO:
+ * 
+ * make FlightPlan work instead of DummyFP.
+ * 
+ * create a Flight out of FlighPlan.
+ * 
+ * algoritm for id.
+ * 
+ * map.
+ * 
+ * 
+ * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
+ */

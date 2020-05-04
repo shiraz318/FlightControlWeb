@@ -84,6 +84,9 @@ namespace FlightControlWeb.Models
 		{
 			Id = id;
 		}
+		public FlightPlan()
+		{
+		}
 
 	}
 
