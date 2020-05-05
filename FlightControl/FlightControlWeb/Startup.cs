@@ -63,7 +63,7 @@ namespace FlightControlWeb
 /*
  * TODO:
  * 
- * may be need to move all code of DataAccess to the dbContext.
+ * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
  * 
  * Manager for Flights.
  * 
