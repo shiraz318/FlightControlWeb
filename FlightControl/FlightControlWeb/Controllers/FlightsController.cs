@@ -12,20 +12,38 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightsController : ControllerBase
     {
-        private Dictionary<string, Flights> idToItem;
+        IFlightsManager manager = new FlightsManager();
 
         // DELETE /api/Flights/{id}.
         [HttpDelete("{id}")]
-        public ActionResult Delete([FromBody] string id)
+        public ActionResult Delete(string id)
         {
-            Flights flight = idToItem[id];
-            if (idToItem.Remove(id))
+            if (manager.DeleteFlight(id))
             {
-                // Status 200 - id was deleted
-                return Ok(flight);
+                return Ok();
             }
-            // Status 404 - Not found.
             return NotFound(id);
         }
+
+        // Get /api/Flights?relative_to=<DATE_TIME>&sync_all
+        [HttpGet]
+        public ActionResult<Flights> GetAll([FromQuery] string relative_to, [FromQuery] string sync_all)
+        {
+            string dataTime = relative_to;
+            string syncAll = sync_all;
+            List<Flights> flights = new List<Flights>();
+            return Ok(flights);
+        }
+
+        //// Get /api/Flights?relative_to=<DATE_TIME>
+        //[HttpGet]
+        //public ActionResult<Flights> GetInternal([FromQuery] string relative_to)
+        //{
+        //    string dataTime = relative_to;   
+        //    List<Flights> flights = new List<Flights>();
+        //    return Ok(flights);
+        //}
+
+       
     }
 }

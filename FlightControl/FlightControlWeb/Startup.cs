@@ -59,13 +59,17 @@ namespace FlightControlWeb
 /*
  * TODO:
  * 
- * make FlightPlan work instead of DummyFP.
+ * Manager for Flights.
  * 
- * create a Flight out of FlighPlan.
- * 
- * algoritm for id.
+ * Manager for Server.
  * 
  * map.
+ * 
+ * DELETE flights/id may be meens to delete the flightplan.
+ * 
+ * startup dependency injection.
+ * 
+ * may by we do not need to create new flight when we get new flightplan and no need to save the flights in the database.
  * 
  * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
  */
