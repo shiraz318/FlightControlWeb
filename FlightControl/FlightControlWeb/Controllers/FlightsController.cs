@@ -25,25 +25,23 @@ namespace FlightControlWeb.Controllers
             return NotFound(id);
         }
 
-        // Get /api/Flights?relative_to=<DATE_TIME>&sync_all
+        // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or /api/Flights?relative_to=<DATE_TIME>
         [HttpGet]
-        public ActionResult<Flights> GetAll([FromQuery] string relative_to, [FromQuery] string sync_all)
+        public ActionResult<Flights> Get([FromQuery] string relative_to)
         {
             string dataTime = relative_to;
-            string syncAll = sync_all;
+            string s = Request.QueryString.Value;
             List<Flights> flights = new List<Flights>();
+            if (s.Contains("sync_all"))
+            {
+               flights = manager.GetAllFlights(dataTime, true);
+            } 
+            else
+            {
+               flights = manager.GetAllFlights(dataTime, false);
+            }
+
             return Ok(flights);
-        }
-
-        //// Get /api/Flights?relative_to=<DATE_TIME>
-        //[HttpGet]
-        //public ActionResult<Flights> GetInternal([FromQuery] string relative_to)
-        //{
-        //    string dataTime = relative_to;   
-        //    List<Flights> flights = new List<Flights>();
-        //    return Ok(flights);
-        //}
-
-       
+        } 
     }
 }

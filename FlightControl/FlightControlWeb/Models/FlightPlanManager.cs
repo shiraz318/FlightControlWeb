@@ -31,26 +31,14 @@ namespace FlightControlWeb.Models
             return id;
         }
 
-        public Flights CreateFlight(FlightPlan fp)
-        {
-            Flights flight = new Flights();
-            flight.FlightId = fp.Id;
-            flight.Longitude = fp.InitialLocation.Longitude;
-            flight.Latitude = fp.InitialLocation.Latitude;
-            flight.Passengers = fp.Passengers;
-            flight.CompanyName = fp.CompanyName;
-            flight.DateTime = fp.InitialLocation.DateTime;
-            flight.IsExternal = false;
-            return flight;
-
-        }
+       
         public void AddFlightPlan(FlightPlan fp)
         {
             SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
             fp.Id = setId();
             s.InsertFlightPlan(fp);
-            Flights flights = CreateFlight(fp);
-            s.InsertFlight(flights);
+            //Flights flights = CreateFlight(fp);
+            //s.InsertFlight(flights);
         }
 
         public FlightPlan GetFlightPlan(string id)

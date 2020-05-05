@@ -11,13 +11,16 @@ namespace FlightControlWeb.Models
         {
             SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
             
-            return s.DeleteFlight(id);
+            return s.DeleteFlightPlan(id);
         }
 
-        public Flights[] GetFlights(string dateTime, bool isExternal)
+
+        public List<Flights> GetAllFlights(string dateTime, bool isExternal)
         {
-            //Fake Number.
-            Flights[] flights = new Flights[10];
+            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+            string time = dateTime.Substring(1, dateTime.Length - 1);
+            List<Flights> flights = new List<Flights>();
+            flights = s.GetFlights(time, isExternal);
             return flights;
         }
     }

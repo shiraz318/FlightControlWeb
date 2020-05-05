@@ -7,7 +7,7 @@ namespace FlightControlWeb.Models
 {
     public interface IFlightsManager
     {
-        Flights[] GetFlights(string dateTime, bool isExternal);
+        List<Flights> GetAllFlights(string dataTime, bool isExternal);
         bool DeleteFlight(string id);
     }
 }

@@ -61,6 +61,7 @@ namespace FlightControlWeb
             {
                 object[] row = new object[query.FieldCount];
                 query.GetValues(row);
+
                 list.Add(row);
                 //query.GetValues(row);
             }
@@ -102,7 +103,7 @@ namespace FlightControlWeb
             SqliteCommand selectCommand = new SqliteCommand();
             selectCommand.Connection = conn;
 
-            selectCommand.CommandText = "SELECT MAX(Place) FROM SegmentsTable WHERE FlightId = " + id;
+            selectCommand.CommandText = "SELECT MAX(Place) FROM SegmentsTable WHERE FlightId = '" + id + "'";
 
             SqliteDataReader query = selectCommand.ExecuteReader();
             if (query.Read())
@@ -110,6 +111,90 @@ namespace FlightControlWeb
                 segmentsCount = query.GetInt32(0);
             }
         }
+
+        public Flights CreateFlight(object[] fp)
+        {
+            Flights flight = new Flights();
+            //flight.FlightId = fp.Id;
+            //flight.Longitude = fp.InitialLocation.Longitude;
+            //flight.Latitude = fp.InitialLocation.Latitude;
+            //flight.Passengers = fp.Passengers;
+            //flight.CompanyName = fp.CompanyName;
+            //flight.DateTime = fp.InitialLocation.DateTime;
+            //flight.IsExternal = false;
+            return flight;
+
+        }
+
+        public string ConvertTime(string time)
+        {
+            return time;
+        }
+
+        public bool NotStarted (object[] row, string time)
+        {
+            return false;
+        }
+
+        public bool AlreadyFinished(List<Object[]> sgements,string initTime, string time)
+        {
+            return false;
+        }
+
+        public Flights CreateFlight(SqliteConnection conn, object[] initialLocation, List<Object[]> sgements, bool isExternal)
+        {
+            Flights flight = new Flights();
+            return flight;
+        }
+
+        public List<Flights> GetExternal(string time)
+        {
+            List<Flights> flights = new List<Flights>();
+            return flights;
+        }
+        public List<Flights> GetFlights(string time, bool isExternal)
+        {
+            List<Flights> flights = new List<Flights>();
+            flights = GetInternalFlights(time);
+            if (isExternal)
+            {
+                flights.AddRange(GetExternal(time));
+            }
+            return flights;
+        } 
+
+        public List<Flights> GetInternalFlights(string time)
+        {
+            // +2 hours.
+            string trueTime = ConvertTime(time);
+            // Reading all the data.
+            SqliteConnection conn = OpenConnection();
+            SqliteCommand selectCommand = new SqliteCommand();
+            selectCommand.Connection = conn;
+            selectCommand.CommandText = "SELECT * FROM InitialLocationTable";
+            SqliteDataReader query = selectCommand.ExecuteReader();
+            List<Flights> flights = new List<Flights>();
+            while (query.Read())
+            {
+                object[] row = new object[query.FieldCount];
+                query.GetValues(row);
+                // InitialTime is in the future
+                if (NotStarted(row, time))
+                {
+                    continue;
+                }
+                string command = "SELECT * FROM SegmentsTable WHERE FlightId= '" + row[0].ToString() + "'";
+                List<Object[]> sgements = ReadSegments(conn, command);
+                if (AlreadyFinished(sgements, row[3].ToString(), time))
+                {
+                    continue;
+                }
+                flights.Add(CreateFlight(conn, row, sgements, true));
+            }
+            query.Close();
+            return flights;
+        }
+
         public FlightPlan GetFlightPlan(string id)
         {
             SqliteConnection conn = OpenConnection();
@@ -183,35 +268,35 @@ namespace FlightControlWeb
             InsertToSegmentsTable(conn, flightPlan);
             conn.Close();
         }
-        public void InsertFlight(Flights flight)
-        {
-            SqliteConnection conn = OpenConnection();
-            SqliteCommand insertCommand = new SqliteCommand();
-            insertCommand.Connection = conn;
+        //public void InsertFlight(Flights flight)
+        //{
+        //    SqliteConnection conn = OpenConnection();
+        //    SqliteCommand insertCommand = new SqliteCommand();
+        //    insertCommand.Connection = conn;
 
-            insertCommand.CommandText = "INSERT INTO FlightsTable VALUES (@Id, @Longitude, @Latitude, @Passengers, @CompanyName, @DateTime, @IsExternal)";
-            insertCommand.Parameters.AddWithValue("@Id", flight.FlightId);
-            insertCommand.Parameters.AddWithValue("@Longitude", flight.Longitude);
-            insertCommand.Parameters.AddWithValue("@Latitude", flight.Latitude);
-            insertCommand.Parameters.AddWithValue("@Passengers", flight.Passengers);
-            insertCommand.Parameters.AddWithValue("@CompanyName", flight.CompanyName);
-            insertCommand.Parameters.AddWithValue("@DateTime", flight.DateTime);
-            insertCommand.Parameters.AddWithValue("@IsExternal", flight.IsExternal);
-            try
-            {
-                insertCommand.ExecuteReader();
-            }
-            catch { }
-            conn.Close();
-        }
+        //    insertCommand.CommandText = "INSERT INTO FlightsTable VALUES (@Id, @Longitude, @Latitude, @Passengers, @CompanyName, @DateTime, @IsExternal)";
+        //    insertCommand.Parameters.AddWithValue("@Id", flight.FlightId);
+        //    insertCommand.Parameters.AddWithValue("@Longitude", flight.Longitude);
+        //    insertCommand.Parameters.AddWithValue("@Latitude", flight.Latitude);
+        //    insertCommand.Parameters.AddWithValue("@Passengers", flight.Passengers);
+        //    insertCommand.Parameters.AddWithValue("@CompanyName", flight.CompanyName);
+        //    insertCommand.Parameters.AddWithValue("@DateTime", flight.DateTime);
+        //    insertCommand.Parameters.AddWithValue("@IsExternal", flight.IsExternal);
+        //    try
+        //    {
+        //        insertCommand.ExecuteReader();
+        //    }
+        //    catch { }
+        //    conn.Close();
+        //}
 
-        public bool DeleteFlight(string id)
+        public bool DeleteFlightPlan(string id)
         {
             SqliteConnection conn = OpenConnection();
             bool returnVal = true;
             SqliteCommand deleteCommand = new SqliteCommand();
             deleteCommand.Connection = conn;
-            deleteCommand.CommandText = "DELETE FROM FlightsTable WHERE Id=" + id;
+            deleteCommand.CommandText = "DELETE FROM FlightPlanTable WHERE Id='" + id + "'";
             deleteCommand.ExecuteReader();
             conn.Close();
             return returnVal;
@@ -291,12 +376,12 @@ namespace FlightControlWeb
             SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
             createTable.ExecuteReader();
         }
-        public static void CreateFlightsTable(SqliteConnection conn)
-        {
-            string tableCommand = @"CREATE TABLE IF NOT EXISTS FlightsTable (Id TEXT PRIMARY KEY, Longitude REAL, Latitude REAL, Passengers INTEGER, CompanyName TEXT, DateTime TEXT, IsExternal INTEGER)";
-            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
-            createTable.ExecuteReader();
-        }
+        //public static void CreateFlightsTable(SqliteConnection conn)
+        //{
+        //    string tableCommand = @"CREATE TABLE IF NOT EXISTS FlightsTable (Id TEXT PRIMARY KEY, Longitude REAL, Latitude REAL, Passengers INTEGER, CompanyName TEXT, DateTime TEXT, IsExternal INTEGER)";
+        //    SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+        //    createTable.ExecuteReader();
+        //}
 
         public static void InitializeDatabase()
         {
@@ -312,7 +397,7 @@ namespace FlightControlWeb
             CreateFlightPlanTable(conn);
             CreateInitialLocationTable(conn);
             CreateSegmentsTable(conn);
-            CreateFlightsTable(conn);
+            //CreateFlightsTable(conn);
             conn.Close();
        }
     }
