@@ -63,6 +63,8 @@ namespace FlightControlWeb
 /*
  * TODO:
  * 
+ * DateTime typy. interesting!
+ * 
  * GetFlights implementaition.
  * 
  * present the flights on the web. - they sent some video in the telegram.
