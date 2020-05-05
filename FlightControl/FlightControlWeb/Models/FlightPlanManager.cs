@@ -10,12 +10,13 @@ namespace FlightControlWeb.Models
         public void AddFlightPlan(FlightPlan fp)
         {
             SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
-            //s.InsertData(fp);
+              
         }
 
         public FlightPlan GetFlightPlan(string id)
         {
-            throw new NotImplementedException();
+            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+            return s.GetFlightPlan(id);
         }
     }
 }

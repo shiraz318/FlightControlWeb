@@ -7,12 +7,14 @@ using System.IO;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using FlightControlWeb.Models;
+using static FlightControlWeb.Models.FlightPlan;
 
 namespace FlightControlWeb
 {
     public class SQLiteDb
     {
         string _path;
+        int segmentsCount = 0;
         public SQLiteDb(string path)
         {
             _path = path;
@@ -25,62 +27,98 @@ namespace FlightControlWeb
             }
         }
 
-        public DummyFP GetDummyFP(string id)
+        public SqliteConnection OpenConnection()
+        {
+            SqliteConnection conn = new SqliteConnection(@"Data Source = " + _path);
+            conn.Open();
+            return conn;
+        }
+        public object[] ReadFromTable(SqliteConnection conn, string commendText)
         {
 
-            SqliteConnection conn = new SqliteConnection(@"Data Source = " + _path);
-            SqliteCommand insertCommand = new SqliteCommand();
-            insertCommand.Connection = conn;
-            conn.Open();
             SqliteCommand selectCommand = new SqliteCommand();
             selectCommand.Connection = conn;
-            selectCommand.CommandText = "SELECT CompanyName FROM DummyFlightPlanTable WHERE Id=id";
-
+            selectCommand.CommandText = commendText;
             SqliteDataReader query = selectCommand.ExecuteReader();
-            string companyName = null;
-            while (query.Read()) {
-                 companyName = query.GetString(0);
+            object[] row = new object[query.FieldCount];
+            if (query.Read())
+            {
+                query.GetValues(row);
             }
             query.Close();
-            conn.Close();
-            SqliteConnection conn2 = new SqliteConnection(@"Data Source = " + _path);
-            SqliteCommand insertCommand2 = new SqliteCommand();
-            insertCommand.Connection = conn2;
-            conn2.Open();
-            SqliteCommand selectCommand2 = new SqliteCommand();
-            selectCommand2.Connection = conn2;
-            DummyFP dfp = new DummyFP();
-            dfp.CompanyName = companyName;
-            
-            selectCommand2.CommandText = "SELECT Passengers FROM DummyFlightPlanTable WHERE Id=id";
-
-            SqliteDataReader query2 = selectCommand2.ExecuteReader();
-            int passanger = 0;
-            while (query2.Read())
-            {
-                passanger = query2.GetInt32(0);
-            }
-            dfp.Passengers = passanger;
-            dfp.Id = id;
-            query2.Close();
-            conn.Close();
-            return dfp;
+            return row;
         }
-
-            public void InsertDummyFlightPlan(DummyFP dfp)
+       
+        public List<object[]> ReadSegments(SqliteConnection conn, string commendText)
         {
-            SqliteConnection conn = new SqliteConnection(@"Data Source = " + _path);
-            SqliteCommand insertCommand = new SqliteCommand();
-            insertCommand.Connection = conn;
-            conn.Open();
+            SqliteCommand selectCommand = new SqliteCommand();
+            selectCommand.Connection = conn;
+            selectCommand.CommandText = commendText;
+            SqliteDataReader query = selectCommand.ExecuteReader();
+            List<object[]> list = new List<object[]>();
+            
+            while (query.Read())
+            {
+                object[] row = new object[query.FieldCount];
+                query.GetValues(row);
+                list.Add(row);
+                //query.GetValues(row);
+            }
+            query.Close();
+            return list;
 
-            insertCommand.CommandText = "INSERT INTO DummyFlightPlanTable VALUES (@Id, @Passenger, @ComapnyName);";
-            insertCommand.Parameters.AddWithValue("@Id", dfp.Id);
-            insertCommand.Parameters.AddWithValue("@Passenger", dfp.Passengers);
-            insertCommand.Parameters.AddWithValue("@ComapnyName", dfp.CompanyName);
+        }
+        public FlightPlan setFlightPlan(object[] basicData, object[] initialLocation, List<object[]> segments)
+        {
+            FlightPlan flightPlan = new FlightPlan();
 
-            insertCommand.ExecuteReader();
+            flightPlan.Id = Convert.ToString(basicData[0]);
+            flightPlan.Passengers = Convert.ToInt32(basicData[1]);
+            flightPlan.CompanyName = Convert.ToString(basicData[2]);
+            
+            // InitialLocation[0] is Id.
+            double longitude = Convert.ToDouble(initialLocation[1]);
+            double latitude = Convert.ToDouble(initialLocation[2]);
+            string dateTime = Convert.ToString(initialLocation[3]);
+            Location location = new Location(longitude, latitude, dateTime);
+            flightPlan.InitialLocation = location;
+
+            foreach(object[] segment in segments)
+            {
+                // segment[0] is Id.
+                // segment[1] is FlightId.
+                // segment[2] is Place.
+                double longitudeS = Convert.ToDouble(segment[3]);
+                double latitudeS = Convert.ToDouble(segment[4]);
+                int TimespanSecond = Convert.ToInt32(segment[5]);
+                Segment segment1 = new Segment(longitudeS, latitudeS, TimespanSecond);
+                flightPlan.Segments.Add(segment1);
+            }
+            return flightPlan;
+        }
+        public void getSegmentsCount(SqliteConnection conn, string id)
+        {
+
+            SqliteCommand selectCommand = new SqliteCommand();
+            selectCommand.Connection = conn;
+
+            selectCommand.CommandText = "SELECT MAX(Place) FROM SegmentsTable WHERE FlightId = " + id;
+
+            SqliteDataReader query = selectCommand.ExecuteReader();
+            if (query.Read())
+            {
+                segmentsCount = query.GetInt32(0);
+            }
+        }
+        public FlightPlan GetFlightPlan(string id)
+        {
+            SqliteConnection conn = OpenConnection();
+            //getSegmentsCount(conn, id);
+            object[] basicData = ReadFromTable(conn, "SELECT * FROM FlightPlanTable WHERE Id=" + id);
+            object[] initialLocation = ReadFromTable(conn, "SELECT * FROM InitialLocationTable WHERE Id=" + id);
+            List<object[]> segments = ReadSegments(conn, "SELECT * FROM SegmentsTable WHERE FlightId=" + id);
             conn.Close();
+             return setFlightPlan(basicData, initialLocation, segments);
         }
 
         public void InsertData(string data, int num)
@@ -110,24 +148,51 @@ namespace FlightControlWeb
 
                 SqliteCommand selectCommand = new SqliteCommand();
                 selectCommand.Connection = conn;
-                selectCommand.CommandText = "SELECT Text_Entry FROM newTable WHERE price='24'";
+                selectCommand.CommandText = "SELECT * FROM newTable WHERE price='20'";
                 
                 SqliteDataReader query = selectCommand.ExecuteReader();
-
-                while (query.Read())
+                object[] row = new object[query.FieldCount];
+               while (query.Read())
                 {
-                    entries.Add(query.GetString(0));
+                    query.GetValues(row);
+                    foreach (var value in row)
+                    {
+                        entries.Add(value.ToString());
+                    }
                 }
+                //while (query.Read())
+                //{
+                //    query.GetValues();
+                //    entries.Add(query.GetString(0));
+                //}
                 query.Close();
             }
             catch 
             {
 
             }
-           
             conn.Close();
             return entries;
 
+        }
+
+        public static void CreateFlightPlanTable(SqliteConnection conn)
+        {
+            string tableCommand = @"CREATE TABLE IF NOT EXISTS FlightPlanTable (Id TEXT PRIMARY KEY, Passengers INTEGER, CompanyName TEXT)";
+            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+            createTable.ExecuteReader();
+        }
+        public static void CreateInitialLocationTable(SqliteConnection conn)
+        {
+            string tableCommand = @"CREATE TABLE IF NOT EXISTS InitialLocationTable (Id TEXT PRIMARY KEY, Longitude REAL , Latitude REAL, DateTime TEXT)";
+            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+            createTable.ExecuteReader();
+        }
+        public static void CreateSegmentsTable(SqliteConnection conn)
+        {
+            string tableCommand = @"CREATE TABLE IF NOT EXISTS SegmentsTable (Id TEXT PRIMARY KEY, FlightId TEXT, Place INTEGER, Longitude REAL , Latitude REAL, TimespanSeconds INTEGER)";
+            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+            createTable.ExecuteReader();
         }
 
         public static void InitializeDatabase()
@@ -135,27 +200,15 @@ namespace FlightControlWeb
 
             string dbPath = Environment.CurrentDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
-            try
-            {
+
                 conn.Open();
-                String tableCommand = @"CREATE TABLE IF NOT EXISTS newTable (id INTEGER PRIMARY KEY,
-            Text_Entry TEXT, price INT)";
-
-                //String tableCommand = "CREATE TABLE IF NOT " +
-                //    "EXISTS TestTable (Primary_Key INTEGER PRIMARY KEY, " +
-                //    "Text_Entry NVARCHAR(2048) NULL)" +
-                //    "Secont_Text";
-
-                SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
-                createTable.ExecuteReader();
-                tableCommand = @"CREATE TABLE IF NOT EXISTS DummyFlightPlanTable (Id TEXT, Passengers INTEGER, CompanyName TEXT)";
-                createTable = new SqliteCommand(tableCommand, conn);
-                createTable.ExecuteReader();
-
-                conn.Close();
-
-            }
-            catch { }
-        }
+            //    String tableCommand = @"CREATE TABLE IF NOT EXISTS newTable (id INTEGER PRIMARY KEY,
+            //Text_Entry TEXT, price INT)";
+            //SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+            //createTable.ExecuteReader();
+            CreateFlightPlanTable(conn);
+            CreateInitialLocationTable(conn);
+            CreateSegmentsTable(conn);
+       }
     }
 }

@@ -11,7 +11,7 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
-        IFlightPlanManager manager = new DummyFPManager();
+        IFlightPlanManager manager = new FlightPlanManager();
 
         private Dictionary<string, FlightPlan> idToItem = new Dictionary<string, FlightPlan>();
        

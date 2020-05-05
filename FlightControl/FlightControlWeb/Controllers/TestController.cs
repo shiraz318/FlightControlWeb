@@ -20,8 +20,10 @@ namespace FlightControlWeb.Controllers
             {
                 return NotFound();
             }
-            string d1 = data[data.Count - 1];
-            return Ok(new { name = d1, c=data.Count });
+            string id = data[data.Count - 3];
+            string text_entry = data[data.Count - 2];
+            string price = data[data.Count - 1];
+            return Ok(new { id = id, text_entry= text_entry, price=price, c=data.Count });
         }
 
         [HttpPost("{data}/{num}")]

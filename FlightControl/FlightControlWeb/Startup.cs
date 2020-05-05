@@ -67,6 +67,5 @@ namespace FlightControlWeb
  * 
  * map.
  * 
- * 
  * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
  */

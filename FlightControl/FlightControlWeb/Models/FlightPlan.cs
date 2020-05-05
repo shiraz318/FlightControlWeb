@@ -60,6 +60,14 @@ namespace FlightControlWeb.Models
 
 			public override string ToString() => $"({Latitude}, {Longitude})";
 		}
+		private List<Segment> segments = new List<Segment>();
+
+		public List<Segment> Segments
+		{
+			get { return segments; }
+			set { segments = value; }
+		}
+
 
 		//private ArraySegment<Segment> segments = new ArraySegment<FlightPlan.Segment>();
 
