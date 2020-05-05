@@ -114,9 +114,9 @@ namespace FlightControlWeb
         {
             SqliteConnection conn = OpenConnection();
             //getSegmentsCount(conn, id);
-            object[] basicData = ReadFromTable(conn, "SELECT * FROM FlightPlanTable WHERE Id=" + id);
-            object[] initialLocation = ReadFromTable(conn, "SELECT * FROM InitialLocationTable WHERE Id=" + id);
-            List<object[]> segments = ReadSegments(conn, "SELECT * FROM SegmentsTable WHERE FlightId=" + id);
+            object[] basicData = ReadFromTable(conn, "SELECT * FROM FlightPlanTable WHERE Id = '" + id + "'");
+            object[] initialLocation = ReadFromTable(conn, "SELECT * FROM InitialLocationTable WHERE Id= '" + id + "'");
+            List<object[]> segments = ReadSegments(conn, "SELECT * FROM SegmentsTable WHERE FlightId= '" + id + "'");
             conn.Close();
              return setFlightPlan(basicData, initialLocation, segments);
         }
@@ -313,6 +313,7 @@ namespace FlightControlWeb
             CreateInitialLocationTable(conn);
             CreateSegmentsTable(conn);
             CreateFlightsTable(conn);
+            conn.Close();
        }
     }
 }
