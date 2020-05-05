@@ -26,11 +26,15 @@ namespace FlightControlWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddRouting();
             services.AddControllers();
 
             services.AddDbContext<FlightControlWebContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("FlightControlWebContext")));
+            options.UseSqlite(Configuration.GetConnectionString("FlightControlWebContext")));
+
+            //services.AddDbContext<FlightControlWebContext>(options =>
+            //        options.UseSqlServer(Configuration.GetConnectionString("FlightControlWebContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +62,8 @@ namespace FlightControlWeb
 
 /*
  * TODO:
+ * 
+ * may be need to move all code of DataAccess to the dbContext.
  * 
  * Manager for Flights.
  * 

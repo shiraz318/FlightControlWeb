@@ -14,6 +14,6 @@ namespace FlightControlWeb.Data
         {
         }
 
-        public DbSet<FlightControlWeb.Models.Server> Server { get; set; }
+        //public DbSet<FlightControlWeb.Models.Server> Server { get; set; }
     }
 }
