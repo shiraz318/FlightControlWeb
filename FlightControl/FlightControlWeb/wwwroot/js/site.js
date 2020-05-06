@@ -2,23 +2,37 @@
 // go to the json file and put the information in data
 
 function DisplayFlightDetails() {
+
+    
     // this=the clicked item
     let flightid = $(this).html();
-    console.log(flightid);
+    //console.log(flightid);
     // Display Flight details according to selected flight id
     $.getJSON("/api/FlightPlan/" + flightid, (data) => {
         $("#company-name-definition").html(data.company_name);
         $("#number-of-passangers-definition").html(data.passengers);
         $("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);   
     });
+    $('#my-flights-table tr').each(function (i, item) {
+        var result = $(item).find('td').last().text();
+        console.log(result);
+        if (result == flightid) {
+            $(item).css('background-color', 'palegreen');
+            console.log("CHANGE");
+        } else {
+            $(item).css('background-color', 'white');
+        }
+      
+    })
 };
 
-function DeleteFlight() {
+
+function DeleteFlight(id) {
     $.ajax({
-        url: '/api/Flights/CT54263cM',
+        url: '/api/Flights/' + id,
         type: 'DELETE',
         success: function (result) {
-            console.log("DELETED");
+            console.log("DELETED");            
         }
     });
 }
@@ -38,18 +52,21 @@ $.getJSON("/api/FlightPlan", (data) => {
     // filter=iterates an array, flight is the item itself
     data.filter(flight => {
         let flightDelete = $('<td>').text('X');
-        let newflightId = $('<td>').text(flight.id);
         let newflightCompanyName = $('<td>').text(flight.company_name);
-        $('<tr>').append(
+        let newflightId = $('<td>').text(flight.id);
+        $("<tr class='d-flex'> ").append(
             flightDelete,
-            newflightId,
-            newflightCompanyName).appendTo('#my-flights-table');
+            newflightCompanyName,
+            newflightId).appendTo('#my-flights-table');
         // create an item in the list with the flight id
         //let newflight = $("<li class='my-flight-table-item'>" + flight.id + "</li>");
         //$("#my-flights-table").append(newflight);
         // when clicked go the function
-        //newflightId.on("click", DisplayFlightDetails);
-        flightDelete.on("click", DeleteFlight);
+        newflightId.on("click", DisplayFlightDetails);
+        flightDelete.on("click", function () {
+            $(this).parents('tr').remove();
+            DeleteFlight(flight.id);
+        });
     });
 });
 

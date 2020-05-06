@@ -61,11 +61,15 @@ namespace FlightControlWeb
 }
 
 /*
- * Mj29449mw, VU47927kz
  * 
  * TODO:
  * 
- *
+ * grira
+ * 
+ * add external table - empty.
+ * 
+ * flight detail table - nice one!
+ * 
  * DateType adds 3 hours!
  * 
  * GetFlights implementaition - GetExternal(other servers), ConvertTime (time differences), linear interpulattion.
