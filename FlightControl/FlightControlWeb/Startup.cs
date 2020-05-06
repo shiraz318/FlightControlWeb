@@ -63,7 +63,8 @@ namespace FlightControlWeb
 /*
  * TODO:
  * 
- * DateTime typy. interesting!
+ *
+ * DateType adds 3 hours!
  * 
  * GetFlights implementaition.
  * 
@@ -76,9 +77,7 @@ namespace FlightControlWeb
  * Manager for Server.
  * 
  * map.
- * 
- * DELETE flights/id may be meens to delete the flightplan.
- * 
+ *  
  * startup dependency injection.
  * 
  * may by we do not need to create new flight when we get new flightplan and no need to save the flights in the database.

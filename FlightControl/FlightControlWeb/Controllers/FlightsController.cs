@@ -25,6 +25,7 @@ namespace FlightControlWeb.Controllers
             return NotFound(id);
         }
 
+        // example /api/Flights?relative_to=<2020-05-06T10:12:00Z>&sync_all
         // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or /api/Flights?relative_to=<DATE_TIME>
         [HttpGet]
         public ActionResult<Flights> Get([FromQuery] string relative_to)

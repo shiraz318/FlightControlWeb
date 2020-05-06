@@ -2,48 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace FlightControlWeb.Models
 {
 	public class FlightPlan
 	{
-		private int passengers;
+		[JsonPropertyName("passengers")]
+		public int Passengers { get; set; }
 
-		public int Passengers
-		{
-			get { return passengers; }
-			set { passengers = value; }
-		}
-		private string companyName;
-
-		public string CompanyName
-		{
-			get { return companyName; }
-			set { companyName = value; }
-		}
+		[JsonPropertyName("company_name")]
+		public string CompanyName { get; set; }
 
 		public struct Location
 		{
-			public Location(double longitudeStruct, double latitudeStruct, string dateTimeStruct)
+			public Location(double longitudeStruct, double latitudeStruct, DateTime dateTimeStruct)
 			{
 				Longitude = longitudeStruct;
 				Latitude = latitudeStruct;
 				DateTime = dateTimeStruct;
 			}
 
+			[JsonPropertyName("longitude")]
 			public double Longitude { get; set; }
+
+			[JsonPropertyName("latitude")]
 			public double Latitude { get; set; }
-			public string DateTime { get; set; }
+
+			[JsonPropertyName("date_time")]
+			public DateTime DateTime { get; set; }
 
 			public override string ToString() => $"({Latitude}, {Longitude})";
 		}
-		private Location initialLocation;
 
-		public Location InitialLocation
-		{
-			get { return initialLocation; }
-			set { initialLocation = value; }
-		}
+		[JsonPropertyName("initial_location")]
+		public Location InitialLocation { get; set; }
 
 		public struct Segment
 		{
@@ -54,39 +47,26 @@ namespace FlightControlWeb.Models
 				TimespanSeconds = timespanSecondsStruct;
 			}
 
+			[JsonPropertyName("longitude")]
 			public double Longitude { get; set; }
+
+			[JsonPropertyName("latitude")]
 			public double Latitude { get; set; }
+
+			[JsonPropertyName("timespan_seconds")]
 			public int TimespanSeconds { get; set; }
 
 			public override string ToString() => $"({Latitude}, {Longitude})";
 		}
-		private List<Segment> segments = new List<Segment>();
 
+		private List<Segment> segments = new List<Segment>();
+		[JsonPropertyName("segments")]
 		public List<Segment> Segments
 		{
 			get { return segments; }
 			set { segments = value; }
 		}
-
-
-		//private ArraySegment<Segment> segments = new ArraySegment<FlightPlan.Segment>();
-
-		//public ArraySegment<Segment> Segments
-		//{
-		//	get { return segments; }
-		//	set { segments = value; }
-		//}
-
-
-		//ArraySegment<Segment> segments = new ArraySegment<Segment>();
-
-		private string id;
-
-		public string Id
-		{
-			get { return id; }
-			set { id = value; }
-		}
+		public string Id { get; set; }
 
 		public FlightPlan(string id)
 		{

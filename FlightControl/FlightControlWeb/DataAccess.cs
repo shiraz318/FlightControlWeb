@@ -11,13 +11,72 @@ using static FlightControlWeb.Models.FlightPlan;
 
 namespace FlightControlWeb
 {
+
+    public enum FlightPlanE
+    {
+        Id = 0,
+        Passengers,
+        CompanyName
+    }
+    public enum InitialLocationE
+    {
+        Id = 0,
+        Longitude,
+        Latitude,
+        DateTime
+    }
+    public enum SegmentsE
+    {
+        Id = 0,
+        FlightId,
+        Place,
+        Longitude,
+        Latitude,
+        TimespanSecond
+    }
     public class SQLiteDb
     {
+        int flightPlanIdE;
+        int flightPlanPassangersE;
+        int flightPlanCompanyNameE;
+
+        int initialLocationIdE;
+        int initialLocationLongitudeE;
+        int initialLocationLatitudeE;
+        int initalLocationDateTimeE;
+
+        int segmentsIdE;
+        int segmentFlightIdE;
+        int segmentPlaceE;
+        int segmentLongitudeE;
+        int segmentLatitudeE;
+        int segmenTimespanSecondE;
+
         string _path;
         int segmentsCount = 0;
+        FlightGenerator flightGenerator = new FlightGenerator();
         public SQLiteDb(string path)
         {
             _path = path;
+            // FlightPlan Enum.
+            flightPlanIdE = (int)FlightPlanE.Id;
+            flightPlanPassangersE = (int)FlightPlanE.Passengers;
+            flightPlanCompanyNameE = (int)FlightPlanE.CompanyName;
+
+            // InitialLocation Enum.
+             initialLocationIdE = (int)InitialLocationE.Id;
+             initialLocationLongitudeE = (int)InitialLocationE.Longitude;
+             initialLocationLatitudeE = (int)InitialLocationE.Latitude;
+             initalLocationDateTimeE = (int)InitialLocationE.DateTime;
+
+            // Segments Enum.
+             segmentsIdE = (int)SegmentsE.Id;
+             segmentFlightIdE = (int)SegmentsE.FlightId;
+             segmentPlaceE = (int)SegmentsE.Place;
+             segmentLongitudeE = (int)SegmentsE.Longitude;
+             segmentLatitudeE = (int)SegmentsE.Latitude;
+             segmenTimespanSecondE = (int)SegmentsE.TimespanSecond;
+
         }
 
         public void Create()
@@ -69,34 +128,7 @@ namespace FlightControlWeb
             return list;
 
         }
-        public FlightPlan setFlightPlan(object[] basicData, object[] initialLocation, List<object[]> segments)
-        {
-            FlightPlan flightPlan = new FlightPlan();
 
-            flightPlan.Id = Convert.ToString(basicData[0]);
-            flightPlan.Passengers = Convert.ToInt32(basicData[1]);
-            flightPlan.CompanyName = Convert.ToString(basicData[2]);
-            
-            // InitialLocation[0] is Id.
-            double longitude = Convert.ToDouble(initialLocation[1]);
-            double latitude = Convert.ToDouble(initialLocation[2]);
-            string dateTime = Convert.ToString(initialLocation[3]);
-            Location location = new Location(longitude, latitude, dateTime);
-            flightPlan.InitialLocation = location;
-
-            foreach(object[] segment in segments)
-            {
-                // segment[0] is Id.
-                // segment[1] is FlightId.
-                // segment[2] is Place.
-                double longitudeS = Convert.ToDouble(segment[3]);
-                double latitudeS = Convert.ToDouble(segment[4]);
-                int TimespanSecond = Convert.ToInt32(segment[5]);
-                Segment segment1 = new Segment(longitudeS, latitudeS, TimespanSecond);
-                flightPlan.Segments.Add(segment1);
-            }
-            return flightPlan;
-        }
         public void getSegmentsCount(SqliteConnection conn, string id)
         {
 
@@ -112,47 +144,53 @@ namespace FlightControlWeb
             }
         }
 
-        public Flights CreateFlight(object[] fp)
-        {
-            Flights flight = new Flights();
-            //flight.FlightId = fp.Id;
-            //flight.Longitude = fp.InitialLocation.Longitude;
-            //flight.Latitude = fp.InitialLocation.Latitude;
-            //flight.Passengers = fp.Passengers;
-            //flight.CompanyName = fp.CompanyName;
-            //flight.DateTime = fp.InitialLocation.DateTime;
-            //flight.IsExternal = false;
-            return flight;
-
-        }
-
-        public string ConvertTime(string time)
+        public DateTime ConvertTime(DateTime time)
         {
             return time;
         }
 
-        public bool NotStarted (object[] row, string time)
+        public bool NotStarted (object[] initialLocation, DateTime requiredTime)
         {
+            DateTime flightPlanDateTime = Convert.ToDateTime(initialLocation[initalLocationDateTimeE]); 
+            int result = DateTime.Compare(requiredTime, flightPlanDateTime);
+
+            // requiredTime is earlier than flightPlanDateTime
+            if (result < 0)
+            {
+                return true;
+            }
             return false;
         }
 
-        public bool AlreadyFinished(List<Object[]> sgements,string initTime, string time)
+        public bool AlreadyFinished(int timeOfAllFlight ,DateTime startTime, DateTime requiredTime)
         {
+            TimeSpan duration = new TimeSpan(0, 0, 0, timeOfAllFlight);
+            DateTime endTime = startTime.Add(duration);
+
+            int result = DateTime.Compare(requiredTime, endTime);
+            // requiredTime is later than endTime
+            if (result > 0)
+            {
+                return true;
+            }
             return false;
         }
 
-        public Flights CreateFlight(SqliteConnection conn, object[] initialLocation, List<Object[]> sgements, bool isExternal)
+        public Flights CreateFlight(SqliteConnection conn, object[] initialLocation, List<Object[]> segements, bool isExternal, DateTime time)
         {
-            Flights flight = new Flights();
+            Flights flight = flightGenerator.CreateFlightFromGivenData(initialLocation, segements, isExternal, time);
+            object[] flightPlan = ReadFromTable(conn, "SELECT * FROM FlightPlanTable WHERE Id = '" + flight.FlightId + "'");
+            flight.CompanyName = flightPlan[flightPlanCompanyNameE].ToString();
+            flight.Passengers = Convert.ToInt32(flightPlan[flightPlanPassangersE]);
             return flight;
         }
 
-        public List<Flights> GetExternal(string time)
+        public List<Flights> GetExternal(DateTime time)
         {
             List<Flights> flights = new List<Flights>();
             return flights;
         }
-        public List<Flights> GetFlights(string time, bool isExternal)
+        public List<Flights> GetFlights(DateTime time, bool isExternal)
         {
             List<Flights> flights = new List<Flights>();
             flights = GetInternalFlights(time);
@@ -163,10 +201,10 @@ namespace FlightControlWeb
             return flights;
         } 
 
-        public List<Flights> GetInternalFlights(string time)
+        public List<Flights> GetInternalFlights(DateTime time)
         {
             // +2 hours.
-            string trueTime = ConvertTime(time);
+            DateTime trueTime = ConvertTime(time);
             // Reading all the data.
             SqliteConnection conn = OpenConnection();
             SqliteCommand selectCommand = new SqliteCommand();
@@ -183,13 +221,15 @@ namespace FlightControlWeb
                 {
                     continue;
                 }
-                string command = "SELECT * FROM SegmentsTable WHERE FlightId= '" + row[0].ToString() + "'";
-                List<Object[]> sgements = ReadSegments(conn, command);
-                if (AlreadyFinished(sgements, row[3].ToString(), time))
+                string command = "SELECT SUM(TimespanSeconds) FROM SegmentsTable WHERE FlightId= '" + row[initialLocationIdE].ToString() + "'";
+                object[] sumTime = ReadFromTable(conn, command);
+                if (AlreadyFinished(Convert.ToInt32(sumTime[0]), Convert.ToDateTime(row[initalLocationDateTimeE]), time))
                 {
                     continue;
                 }
-                flights.Add(CreateFlight(conn, row, sgements, true));
+                command = "SELECT * FROM SegmentsTable WHERE FlightId= '" + row[initialLocationIdE].ToString() + "'";
+                List<Object[]> sgements = ReadSegments(conn, command);
+                flights.Add(CreateFlight(conn, row, sgements, true, time));
             }
             query.Close();
             return flights;
@@ -318,7 +358,30 @@ namespace FlightControlWeb
             conn.Close();
         }
 
+        public FlightPlan setFlightPlan(object[] basicData, object[] initialLocation, List<object[]> segments)
+        {
+            FlightPlan flightPlan = new FlightPlan();
 
+            flightPlan.Id = Convert.ToString(basicData[flightPlanIdE]);
+            flightPlan.Passengers = Convert.ToInt32(basicData[flightPlanPassangersE]);
+            flightPlan.CompanyName = Convert.ToString(basicData[flightPlanCompanyNameE]);
+
+            double longitude = Convert.ToDouble(initialLocation[initialLocationLongitudeE]);
+            double latitude = Convert.ToDouble(initialLocation[initialLocationLatitudeE]);
+            DateTime dateTime = Convert.ToDateTime(initialLocation[initalLocationDateTimeE]);
+            Location location = new Location(longitude, latitude, dateTime);
+            flightPlan.InitialLocation = location;
+
+            foreach (object[] segment in segments)
+            {
+                double longitudeS = Convert.ToDouble(segment[segmentLongitudeE]);
+                double latitudeS = Convert.ToDouble(segment[segmentLatitudeE]);
+                int TimespanSecond = Convert.ToInt32(segment[segmenTimespanSecondE]);
+                Segment segment1 = new Segment(longitudeS, latitudeS, TimespanSecond);
+                flightPlan.Segments.Add(segment1);
+            }
+            return flightPlan;
+        }
 
         public List<string> GetData()
         {
