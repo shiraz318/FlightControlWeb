@@ -66,21 +66,17 @@ namespace FlightControlWeb
  *
  * DateType adds 3 hours!
  * 
- * GetFlights implementaition.
+ * GetFlights implementaition - GetExternal(other servers), ConvertTime (time differences), linear interpulattion.
  * 
  * present the flights on the web. - they sent some video in the telegram.
  * 
  * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
- * 
- * Manager for Flights.
  * 
  * Manager for Server.
  * 
  * map.
  *  
  * startup dependency injection.
- * 
- * may by we do not need to create new flight when we get new flightplan and no need to save the flights in the database.
  * 
  * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
  */

@@ -46,5 +46,20 @@ namespace FlightControlWeb.Models
             SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
             return s.GetFlightPlan(id);
         }
+
+        public FlightPlan[] GetAllFlightPlans()
+        {
+            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+            List<FlightPlan> list = s.GetAllFlightPlans();
+            FlightPlan[] flightPlans = new FlightPlan[list.Count];
+            int i = 0;
+            foreach (FlightPlan fp in list)
+            {
+                flightPlans[i] = fp;
+                i++;
+            }
+
+            return flightPlans;
+        }
     }
 }

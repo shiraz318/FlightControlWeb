@@ -108,7 +108,7 @@ namespace FlightControlWeb
             return row;
         }
        
-        public List<object[]> ReadSegments(SqliteConnection conn, string commendText)
+        public List<object[]> ReadMultipleLines(SqliteConnection conn, string commendText)
         {
             SqliteCommand selectCommand = new SqliteCommand();
             selectCommand.Connection = conn;
@@ -228,7 +228,7 @@ namespace FlightControlWeb
                     continue;
                 }
                 command = "SELECT * FROM SegmentsTable WHERE FlightId= '" + row[initialLocationIdE].ToString() + "'";
-                List<Object[]> sgements = ReadSegments(conn, command);
+                List<Object[]> sgements = ReadMultipleLines(conn, command);
                 flights.Add(CreateFlight(conn, row, sgements, true, time));
             }
             query.Close();
@@ -241,9 +241,22 @@ namespace FlightControlWeb
             //getSegmentsCount(conn, id);
             object[] basicData = ReadFromTable(conn, "SELECT * FROM FlightPlanTable WHERE Id = '" + id + "'");
             object[] initialLocation = ReadFromTable(conn, "SELECT * FROM InitialLocationTable WHERE Id= '" + id + "'");
-            List<object[]> segments = ReadSegments(conn, "SELECT * FROM SegmentsTable WHERE FlightId= '" + id + "'");
+            List<object[]> segments = ReadMultipleLines(conn, "SELECT * FROM SegmentsTable WHERE FlightId= '" + id + "'");
             conn.Close();
              return setFlightPlan(basicData, initialLocation, segments);
+        }
+
+        public List<FlightPlan> GetAllFlightPlans()
+        {
+            SqliteConnection conn = OpenConnection();
+            List<FlightPlan> list = new List<FlightPlan>();
+            List<object[]> ids = ReadMultipleLines(conn, "SELECT Id FROM FlightPlanTable");
+            foreach (object[] id in ids)
+            {
+                list.Add(GetFlightPlan(id[0].ToString()));
+            }
+            conn.Close();
+            return list;
         }
 
         public void InsertToFlightPlanTable(SqliteConnection conn, FlightPlan flightPlan)

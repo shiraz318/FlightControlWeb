@@ -13,6 +13,16 @@ namespace FlightControlWeb.Controllers
     {
         IFlightPlanManager manager = new FlightPlanManager();
 
+
+        // GET /api/FlightPlan.
+        [HttpGet]
+        public FlightPlan[] GetAllFlightPlans()
+        {
+            FlightPlan[] flightPlans;
+            flightPlans = manager.GetAllFlightPlans();
+            return flightPlans;
+        }
+
         // GET /api/FlightPlan/{id}.
         [HttpGet("{id}", Name = "GetItem")]
         public ActionResult GetItem(string id)

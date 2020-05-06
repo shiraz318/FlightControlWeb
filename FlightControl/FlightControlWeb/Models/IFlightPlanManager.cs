@@ -9,5 +9,6 @@ namespace FlightControlWeb.Models
     {
         void AddFlightPlan(FlightPlan fp);
         FlightPlan GetFlightPlan(string id);
+        FlightPlan[] GetAllFlightPlans();
     }
 }
