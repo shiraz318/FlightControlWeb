@@ -20,7 +20,6 @@ namespace FlightControlWeb.Models
             {
                 chars[i] = allowedChars[rd.Next(0, allowedChars.Length)];
             }
-
             return new String(chars);
         }
         public string setId()

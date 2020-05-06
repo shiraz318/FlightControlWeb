@@ -243,7 +243,7 @@ namespace FlightControlWeb
             object[] initialLocation = ReadFromTable(conn, "SELECT * FROM InitialLocationTable WHERE Id= '" + id + "'");
             List<object[]> segments = ReadMultipleLines(conn, "SELECT * FROM SegmentsTable WHERE FlightId= '" + id + "'");
             conn.Close();
-             return setFlightPlan(basicData, initialLocation, segments);
+            return setFlightPlan(basicData, initialLocation, segments);
         }
 
         public List<FlightPlan> GetAllFlightPlans()
@@ -347,10 +347,21 @@ namespace FlightControlWeb
         {
             SqliteConnection conn = OpenConnection();
             bool returnVal = true;
-            SqliteCommand deleteCommand = new SqliteCommand();
-            deleteCommand.Connection = conn;
-            deleteCommand.CommandText = "DELETE FROM FlightPlanTable WHERE Id='" + id + "'";
-            deleteCommand.ExecuteReader();
+            
+            string[] tables = { "FlightPlanTable", "InitialLocationTable", "SegmentsTable" };
+            int i = 0;
+            for (i = 0; i < tables.Length; i++)
+            {
+                SqliteCommand deleteCommand = new SqliteCommand();
+                deleteCommand.Connection = conn;
+                deleteCommand.CommandText = "DELETE FROM " + tables[i] + " WHERE Id='" + id + "'";
+                deleteCommand.ExecuteReader();
+            }
+           
+            //deleteCommand.CommandText = "DELETE FROM InitialLocationTable WHERE Id='" + id + "'";
+            //deleteCommand.ExecuteReader();
+            //deleteCommand.CommandText = "DELETE FROM SegmentsTable WHERE Id='" + id + "'";
+            //deleteCommand.ExecuteReader();
             conn.Close();
             return returnVal;
         }
@@ -465,8 +476,8 @@ namespace FlightControlWeb
             string dbPath = Environment.CurrentDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
 
-                conn.Open();
-            //    String tableCommand = @"CREATE TABLE IF NOT EXISTS newTable (id INTEGER PRIMARY KEY,
+             conn.Open();
+            //String tableCommand = @"CREATE TABLE IF NOT EXISTS newTable (id INTEGER PRIMARY KEY,
             //Text_Entry TEXT, price INT)";
             //SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
             //createTable.ExecuteReader();

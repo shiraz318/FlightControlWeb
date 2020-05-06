@@ -30,16 +30,16 @@ namespace FlightControlWeb.Controllers
         [HttpGet]
         public ActionResult<Flights> Get([FromQuery] string relative_to)
         {
-            string dataTime = relative_to;
+            string dateTime = relative_to;
             string s = Request.QueryString.Value;
             List<Flights> flights = new List<Flights>();
             if (s.Contains("sync_all"))
             {
-               flights = manager.GetAllFlights(dataTime, true);
+               flights = manager.GetAllFlights(dateTime, true);
             } 
             else
             {
-               flights = manager.GetAllFlights(dataTime, false);
+               flights = manager.GetAllFlights(dateTime, false);
             }
 
             return Ok(flights);

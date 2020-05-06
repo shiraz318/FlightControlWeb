@@ -22,15 +22,16 @@
                 <div id="flight-details-wrapper">
                     <h2>Flight Details</h2>
                     <dl id="flight-details">
-                        <dt id="company-name-label">Company Name: </dt>
-                        <dd id="company-name-definition"></dd>
-                        <dt id="number-of-passangers-label">number of passangers: </dt>
-                        <dd id="number-of-passangers-definition"></dd>
-                        <dt id="start-location-label">start location: </dt>
-                        <dd id="start-location-definition"></dd>
+                        <dt class="table-danger" id="company-name-label">Company Name: </dt>
+                        <dd class="table-danger" id="company-name-definition"></dd>
+                        <dt class="table-warning" id="number-of-passangers-label">number of passangers: </dt>
+                        <dd class="table-warning" id="number-of-passangers-definition"></dd>
+                        <dt class="table-success" id="start-location-label">start location: </dt>
+                        <dd class="table-success" id="start-location-definition"></dd>
                     </dl>
                 </div>
             </div>
+            <!--
     <div id="flight-lists-section">
         <div id="my-flights-wrapper">
             <h2>My Flights</h2>
@@ -38,7 +39,24 @@
             </ul>
         </div>
         <div id="external-flights"></div>
-   </div>
+    </div>
+        -->
+            <div id="flight-tables-section">
+                <div id="my-flights-wrapper">
+                    <h2>My Flights</h2>
+                    <table class="Table" id="my-flights-table">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 </main>
     </div>
         <script src="../lib/jquery/dist/jquery.min.js"></script>

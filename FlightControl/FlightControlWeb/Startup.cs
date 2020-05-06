@@ -61,14 +61,14 @@ namespace FlightControlWeb
 }
 
 /*
+ * Mj29449mw, VU47927kz
+ * 
  * TODO:
  * 
  *
  * DateType adds 3 hours!
  * 
  * GetFlights implementaition - GetExternal(other servers), ConvertTime (time differences), linear interpulattion.
- * 
- * present the flights on the web. - they sent some video in the telegram.
  * 
  * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
  * 

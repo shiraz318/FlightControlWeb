@@ -105,3 +105,15 @@ body {
 .my-flight-list-item {
     cursor: pointer;
 }
+
+my-flights-table-item {
+    cursor: pointer;
+}
+
+.my-flights-table td {
+    cursor: pointer;
+}
+
+
+
+

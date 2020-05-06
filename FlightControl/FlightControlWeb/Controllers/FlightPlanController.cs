@@ -13,7 +13,6 @@ namespace FlightControlWeb.Controllers
     {
         IFlightPlanManager manager = new FlightPlanManager();
 
-
         // GET /api/FlightPlan.
         [HttpGet]
         public FlightPlan[] GetAllFlightPlans()
@@ -44,6 +43,4 @@ namespace FlightControlWeb.Controllers
             return CreatedAtAction(actionName: "GetItem", new { id = flightPlan.Id }, flightPlan);
         }
     }
-
-
 }
