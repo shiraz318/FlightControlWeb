@@ -88,6 +88,10 @@ body {
         padding: 1rem;
     }
 
+    #main [id*="flight-details-wrapper"] {
+        height: 100px;
+    }
+
 .mapouter {
     position: relative;
     text-align: right;
@@ -102,6 +106,11 @@ body {
     width: 600px;
 }
 
+.table-wrapper {
+    height: 250px;
+    overflow-y: scroll;
+}
+
 .my-flight-list-item {
     cursor: pointer;
 }
@@ -114,6 +123,9 @@ my-flights-table-item {
     cursor: pointer;
 }
 
+.flight-details-wrapper {
+    height: 100px;
+}
 
 
 

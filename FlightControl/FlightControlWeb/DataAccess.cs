@@ -115,18 +115,18 @@ namespace FlightControlWeb
             selectCommand.Connection = conn;
             selectCommand.CommandText = commendText;
             SqliteDataReader query = selectCommand.ExecuteReader();
-            List<object[]> list = new List<object[]>();
+            List<object[]> rows = new List<object[]>();
             
             while (query.Read())
             {
                 object[] row = new object[query.FieldCount];
                 query.GetValues(row);
 
-                list.Add(row);
+                rows.Add(row);
                 //query.GetValues(row);
             }
             query.Close();
-            return list;
+            return rows;
 
         }
 
@@ -395,8 +395,8 @@ namespace FlightControlWeb
         public static void InitializeDatabase()
         {
 
-            string dbPath = Environment.CurrentDirectory + @"\Database.sqlite";
-            //string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
+            //string dbPath = Environment.CurrentDirectory + @"\Database.sqlite";
+            string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
 
              conn.Open();

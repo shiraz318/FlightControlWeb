@@ -8,7 +8,7 @@
     <title>shiraz and nili</title>
 </head>
 <body>
-    
+
     <div id="page">
         <header><h1 class="display-4">Flight Board</h1></header>
         <main id="main">
@@ -18,50 +18,86 @@
                         <div class="gmap_canvas"><iframe width="600" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://www.whatismyip-address.com">whatismyip-address.com</a></div>
                     </div>
                 </div>
-
+                <!--class="overflow-auto"-->
                 <div id="flight-details-wrapper">
                     <h2>Flight Details</h2>
-                    <dl id="flight-details">
-                        <dt class="table-danger" id="company-name-label">Company Name: </dt>
-                        <dd class="table-danger" id="company-name-definition"></dd>
-                        <dt class="table-warning" id="number-of-passangers-label">number of passangers: </dt>
-                        <dd class="table-warning" id="number-of-passangers-definition"></dd>
-                        <dt class="table-success" id="start-location-label">start location: </dt>
-                        <dd class="table-success" id="start-location-definition"></dd>
-                    </dl>
-                </div>
-            </div>
-            <!--
-    <div id="flight-lists-section">
-        <div id="my-flights-wrapper">
-            <h2>My Flights</h2>
-            <ul id="my-flights-list">
-            </ul>
-        </div>
-        <div id="external-flights"></div>
-    </div>
-        -->
-            <div id="flight-tables-section">
-                <div id="my-flights-wrapper">
-                    <h2>My Flights</h2>
-                    <table class="table table-borderless" id="my-flights-table">
+                    <table class="table table-borderless" id="flight-details">
                         <thead>
-                            <tr class="d-flex">
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
+                            <tr>
+                                <th class="table-primary" id="company-name-label">Company Name</th>
+                                <th class="table-primary" id="number-of-passangers-label">Number of passangers</th>
+                                <th class="table-primary" id="start-location-label">Start location</th>
+                                <th class="table-primary" id="end-location-label">End location</th>
+                                <th class="table-primary" id="start-time-label">Start Time</th>
+                                <th class="table-primary" id="end-time-label">End Time</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <tr>
+                                <td class="table-primary" id="company-name-definition"> </td>
+                                <td class="table-primary" id="number-of-passangers-definition"> </td>
+                                <td class="table-primary" id="start-location-definition"> </td>
+                                <td class="table-primary" id="end-location-definition"> </td>
+                                <td class="table-primary" id="start-time-definition"> </td>
+                                <td class="table-primary" id="end-time-definition"> </td>
+                            </tr>
                         </tbody>
+
+                        <!---
+            <dt class="table-danger" id="company-name-label">Company Name: </dt>
+            <dd class="table-danger" id="company-name-definition"></dd>
+            <dt class="table-warning" id="number-of-passangers-label">number of passangers: </dt>
+            <dd class="table-warning" id="number-of-passangers-definition"></dd>
+            <dt class="table-success" id="start-location-label">start location: </dt>
+            <dd class="table-success" id="start-location-definition"></dd>
+            <dt class="table-success" id="start-location-label">start location: </dt>
+            <dd class="table-success" id="start-location-definition"></dd>
+                -->
+
                     </table>
                 </div>
             </div>
-</main>
+            <!--
+            <div id="flight-lists-section">
+                <div id="my-flights-wrapper">
+                    <h2>My Flights</h2>
+                    <ul id="my-flights-list">
+                    </ul>
+                </div>
+                <div id="external-flights"></div>
+            </div>
+                 -->
+            <div id="flight-tables-section">
+                <div id="my-flights-wrapper">
+                    <h2>My Flights</h2>
+                    <div class="table-wrapper">
+                        <table class="table table-borderless" id="my-flights-table">
+                            <thead>
+                                <tr class="d-flex">
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="drop-area">
+                    <form class="my-form">
+                        <p>Drag & Drop</p>
+                        <div id="gallery"></div>
+                        <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+                    </form>
+                </div>
+            </div>
+        </main>
     </div>
-        <script src="../lib/jquery/dist/jquery.min.js"></script>
-        <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="../js/site.js" asp-append-version="true"></script>
+    <script src="../lib/jquery/dist/jquery.min.js"></script>
+    <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/site.js" asp-append-version="true"></script>
+    <script src="../js/DragAndDrop.js" asp-append-version="true"></script>
 </body>
 </html>

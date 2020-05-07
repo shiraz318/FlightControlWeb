@@ -63,21 +63,17 @@ namespace FlightControlWeb
 /*
  * TODO:
  * 
+ * Time- also in c# and in js needs to.
+ * 
  * DateTime returns in json different format - no Z and +3
  * 
  * may be needs to uninstall the toolbox befor submit.
  * 
- * may be add an icon of X 
+ * may be add an icon of X.
  * 
- * no nameing List<> list.
- * 
- * grira
+ * grira.
  * 
  * add external table - empty.
- * 
- * flight detail table - nice one!
- * 
- * DateType adds 3 hours!
  * 
  * GetFlights implementaition - GetExternal(other servers), ConvertTime (time differences), linear interpulattion.
  * 

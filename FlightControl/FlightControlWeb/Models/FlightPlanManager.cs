@@ -7,8 +7,8 @@ namespace FlightControlWeb.Models
 {
     public class FlightPlanManager : IFlightPlanManager
     {
-        private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
-        //private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
+        //private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+        private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
         private string CreateLetters()
         {
            
@@ -44,17 +44,16 @@ namespace FlightControlWeb.Models
         }
 
         public FlightPlan GetFlightPlan(string id)
-        {
-            
-            return s.GetFlightPlan(id);
+        {      
+            return  s.GetFlightPlan(id);
         }
 
         public FlightPlan[] GetAllFlightPlans()
         {
-            List<FlightPlan> list = s.GetAllFlightPlans();
-            FlightPlan[] flightPlans = new FlightPlan[list.Count];
+            List<FlightPlan> flightPlans1 = s.GetAllFlightPlans();
+            FlightPlan[] flightPlans = new FlightPlan[flightPlans1.Count];
             int i = 0;
-            foreach (FlightPlan fp in list)
+            foreach (FlightPlan fp in flightPlans1)
             {
                 flightPlans[i] = fp;
                 i++;

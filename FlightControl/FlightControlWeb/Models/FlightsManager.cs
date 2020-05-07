@@ -7,8 +7,8 @@ namespace FlightControlWeb.Models
 {
     public class FlightsManager : IFlightsManager
     {
-        private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
-        //private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
+        //private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+        private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
         public bool DeleteFlight(string id)
         {
             return s.DeleteFlightPlan(id);
@@ -17,7 +17,8 @@ namespace FlightControlWeb.Models
 
         public List<Flights> GetAllFlights(string dateTime, bool isExternal)
         { 
-            // Remove the <>.
+            // Remove t <>.
+          
             DateTime time = DateTime.Parse(dateTime.Substring(1, dateTime.Length - 2));
             List<Flights> flights = new List<Flights>();
             //List<FlightPlan> flightPlans = new List<FlightPlan>();
