@@ -38,9 +38,10 @@ namespace FlightControlWeb.Controllers
         [HttpPost]
         public ActionResult Post([FromBody] FlightPlan flightPlan)
         {
-            manager.AddFlightPlan(flightPlan);
+            string id = manager.AddFlightPlan(flightPlan);
             // Status 201 - created.
-            return CreatedAtAction(actionName: "GetItem", new { id = flightPlan.Id }, flightPlan);
+            //return CreatedAtAction(actionName: "GetItem", flightPlan);
+            return CreatedAtAction(actionName: "GetItem", new { id = id }, flightPlan);
         }
     }
 }

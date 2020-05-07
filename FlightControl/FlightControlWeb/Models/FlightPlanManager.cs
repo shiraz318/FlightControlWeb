@@ -7,6 +7,8 @@ namespace FlightControlWeb.Models
 {
     public class FlightPlanManager : IFlightPlanManager
     {
+        private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+        //private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
         private string CreateLetters()
         {
            
@@ -31,24 +33,24 @@ namespace FlightControlWeb.Models
         }
 
        
-        public void AddFlightPlan(FlightPlan fp)
+        public string AddFlightPlan(FlightPlan fp)
         {
-            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
-            fp.Id = setId();
-            s.InsertFlightPlan(fp);
+            string id = setId();
+
+            s.InsertFlightPlan(fp, id);
+            return id;
             //Flights flights = CreateFlight(fp);
             //s.InsertFlight(flights);
         }
 
         public FlightPlan GetFlightPlan(string id)
         {
-            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
+            
             return s.GetFlightPlan(id);
         }
 
         public FlightPlan[] GetAllFlightPlans()
         {
-            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
             List<FlightPlan> list = s.GetAllFlightPlans();
             FlightPlan[] flightPlans = new FlightPlan[list.Count];
             int i = 0;

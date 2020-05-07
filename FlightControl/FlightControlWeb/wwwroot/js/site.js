@@ -47,17 +47,17 @@ function DeleteFlight(id) {
 //    });
 //});
 
-
-$.getJSON("/api/FlightPlan", (data) => {
+$.getJSON("/api/Flights?relative_to=<2014-08-07T14:24:20Z>", (data) => {
+    console.log(Date.now());
     // filter=iterates an array, flight is the item itself
     data.filter(flight => {
         let flightDelete = $('<td>').text('X');
         let newflightCompanyName = $('<td>').text(flight.company_name);
-        let newflightId = $('<td>').text(flight.id);
+        let newflightId = $('<td>').text(flight.flight_id);
         $("<tr class='d-flex'> ").append(
             flightDelete,
             newflightCompanyName,
-            newflightId).appendTo('#my-flights-table');
+           newflightId).appendTo('#my-flights-table');
         // create an item in the list with the flight id
         //let newflight = $("<li class='my-flight-table-item'>" + flight.id + "</li>");
         //$("#my-flights-table").append(newflight);

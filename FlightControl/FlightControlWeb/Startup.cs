@@ -63,6 +63,14 @@ namespace FlightControlWeb
 /*
  * TODO:
  * 
+ * DateTime returns in json different format - no Z and +3
+ * 
+ * may be needs to uninstall the toolbox befor submit.
+ * 
+ * may be add an icon of X 
+ * 
+ * no nameing List<> list.
+ * 
  * grira
  * 
  * add external table - empty.

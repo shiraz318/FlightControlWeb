@@ -7,7 +7,7 @@ namespace FlightControlWeb.Models
 {
     public interface IFlightPlanManager
     {
-        void AddFlightPlan(FlightPlan fp);
+        string AddFlightPlan(FlightPlan fp);
         FlightPlan GetFlightPlan(string id);
         FlightPlan[] GetAllFlightPlans();
     }
