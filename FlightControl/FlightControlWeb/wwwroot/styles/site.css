@@ -1,6 +1,15 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+html {
+    box-sizing: border-box;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
 a.navbar-brand {
     white-space: normal;
     text-align: center;
@@ -76,9 +85,10 @@ body {
 /* Main Page styles
 -------------------------------------------------- */
 #page {
-    max-width:1000px;
+    max-width: 1100px;
     margin: 0 auto;
 }
+
 #main {
     width: 100%;
     display: flex;
@@ -88,8 +98,8 @@ body {
         padding: 1rem;
     }
 
-    #main [id*="flight-details-wrapper"] {
-        height: 100px;
+    #main #board-section {
+        min-width: 830px;
     }
 
 .mapouter {
@@ -111,21 +121,34 @@ body {
     overflow-y: scroll;
 }
 
-.my-flight-list-item {
+.d-flex {
+    align-items: center;
+}
+
+.my-flights-list-item {
     cursor: pointer;
 }
 
-my-flights-table-item {
-    cursor: pointer;
+    .my-flights-list-item.highlighted {
+        background-color: palegreen;
+    }
+
+#my-flights-table [class*="flight-"] {
+    padding: 0.5rem 0.4rem;
+    display: inline-block;
 }
 
-.my-flights-table td {
-    cursor: pointer;
+.flight-delete {
+    font-style: italic;
+    font-weight: bold;
+    color: red;
+    font-size: 20px;
 }
 
 .flight-details-wrapper {
     height: 100px;
 }
 
-
-
+#flight-details tbody tr {
+    height: 75px;
+}

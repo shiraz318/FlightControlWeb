@@ -398,8 +398,7 @@ namespace FlightControlWeb
             //string dbPath = Environment.CurrentDirectory + @"\Database.sqlite";
             string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
-
-             conn.Open();
+            conn.Open();
             CreateFlightPlanTable(conn);
             CreateInitialLocationTable(conn);
             CreateSegmentsTable(conn);

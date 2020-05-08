@@ -50,6 +50,7 @@ function uploadFile(file) {
         xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         xhr.addEventListener('readystatechange', function (e) {
             if (xhr.readyState == 4 && xhr.status == 201) {
+                //NewRow(reader.result);
                 // Done. Inform the user
                 console.log("GOOD");
             }
