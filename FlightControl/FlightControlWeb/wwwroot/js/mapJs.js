@@ -1,70 +1,102 @@
-﻿function initMap() {
- 
+﻿let map;
+let allFlightsPath = {};
+let allFlightsMarker = {};
+const regularImg = '../images/small_black.png'
+const clickedImg = '../images/airplane.png'
+function ResetFlightDetails() {
+    $("#company-name-definition").html("");
+    $("#number-of-passangers-definition").html("");
+    $("#start-location-definition").html("");
+    $("#end-location-definition").html("");
+    $("#start-time-definition").html("");
+    $("#end-time-definition").html("");
+}
+
+function Reset() {
+    for (let key in allFlightsPath) {
+        allFlightsPath[key].setMap(null);
+        var icon = { url: regularImg };
+        allFlightsMarker[key].setIcon(icon);
+    }
+    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let i = 0;
+    let size = listItems.length;
+    for (i = 0; i < size; i++) {
+        listItems[i].classList.remove("highlighted");
+    }
+    ResetFlightDetails();
+}
+
+function initMap() { 
     // Map options.
     let options = {
-        zoom: 8,
+        zoom: 1,
         center: {lat:42.3601, lng:-71.0589}
     }
-
     // New map.
-    let map = new google.maps.Map(document.getElementById('map'), options);
-    return map;
-    // Add marker
-    /*let image = "../images/blue_airplane.jpg";
-    let marker = new google.maps.Marker({
-        position: { lat: 42.4668, lng: -70.9495 },
-        map: map,
-        //icon: "../images/red_airplane.jpg"
-    });
-
-    let infoWindow = new google.maps.InfoWindow({
-        content: '<h3>Shiraz Berger</h3>'
-    });
-
-    marker.addListener('click', function () {
-        infoWindow.open(map, marker);
-    });
-    */
-    //addMarker({
-    //    coords: { lat: 42.4668, lng: -70.9495 },
-    //    iconImage: ''
-    //});
-    //addMarker({ coords: { lat: 42.8584, lng: -70.9300 } });
-
-    // Add marker function.
-    
-
-    flightPath.setMap(map);
+    map = new google.maps.Map(document.getElementById('map'), options);
+    google.maps.event.addListener(map, 'click', Reset);
 }
-function addMarker(flight, self) {
-    let map = initMap();
-    console.log(flight.latitude);
-    let marker = new google.maps.Marker({
-        position: { lat: 42.8584, lng: -70.9300 },//{ lat:  + flight.latitude + , lng: + flight.longitude + },
-        map: map
-        //icon: "../images/red_airplane.jpg"
+
+function DisplayPath(id) {
+
+    for (let key in allFlightsPath) {
+        if (key == id) {
+            allFlightsPath[key].setMap(map);
+            var icon = { url: clickedImg };
+            allFlightsMarker[key].setIcon(icon);
+        } else {
+            allFlightsPath[key].setMap(null);
+            var icon = { url: regularImg };
+            allFlightsMarker[key].setIcon(icon);
+        }
+    }
+   
+}
+
+function CreatePath(id) {
+    $.getJSON("/api/FlightPlan/" + id, (data) => {
+        let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
+        let flightPlanCoordinates = [startLoc];
+        data.segments.filter(segment => {
+            let loc = new google.maps.LatLng(segment.latitude, segment.longitude);
+            flightPlanCoordinates.push(loc);
+        });
+        let flightPath = new google.maps.Polyline({
+            path: flightPlanCoordinates,
+            geodesic: true,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+       
+        allFlightsPath[id] = flightPath;
     });
+}
+
+function addMarker(flight) {  
+    let marker = new google.maps.Marker({
+        position: new google.maps.LatLng(flight.latitude, flight.longitude),
+        map: map,
+        icon: regularImg
+    });
+    allFlightsMarker[flight.flight_id] = marker;
     let infoWindow = new google.maps.InfoWindow({
         content: '<h3>' + flight.flight_id + '</h3>'
     });
 
-    marker.addListener('click', function () {
-        infoWindow.open(map, marker);
-        DisplayFlightDetails(flight_id, self);
-    });
-}
-//var flightPlanCoordinates = [
-//    { lat: 37.772, lng: -122.214 },
-//    { lat: 21.291, lng: -157.821 },
-//    { lat: -18.142, lng: 178.431 },
-//    { lat: -27.467, lng: 153.027 }
-//];
-//var flightPath = new google.maps.Polyline({
-//    path: flightPlanCoordinates,
-//    geodesic: true,
-//    strokeColor: '#FF0000',
-//    strokeOpacity: 1.0,
-//    strokeWeight: 2
-//});
+    CreatePath(flight.flight_id);
 
+    marker.addListener('click', function () {
+        //console.log($(this));
+       
+        infoWindow.open(map, marker);
+        DisplayFlightDetails(flight.flight_id);
+        DisplayPath(flight.flight_id);
+    });
+
+}
+function SetNewPosition(flight) {
+    allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
+}
 

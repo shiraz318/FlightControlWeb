@@ -41,8 +41,21 @@ function DisplayFlightDetails(id, self) {
         $("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
 
     });
-    self.parent().toggleClass("highlighted");
-    self.parent().siblings().removeClass("highlighted");
+
+    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let j = 0;
+    let size = listItems.length;
+    let found = false;
+    let row = listItems[0];
+    for (j = 0; j < size; j++) {
+        let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
+        if (id1 == id) {
+            listItems[j].classList.add("highlighted");
+
+        } else {
+            listItems[j].classList.remove("highlighted");
+        }
+    }
   
 };
 
@@ -50,7 +63,6 @@ function DisplayFlightDetails(id, self) {
 
 function DeleteFlight(id, self) {
     if (self.parent().hasClass("highlighted")) {
-        console.log(1);
         self.parent().removeClass("highlighted");
     } else {
         self.parent().fadeOut(600, function () { $(this).remove(); });
@@ -61,12 +73,13 @@ function DeleteFlight(id, self) {
                 console.log("DELETED");
             }
         });
+
     }
 }
 
 function RowInMyFlightList(flight) {
-    var listItems = document.querySelectorAll('#my-flights-table > li');
-
+   
+    let listItems = document.querySelectorAll('#my-flights-table > li');
     let j = 0;
     let size = listItems.length;
     let found = false;
@@ -78,7 +91,6 @@ function RowInMyFlightList(flight) {
         }
     }
     if (!found) {
-
         let flightDelete = $('<span class="flight-delete">').text('X');
         let newflightCompanyName = $('<span class="flight-company">').text(flight.company_name);
         let newflightId = $('<span class="flight-id">').text(flight.flight_id);
@@ -89,16 +101,21 @@ function RowInMyFlightList(flight) {
 
         newflightId.on("click", function () {
             DisplayFlightDetails(flight.flight_id, $(this));
+            DisplayPath(flight.flight_id);
         });
         newflightCompanyName.on("click", function () {
             DisplayFlightDetails(flight.flight_id, $(this));
+            DisplayPath(flight.flight_id);
         });
         flightDelete.on("click", function () {
-
             DeleteFlight(flight.flight_id, $(this));
+            Reset();
         });
-        addMarker(flight, $(this));
+        console.log(flight.flight_id);
+        addMarker(flight);  
     }
+    SetNewPosition(flight);
+   
 }
 
 function DisplayFlights() {

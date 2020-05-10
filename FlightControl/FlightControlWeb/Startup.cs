@@ -67,7 +67,9 @@ namespace FlightControlWeb
  * 
  * may be add an icon of X.
  * 
- * grira.
+ * 
+ *  tomoorow - drag & drop, linear interpulation, server?.
+ * 
  * 
  * add external table - empty.
  * 
