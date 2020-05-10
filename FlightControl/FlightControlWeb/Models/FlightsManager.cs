@@ -19,7 +19,9 @@ namespace FlightControlWeb.Models
         { 
             // Remove t <>.
           
-            DateTime time = DateTime.Parse(dateTime.Substring(1, dateTime.Length - 2));
+            DateTime time = DateTime.Parse(dateTime.Substring(1, dateTime.Length - 2)).ToUniversalTime();
+
+            string str = time.ToString();
             List<Flights> flights = new List<Flights>();
             //List<FlightPlan> flightPlans = new List<FlightPlan>();
            // flightPlans = s.GetAllFlightPlans(isExternal);

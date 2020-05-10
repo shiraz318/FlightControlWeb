@@ -1,4 +1,7 @@
-﻿function EndLocation(segments) {
+﻿
+setInterval(DisplayFlights, 1000);
+
+function EndLocation(segments) {
     let loc = 3;
     segments.filter(segment => {
         loc = segment.longitude + ", " + segment.latitude;
@@ -92,9 +95,11 @@ function RowInMyFlightList(flight) {
 
 function DisplayFlights() {
     //let d = new Date();
+   // let date = new Date().toUTCString();
     let date = new Date().toISOString();
-    console.log(date)
-    $.getJSON("/api/Flights?relative_to=<2014-08-07T14:24:20Z>", (data) => {
+    console.log(date);
+    //console.log(date1)
+    $.getJSON("/api/Flights?relative_to=<2014-08-07T17:24:20Z>", (data) => {
         // filter=iterates an array, flight is the item itself
         data.filter(flight => {
             RowInMyFlightList(flight);
