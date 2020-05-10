@@ -97,6 +97,8 @@ function addMarker(flight) {
 
 }
 function SetNewPosition(flight) {
-    allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
+    if (allFlightsMarker[flight.flight_id]) {
+        allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
+    }
 }
 
