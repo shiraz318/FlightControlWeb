@@ -1,6 +1,4 @@
-﻿
-setInterval(DisplayFlights, 1000);
-
+﻿setInterval(DisplayFlights, 1000);
 function EndLocation(segments) {
     let loc = 3;
     segments.filter(segment => {
@@ -14,16 +12,20 @@ function EndTime(startTime, segments) {
     segments.filter(segment => {
         duration += segment.timespan_seconds;
     });
-    console.log(duration);
     let d = new Date(startTime);
-    console.log(d);
     d.setSeconds(d.getSeconds() + duration);
+    let offset = d.getTimezoneOffset();
+    let realOS = offset * -1; 
+    d.setMinutes(d.getMinutes() + realOS);
     let endTime = d.toISOString();
     return endTime;
 }
 
 function StartTime(time) {
     let d = new Date(time);
+    let offset = d.getTimezoneOffset();
+    let realOS = offset * -1;
+    d.setMinutes(d.getMinutes() + realOS);
     let startTime = d.toISOString();
     return startTime;
 }
@@ -39,19 +41,9 @@ function DisplayFlightDetails(id, self) {
         $("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
 
     });
-    //$('#my-flights-table li').each(function (i, item) {
     self.parent().toggleClass("highlighted");
     self.parent().siblings().removeClass("highlighted");
-    //var result = $(item).find('.flight-id').text();
-    console.log(self.parent());
-    //if (result == id) {
-    //    $(item).css('background-color', 'palegreen');
-    //    console.log("CHANGE");
-    //} else {
-    //    $(item).css('background-color', 'white');
-    //}
-
-    //  })
+  
 };
 
 
@@ -73,32 +65,45 @@ function DeleteFlight(id, self) {
 }
 
 function RowInMyFlightList(flight) {
-    let flightDelete = $('<span class="flight-delete">').text('X');
-    let newflightCompanyName = $('<span class="flight-company">').text(flight.company_name);
-    let newflightId = $('<span class="flight-id">').text(flight.flight_id);
-    $("<li class='d-flex my-flights-list-item'> ").append(
-        flightDelete,
-        newflightCompanyName,
-        newflightId).appendTo('#my-flights-table');
+    var listItems = document.querySelectorAll('#my-flights-table > li');
 
-    newflightId.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
-    });
-    newflightCompanyName.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
-    });
-    flightDelete.on("click", function () {
+    let j = 0;
+    let size = listItems.length;
+    let found = false;
+    for (j = 0; j < size; j++) {
+        let id = listItems[j].getElementsByTagName("span")[2].innerText;
+        if (id == flight.flight_id) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
 
-        DeleteFlight(flight.flight_id, $(this));
-    });
+        let flightDelete = $('<span class="flight-delete">').text('X');
+        let newflightCompanyName = $('<span class="flight-company">').text(flight.company_name);
+        let newflightId = $('<span class="flight-id">').text(flight.flight_id);
+        $("<li class='d-flex my-flights-list-item'> ").append(
+            flightDelete,
+            newflightCompanyName,
+            newflightId).appendTo('#my-flights-table');
+
+        newflightId.on("click", function () {
+            DisplayFlightDetails(flight.flight_id, $(this));
+        });
+        newflightCompanyName.on("click", function () {
+            DisplayFlightDetails(flight.flight_id, $(this));
+        });
+        flightDelete.on("click", function () {
+
+            DeleteFlight(flight.flight_id, $(this));
+        });
+        addMarker(flight, $(this));
+    }
 }
 
 function DisplayFlights() {
-    //let d = new Date();
-   // let date = new Date().toUTCString();
     let date = new Date().toISOString();
-    console.log(date);
-    //console.log(date1)
+    //console.log(date)
     $.getJSON("/api/Flights?relative_to=<2014-08-07T17:24:20Z>", (data) => {
         // filter=iterates an array, flight is the item itself
         data.filter(flight => {

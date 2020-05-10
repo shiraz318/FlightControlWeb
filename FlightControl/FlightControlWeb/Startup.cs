@@ -62,11 +62,7 @@ namespace FlightControlWeb
 
 /*
  * TODO:
- * 
- * Time- also in c# and in js needs to.
- * 
- * DateTime returns in json different format - no Z and +3
- * 
+ *
  * may be needs to uninstall the toolbox befor submit.
  * 
  * may be add an icon of X.
