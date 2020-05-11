@@ -125,10 +125,11 @@ function RemoveFromFlightList() {
             //console.log("key: " + key);
             let row = GetRow(key);
             //console.log("row: " + row);
+            if (row.classList.contains("highlighted")) {
+                ResetFlightDetails();
+            }
             row.remove();
-            delete isOnTime[key];
-
-            
+            delete isOnTime[key];    
         }
     }
 }

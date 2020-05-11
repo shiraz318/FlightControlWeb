@@ -17,11 +17,25 @@ function preventDefaults(e) {
         dropArea.addEventListener(eventName, unhighlight, false)
     })
 
+
+
+function ShowImage() {
+    let img = document.getElementById('myImageId');
+    img.style.visibility = 'visible';
+    console.log("Visible");
+}
+function HideImage() {
+    let img = document.getElementById('myImageId');
+    img.style.visibility = 'hidden';
+}
+
 function highlight(e) {
+    ShowImage();
     dropArea.classList.add('highlight')
 }
 
 function unhighlight(e) {
+    HideImage();
     dropArea.classList.remove('highlight')
 }
 dropArea.addEventListener('drop', handleDrop, false)

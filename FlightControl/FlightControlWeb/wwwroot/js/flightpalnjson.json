@@ -1,31 +1,26 @@
 {
-    "passengers": 980,
-    "company_name": "Eli",
+    "passengers": 200000,
+    "company_name": "Rachel",
     "initial_location": {
-        "longitude": 54.98,
-        "latitude": 78.10,
-        "date_time": "2014-08-07T17:24:51Z"
+        "longitude": 0.98,
+        "latitude": 2.36,
+        "date_time": "2020-05-11T16:17:00Z"
     },
     "segments": [
         {
-            "longitude": 55.22,
-            "latitude": 78.98,
-            "timespan_seconds": 40
+            "longitude": 10.22,
+            "latitude": 12.33,
+            "timespan_seconds": 100
         },
         {
-            "longitude": 56.14,
-            "latitude": 79.13,
-            "timespan_seconds": 12
+            "longitude": 15.08,
+            "latitude": 20.25,
+            "timespan_seconds": 10
         },
         {
-            "longitude": 56.89,
-            "latitude": 79.25,
-            "timespan_seconds": 80
-        },
-        {
-            "longitude": 56.32,
-            "latitude": 79.89,
-            "timespan_seconds": 49
+            "longitude": 50.00,
+            "latitude": 70.14,
+            "timespan_seconds": 10
         }
     ]
 }

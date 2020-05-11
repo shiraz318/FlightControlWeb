@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="../styles/site.css" />
+    <link rel="stylesheet" href="../styles/DragAndDrop.css" />
 
     <title>shiraz and nili</title>
 </head>
@@ -14,11 +15,6 @@
         <main id="main">
             <div id="board-section">
                 <div id="flights-map">
-                    <!--
-                     <div class="mapouter">
-                        <div class="gmap_canvas"><iframe width="600" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://www.whatismyip-address.com">whatismyip-address.com</a></div>
-                     </div>
-                    -->
                     <h1> My Google Map</h1>
                     <style>
                         #map {
@@ -68,20 +64,21 @@
             </div>
                  -->
             <div id="flight-tables-section">
-                <div id="my-flights-wrapper">
+                <div class="my-flights-wrapper" id="my-flights-wrapper">
+                    <div class="drop-wrapper" id="drop-area">
+                        <form class="my-form">
+                            <div id="gallery"></div>
+                            <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+                           <img id="myImageId" src="../images/drag.png">
+                        </form>
+                    </div>
                     <h2>My Flights</h2>
-                    <div class="table-wrapper">
+                    <div class="table-wrapper">   
                         <ul id="my-flights-table">
                         </ul>
                     </div>
                 </div>
-                <div id="drop-area">
-                    <form class="my-form">
-                        <p>Drag & Drop</p>
-                        <div id="gallery"></div>
-                        <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
-                    </form>
-                </div>
+               <!---->
             </div>
         </main>
     </div>

@@ -107,7 +107,7 @@ namespace FlightControlWeb.Models
 
             // How mach time we are in the segment until the requierd time = timeInSegmnent.
             TimeSpan timeInSegmnent = time - soFar;
-            double timeToGo = timeInSegmnent.Seconds;
+            double timeToGo = timeInSegmnent.TotalSeconds;// Seconds;
 
             // timeInSegmnent/timespan = the partial time.
             double timespan = Convert.ToDouble(segmennts[segmentNumber][segmenTimespanSecondE]);
