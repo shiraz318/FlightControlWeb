@@ -2,7 +2,7 @@
 let allFlightsPath = {};
 let allFlightsMarker = {};
 const regularImg = '../images/small_black.png'
-const clickedImg = '../images/airplane.png'
+const clickedImg = '../images/pink.png'
 function ResetFlightDetails() {
     $("#company-name-definition").html("");
     $("#number-of-passangers-definition").html("");
@@ -26,6 +26,8 @@ function Reset() {
     }
     ResetFlightDetails();
 }
+
+
 
 function initMap() { 
     // Map options.
@@ -65,7 +67,7 @@ function CreatePath(id) {
         let flightPath = new google.maps.Polyline({
             path: flightPlanCoordinates,
             geodesic: true,
-            strokeColor: '#FF0000',
+            strokeColor: "#FF7F50",
             strokeOpacity: 1.0,
             strokeWeight: 2
         });
@@ -81,16 +83,10 @@ function addMarker(flight) {
         icon: regularImg
     });
     allFlightsMarker[flight.flight_id] = marker;
-    let infoWindow = new google.maps.InfoWindow({
-        content: '<h3>' + flight.flight_id + '</h3>'
-    });
 
     CreatePath(flight.flight_id);
 
     marker.addListener('click', function () {
-        //console.log($(this));
-       
-        infoWindow.open(map, marker);
         DisplayFlightDetails(flight.flight_id);
         DisplayPath(flight.flight_id);
     });
@@ -98,7 +94,29 @@ function addMarker(flight) {
 }
 function SetNewPosition(flight) {
     if (allFlightsMarker[flight.flight_id]) {
+        console.log("current position: lat: " + flight.latitude + ", lng: " + flight.longitude);
         allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
     }
 }
+function RemovwMareker(id) {
+    allFlightsMarker[id].setMap(null);
+    delete allFlightsMarker[id];
+    if (allFlightsPath[id]) {
+        allFlightsPath[id].setMap(null);
+    }
+    delete allFlightsPath[id];
 
+}
+
+function UnDisplayMarkers() {
+
+    for (let key in allFlightsMarker) {
+        if (allFlightsMarker[key]) {
+            // If the marker exists.
+            let found = IsFound(key);
+            if (!found) {
+                RemovwMareker(key);
+            }
+        }
+    }
+}

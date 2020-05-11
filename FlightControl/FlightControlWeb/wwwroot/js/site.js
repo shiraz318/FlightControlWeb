@@ -1,4 +1,9 @@
 ﻿setInterval(DisplayFlights, 1000);
+let isOnTime = {};
+const uninitialize = 0;
+const oldFlight = 1;
+const newFlight = 2;
+
 function EndLocation(segments) {
     let loc = 3;
     segments.filter(segment => {
@@ -73,24 +78,67 @@ function DeleteFlight(id, self) {
                 console.log("DELETED");
             }
         });
-
+        RemovwMareker(id);
     }
 }
 
-function RowInMyFlightList(flight) {
-   
+function IsFound(id) {
     let listItems = document.querySelectorAll('#my-flights-table > li');
     let j = 0;
     let size = listItems.length;
     let found = false;
     for (j = 0; j < size; j++) {
-        let id = listItems[j].getElementsByTagName("span")[2].innerText;
-        if (id == flight.flight_id) {
+        let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
+        if (id1 == id) {
             found = true;
             break;
         }
     }
+    return found;
+}
+
+function ResetDictionaryOnTime() {
+    for (let key in isOnTime) {
+        isOnTime[key] = uninitialize;
+        //console.log("reset" + isOnTime[key]);
+    }
+}
+
+function GetRow(id) {
+    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let j = 0;
+    let size = listItems.length;
+    for (j = 0; j < size; j++) {
+        let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
+        if (id1 == id) {
+            return listItems[j];
+        }
+    }
+}
+
+
+function RemoveFromFlightList() {
+    //console.log("I am in remove from flight lists");
+    //console.log(isOnTime);
+    for (let key in isOnTime) {
+        if ((isOnTime[key] == uninitialize)) {
+            //console.log("key: " + key);
+            let row = GetRow(key);
+            //console.log("row: " + row);
+            row.remove();
+            delete isOnTime[key];
+
+            
+        }
+    }
+}
+
+function RowInMyFlightList(flight) {
+  
+    let found = IsFound(flight.flight_id);
+    
     if (!found) {
+        isOnTime[flight.flight_id] = newFlight;
         let flightDelete = $('<span class="flight-delete">').text('X');
         let newflightCompanyName = $('<span class="flight-company">').text(flight.company_name);
         let newflightId = $('<span class="flight-id">').text(flight.flight_id);
@@ -98,6 +146,7 @@ function RowInMyFlightList(flight) {
             flightDelete,
             newflightCompanyName,
             newflightId).appendTo('#my-flights-table');
+
 
         newflightId.on("click", function () {
             DisplayFlightDetails(flight.flight_id, $(this));
@@ -112,22 +161,30 @@ function RowInMyFlightList(flight) {
             Reset();
         });
         console.log(flight.flight_id);
-        addMarker(flight);  
+        addMarker(flight);
     }
-    SetNewPosition(flight);
-   
+    else {
+        isOnTime[flight.flight_id] = oldFlight;
+    }
+    SetNewPosition(flight);   
 }
+
 
 function DisplayFlights() {
     let date = new Date().toISOString();
-    //console.log(date)
-    $.getJSON("/api/Flights?relative_to=<2014-08-07T17:24:20Z>", (data) => {
+    let curdate = date.split(".")[0] + "Z";
+    $.getJSON("/api/Flights?relative_to=" + curdate, (data) => {
         // filter=iterates an array, flight is the item itself
+        ResetDictionaryOnTime();
         data.filter(flight => {
             RowInMyFlightList(flight);
         });
-    });
+        RemoveFromFlightList();
+        UnDisplayMarkers();
+    }); 
+   
 }
 DisplayFlights();
+
 
 

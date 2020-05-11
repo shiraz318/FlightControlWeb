@@ -94,8 +94,8 @@ namespace FlightControlWeb.Models
 
             }
             // linear interpulation is needed.
-            location.Latitude = (currentSegment.Latitude + prevSegmen.Latitude) / 2;
-            location.Longitude = (currentSegment.Longitude + prevSegmen.Longitude) / 2;
+            location.Latitude = prevSegmen.Latitude + ((currentSegment.Latitude - prevSegmen.Latitude) * partialTime);
+            location.Longitude = prevSegmen.Longitude + ((currentSegment.Longitude - prevSegmen.Longitude) * partialTime);
 
         }
 

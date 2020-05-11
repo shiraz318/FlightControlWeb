@@ -17,9 +17,8 @@ namespace FlightControlWeb.Models
 
         public List<Flights> GetAllFlights(string dateTime, bool isExternal)
         { 
-            // Remove t <>.
           
-            DateTime time = DateTime.Parse(dateTime.Substring(1, dateTime.Length - 2)).ToUniversalTime();
+            DateTime time = DateTime.Parse(dateTime).ToUniversalTime();
 
             string str = time.ToString();
             List<Flights> flights = new List<Flights>();

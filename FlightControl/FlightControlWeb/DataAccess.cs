@@ -170,7 +170,7 @@ namespace FlightControlWeb
 
             int result = DateTime.Compare(requiredTime, endTime);
             // requiredTime is later than endTime
-            if (result > 0)
+            if (result >= 0)
             {
                 return true;
             }
