@@ -108,9 +108,10 @@ body {
     height: 500px;
     width: 600px;
 }
-#flights-map {
+
+#map {
     height: 500px;
-    width: 600px;
+    width: 100%;
 }
 
 .drop-wrapper {
@@ -124,7 +125,7 @@ body {
     z-index: 0;
 }
 
-.table-wrapper {
+.my-flights-list-wrapper {
     position: absolute;
     height: 250px;
     width: 100%;
@@ -133,6 +134,7 @@ body {
     grid-area: 1 / 1 / 12 / 12;
     z-index: -1;
 }
+
 .my-flights-wrapper {
     position: relative;
     height: 250px;
@@ -140,12 +142,14 @@ body {
     grid-template-columns: 250px 1fr;
     grid-template-rows: 350px 1fr;
 }
+
 .external-flights-wrapper {
     position: relative;
     height: 250px;
     width: 350px;
     top: 60px;
 }
+
 .external-list-wrapper {
     position: absolute;
     height: 250px;
@@ -167,7 +171,7 @@ body {
         background-color: palegreen;
     }
 
-#my-flights-table [class*="flight-"] {
+#my-flights-list [class*="flight-"] {
     padding: 0.5rem 0.4rem;
     display: inline-block;
 }

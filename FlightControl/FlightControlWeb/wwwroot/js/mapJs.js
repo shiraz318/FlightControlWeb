@@ -18,7 +18,7 @@ function Reset() {
         var icon = { url: regularImg };
         allFlightsMarker[key].setIcon(icon);
     }
-    let listItems = document.querySelectorAll("#my-flights-table > li");
+    let listItems = document.querySelectorAll("#my-flights-list > li");
     let i = 0;
     let size = listItems.length;
     for (i = 0; i < size; i++) {

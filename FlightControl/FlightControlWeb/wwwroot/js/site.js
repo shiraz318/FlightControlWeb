@@ -47,7 +47,7 @@ function DisplayFlightDetails(id, self) {
 
     });
 
-    let listItems = document.querySelectorAll("#my-flights-table > li");
+    let listItems = document.querySelectorAll("#my-flights-list > li");
     let j = 0;
     let size = listItems.length;
     let found = false;
@@ -83,7 +83,7 @@ function DeleteFlight(id, self) {
 }
 
 function IsFound(id) {
-    let listItems = document.querySelectorAll("#my-flights-table > li");
+    let listItems = document.querySelectorAll("#my-flights-list > li");
     let j = 0;
     let size = listItems.length;
     let found = false;
@@ -105,7 +105,7 @@ function ResetDictionaryOnTime() {
 }
 
 function GetRow(id) {
-    let listItems = document.querySelectorAll("#my-flights-table > li");
+    let listItems = document.querySelectorAll("#my-flights-list > li");
     let j = 0;
     let size = listItems.length;
     for (j = 0; j < size; j++) {
@@ -146,7 +146,7 @@ function RowInMyFlightList(flight) {
         $("<li class="+"d-flex my-flights-list-item"+"> ").append(
             flightDelete,
             newflightCompanyName,
-            newflightId).appendTo("#my-flights-table");
+            newflightId).appendTo("#my-flights-list");
 
 
         newflightId.on("click", function () {
