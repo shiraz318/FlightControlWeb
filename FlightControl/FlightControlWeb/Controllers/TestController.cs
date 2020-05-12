@@ -4,34 +4,121 @@
 //using System.Threading.Tasks;
 //using Microsoft.AspNetCore.Http;
 //using Microsoft.AspNetCore.Mvc;
+//using Microsoft.EntityFrameworkCore;
+//using FlightControlWeb.Data;
+//using FlightControlWeb.Models;
 
 //namespace FlightControlWeb.Controllers
 //{
-//    [Route("api/test")]
+//    [Route("api/[controller]")]
 //    [ApiController]
-//    public class TestController : ControllerBase
+//    public class ServersController : ControllerBase
 //    {
-//        [HttpGet]
-//        public IActionResult Get()
+//        private readonly FlightControlWebContext _context;
+
+//        public ServersController(FlightControlWebContext context)
 //        {
-//            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
-//            List<string> data = s.GetData();
-//            if (data.Count < 1)
+//            _context = context;
+//        }
+
+//        // GET: api/Servers
+//        [HttpGet]
+//        public async Task<ActionResult<IEnumerable<Server>>> GetServer()
+//        {
+//            return await _context.Server.ToListAsync();
+//        }
+
+//        // GET: api/Servers/5
+//        [HttpGet("{id}")]
+//        public async Task<ActionResult<Server>> GetServer(string id)
+//        {
+//            var server = await _context.Server.FindAsync(id);
+
+//            if (server == null)
 //            {
 //                return NotFound();
 //            }
-//            string id = data[data.Count - 3];
-//            string text_entry = data[data.Count - 2];
-//            string price = data[data.Count - 1];
-//            return Ok(new { id = id, text_entry= text_entry, price=price, c=data.Count });
+
+//            return server;
 //        }
 
-//        [HttpPost("{data}/{num}")]
-//        public IActionResult Post(string data, int num)
+//        // PUT: api/Servers/5
+//        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+//        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+//        [HttpPut("{id}")]
+//        public async Task<IActionResult> PutServer(string id, Server server)
 //        {
-//            SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
-//            s.InsertData(data, num);
-//            return Ok();
+//            if (id != server.ServerId)
+//            {
+//                return BadRequest();
+//            }
+
+//            _context.Entry(server).State = EntityState.Modified;
+
+//            try
+//            {
+//                await _context.SaveChangesAsync();
+//            }
+//            catch (DbUpdateConcurrencyException)
+//            {
+//                if (!ServerExists(id))
+//                {
+//                    return NotFound();
+//                }
+//                else
+//                {
+//                    throw;
+//                }
+//            }
+
+//            return NoContent();
+//        }
+
+//        // POST: api/Servers
+//        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+//        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+//        [HttpPost]
+//        public async Task<ActionResult<Server>> PostServer(Server server)
+//        {
+//            _context.Server.Add(server);
+//            try
+//            {
+//                await _context.SaveChangesAsync();
+//            }
+//            catch (DbUpdateException)
+//            {
+//                if (ServerExists(server.ServerId))
+//                {
+//                    return Conflict();
+//                }
+//                else
+//                {
+//                    throw;
+//                }
+//            }
+
+//            return CreatedAtAction("GetServer", new { id = server.ServerId }, server);
+//        }
+
+//        // DELETE: api/Servers/5
+//        [HttpDelete("{id}")]
+//        public async Task<ActionResult<Server>> DeleteServer(string id)
+//        {
+//            var server = await _context.Server.FindAsync(id);
+//            if (server == null)
+//            {
+//                return NotFound();
+//            }
+
+//            _context.Server.Remove(server);
+//            await _context.SaveChangesAsync();
+
+//            return server;
+//        }
+
+//        private bool ServerExists(string id)
+//        {
+//            return _context.Server.Any(e => e.ServerId == id);
 //        }
 //    }
 //}

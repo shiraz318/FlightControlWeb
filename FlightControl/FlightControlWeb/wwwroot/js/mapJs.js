@@ -1,8 +1,8 @@
 ﻿let map;
 let allFlightsPath = {};
 let allFlightsMarker = {};
-const regularImg = '../images/small_black.png'
-const clickedImg = '../images/pink.png'
+const regularImg = "../images/small_black.png";
+const clickedImg = "../images/pink.png";
 function ResetFlightDetails() {
     $("#company-name-definition").html("");
     $("#number-of-passangers-definition").html("");
@@ -18,7 +18,7 @@ function Reset() {
         var icon = { url: regularImg };
         allFlightsMarker[key].setIcon(icon);
     }
-    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let listItems = document.querySelectorAll("#my-flights-table > li");
     let i = 0;
     let size = listItems.length;
     for (i = 0; i < size; i++) {
@@ -29,27 +29,28 @@ function Reset() {
 
 
 
-function initMap() { 
+function initMap() {
     // Map options.
     let options = {
         zoom: 1,
-        center: {lat:42.3601, lng:-71.0589}
-    }
+        center: { lat: 42.3601, lng: -71.0589 }
+    };
     // New map.
-    map = new google.maps.Map(document.getElementById('map'), options);
-    google.maps.event.addListener(map, 'click', Reset);
+    map = new google.maps.Map(document.getElementById("map"), options);
+    google.maps.event.addListener(map, "click", Reset);
 }
 
 function DisplayPath(id) {
 
     for (let key in allFlightsPath) {
-        if (key == id) {
+        let icon;
+        if (key === id) {
             allFlightsPath[key].setMap(map);
-            var icon = { url: clickedImg };
+             icon = { url: clickedImg };
             allFlightsMarker[key].setIcon(icon);
         } else {
             allFlightsPath[key].setMap(null);
-            var icon = { url: regularImg };
+            icon = { url: regularImg };
             allFlightsMarker[key].setIcon(icon);
         }
     }
@@ -86,7 +87,7 @@ function addMarker(flight) {
 
     CreatePath(flight.flight_id);
 
-    marker.addListener('click', function () {
+    marker.addListener("click", function () {
         DisplayFlightDetails(flight.flight_id);
         DisplayPath(flight.flight_id);
     });

@@ -47,14 +47,14 @@ function DisplayFlightDetails(id, self) {
 
     });
 
-    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let listItems = document.querySelectorAll("#my-flights-table > li");
     let j = 0;
     let size = listItems.length;
     let found = false;
     let row = listItems[0];
     for (j = 0; j < size; j++) {
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
-        if (id1 == id) {
+        if (id1 === id) {
             listItems[j].classList.add("highlighted");
 
         } else {
@@ -62,7 +62,7 @@ function DisplayFlightDetails(id, self) {
         }
     }
   
-};
+}
 
 
 
@@ -72,8 +72,8 @@ function DeleteFlight(id, self) {
     } else {
         self.parent().fadeOut(600, function () { $(this).remove(); });
         $.ajax({
-            url: '/api/Flights/' + id,
-            type: 'DELETE',
+            url: "/api/Flights/" + id,
+            type: "DELETE",
             success: function (result) {
                 console.log("DELETED");
             }
@@ -83,13 +83,13 @@ function DeleteFlight(id, self) {
 }
 
 function IsFound(id) {
-    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let listItems = document.querySelectorAll("#my-flights-table > li");
     let j = 0;
     let size = listItems.length;
     let found = false;
     for (j = 0; j < size; j++) {
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
-        if (id1 == id) {
+        if (id1 === id) {
             found = true;
             break;
         }
@@ -105,12 +105,12 @@ function ResetDictionaryOnTime() {
 }
 
 function GetRow(id) {
-    let listItems = document.querySelectorAll('#my-flights-table > li');
+    let listItems = document.querySelectorAll("#my-flights-table > li");
     let j = 0;
     let size = listItems.length;
     for (j = 0; j < size; j++) {
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
-        if (id1 == id) {
+        if (id1 === id) {
             return listItems[j];
         }
     }
@@ -121,7 +121,7 @@ function RemoveFromFlightList() {
     //console.log("I am in remove from flight lists");
     //console.log(isOnTime);
     for (let key in isOnTime) {
-        if ((isOnTime[key] == uninitialize)) {
+        if (isOnTime[key] === uninitialize) {
             //console.log("key: " + key);
             let row = GetRow(key);
             //console.log("row: " + row);
@@ -140,13 +140,13 @@ function RowInMyFlightList(flight) {
     
     if (!found) {
         isOnTime[flight.flight_id] = newFlight;
-        let flightDelete = $('<span class="flight-delete">').text('X');
-        let newflightCompanyName = $('<span class="flight-company">').text(flight.company_name);
-        let newflightId = $('<span class="flight-id">').text(flight.flight_id);
-        $("<li class='d-flex my-flights-list-item'> ").append(
+        let flightDelete = $("<span class=" + "flight-delete" + ">").text("X");
+        let newflightCompanyName = $("<span class="+"flight-company"+">").text(flight.company_name);
+        let newflightId = $("<span class="+"flight-id"+">").text(flight.flight_id);
+        $("<li class="+"d-flex my-flights-list-item"+"> ").append(
             flightDelete,
             newflightCompanyName,
-            newflightId).appendTo('#my-flights-table');
+            newflightId).appendTo("#my-flights-table");
 
 
         newflightId.on("click", function () {

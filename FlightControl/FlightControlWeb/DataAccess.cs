@@ -145,10 +145,6 @@ namespace FlightControlWeb
             }
         }
 
-        public DateTime ConvertTime(DateTime time)
-        {
-            return time;
-        }
 
         public bool NotStarted (object[] initialLocation, DateTime requiredTime)
         {
@@ -205,8 +201,6 @@ namespace FlightControlWeb
 
         public List<Flights> GetInternalFlights(DateTime time)
         {
-            // +2 hours.
-            DateTime trueTime = ConvertTime(time);
             // Reading all the data.
             SqliteConnection conn = OpenConnection();
             SqliteCommand selectCommand = new SqliteCommand();
@@ -237,6 +231,33 @@ namespace FlightControlWeb
             return flights;
         }
 
+        public List<Server> CreateServers(List<object[]> tempServers)
+        {
+            List<Server> servers = new List<Server>();
+
+            foreach (object[] server in tempServers)
+            {
+                Server serv = new Server();
+                serv.ServerId = server[0].ToString();
+                serv.ServerURL = server[1].ToString();
+                servers.Add(serv);
+            }
+
+            return servers;
+
+        }
+
+        public List<Server> GetServers()
+        {
+            SqliteConnection conn = OpenConnection();
+            List<Server> servers = new List<Server>();
+            List<object[]> tempServers = ReadMultipleLines(conn, "SELECT * FROM ServersTable");
+            servers = CreateServers(tempServers);
+            conn.Close();
+            return servers;
+
+        }
+
         public FlightPlan GetFlightPlan(string id)
         {
             SqliteConnection conn = OpenConnection();
@@ -260,6 +281,25 @@ namespace FlightControlWeb
             }
             conn.Close();
             return list;
+        }
+
+
+        public void InsertServer(Server server)
+        {
+            SqliteConnection conn = OpenConnection();
+            SqliteCommand insertCommand = new SqliteCommand();
+            insertCommand.Connection = conn;
+
+            insertCommand.CommandText = "INSERT INTO ServersTable VALUES (@Id , @Url)";
+            insertCommand.Parameters.AddWithValue("@Id", server.ServerId);
+            insertCommand.Parameters.AddWithValue("@Url", server.ServerURL);
+            try
+            {
+                insertCommand.ExecuteReader();
+            }
+            catch { }
+
+            conn.Close();
         }
 
         public void InsertToFlightPlanTable(SqliteConnection conn, FlightPlan flightPlan, string id)
@@ -328,6 +368,16 @@ namespace FlightControlWeb
             conn.Close();
         }
 
+        public void DeleteServer(string id)
+        {
+            SqliteConnection conn = OpenConnection();
+            SqliteCommand deleteCommand = new SqliteCommand();
+            deleteCommand.Connection = conn;
+            deleteCommand.CommandText = "DELETE FROM ServersTable WHERE Id='" + id + "'";
+            deleteCommand.ExecuteReader();
+            conn.Close();
+        }
+
         public bool DeleteFlightPlan(string id)
         {
             SqliteConnection conn = OpenConnection();
@@ -392,6 +442,13 @@ namespace FlightControlWeb
             createTable.ExecuteReader();
         }
 
+        public static void CreateServersTable(SqliteConnection conn)
+        {
+            string tableCommand = @"CREATE TABLE IF NOT EXISTS ServersTable (Id TEXT PRIMARY KEY, Url TEXT)";
+            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+            createTable.ExecuteReader();
+        }
+
         public static void InitializeDatabase()
         {
 
@@ -399,9 +456,13 @@ namespace FlightControlWeb
             string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
             conn.Open();
+            //string com = "DROP Table FlightPlanTable";
+            //SqliteCommand delete = new SqliteCommand(com, conn);
+            //delete.ExecuteReader();
             CreateFlightPlanTable(conn);
             CreateInitialLocationTable(conn);
             CreateSegmentsTable(conn);
+            CreateServersTable(conn);
             conn.Close();
        }
     }

@@ -112,50 +112,46 @@ body {
     height: 500px;
     width: 600px;
 }
-/*.gmap_canvas {
-    overflow: hidden;
-    background: none !important;
-    height: 500px;
-    width: 600px;
-}*/
 
-
-/*.table-wrapper, .drop-wrapper {
-    grid-column: 1;
-    grid-row: 1;
-    height: 250px;
-    overflow-y: scroll;
-}*/
 .drop-wrapper {
     position: absolute;
-    /*right: 0;
-    top: 0;*/
-    width: 100%;
     height: 250px;
-    top:0;
-    left:0;
-    /*grid-area: 1 / 1 / 1 / 1;*/
+    width: 100%;
     margin-top: 100px;
+    top: -305px;
+    left: 0;
+    grid-area: 1 / 1 / 12 / 12;
+    z-index: 0;
 }
 
 .table-wrapper {
-    height: 250px;
-    overflow-y: scroll;
     position: absolute;
-    top: 0;
-    left: 0;
-    /*right: 0;
-    top: 0;*/
+    height: 250px;
     width: 100%;
-    /* grid-area: 1 / 1 / 2 / 2;*/
+    left: 0;
+    overflow-y: scroll;
+    grid-area: 1 / 1 / 12 / 12;
+    z-index: -1;
 }
 .my-flights-wrapper {
-    width: 350px;
-    height: 250px;
     position: relative;
-    /*display: grid;
+    height: 250px;
+    width: 350px;
     grid-template-columns: 250px 1fr;
-    grid-template-rows: 150px 1fr;*/
+    grid-template-rows: 350px 1fr;
+}
+.external-flights-wrapper {
+    position: relative;
+    height: 250px;
+    width: 350px;
+    top: 60px;
+}
+.external-list-wrapper {
+    position: absolute;
+    height: 250px;
+    width: 100%;
+    left: 0;
+    overflow-y: scroll;
 }
 
 

@@ -67,25 +67,17 @@ namespace FlightControlWeb
  * 
  * may be add an icon of X.
  * 
- * 
- *  tomoorow - drag & drop, linear interpulation, server?.
- * 
- * 
- * add external table - empty.
- * 
- * GetFlights implementaition - GetExternal(other servers), ConvertTime (time differences), linear interpulattion.
+ * GetFlights implementaition - GetExternal(other servers), linear interpulattion.
  * 
  * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
  * 
  * Manager for Server.
- * 
- * map.
  *  
  * startup dependency injection.
  * 
  * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
- * 
- * 
+ *  
+ *  delete all console.log before submitting.
  * End points events:
  *
  * invalid json file - no segmnents, and other things.
