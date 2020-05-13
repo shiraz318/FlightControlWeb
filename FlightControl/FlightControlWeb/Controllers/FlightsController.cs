@@ -25,9 +25,10 @@ namespace FlightControlWeb.Controllers
             return NotFound(id);
         }
 
-        // example /api/Flights?relative_to=<2020-05-06T10:12:00Z>&sync_all
+        // example /api/Flights?relative_to=<2020-05-06T10:12:00/Z>&sync_all
         // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or /api/Flights?relative_to=<DATE_TIME>
         [HttpGet]
+
         public ActionResult<Flights> Get([FromQuery] string relative_to)
         {
             string dateTime = relative_to;
@@ -35,14 +36,14 @@ namespace FlightControlWeb.Controllers
             List<Flights> flights = new List<Flights>();
             if (s.Contains("sync_all"))
             {
-               flights = manager.GetAllFlights(dateTime, true);
-            } 
+                flights = manager.GetAllFlights(dateTime, true);
+            }
             else
             {
-               flights = manager.GetAllFlights(dateTime, false);
+                flights = manager.GetAllFlights(dateTime, false);
             }
 
             return Ok(flights);
-        } 
+        }
     }
 }

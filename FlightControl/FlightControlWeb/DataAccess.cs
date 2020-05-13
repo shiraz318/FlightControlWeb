@@ -177,7 +177,7 @@ namespace FlightControlWeb
         {
             Flights flight = flightGenerator.CreateFlightFromGivenData(initialLocation, segements, isExternal, time);
             object[] flightPlan = ReadFromTableSingleRow(conn, "SELECT * FROM FlightPlanTable WHERE Id = '" + flight.FlightId + "'");
-            flight.CompanyName = flightPlan[flightPlanCompanyNameE].ToString();
+            flight.CompanyName = Convert.ToString(flightPlan[flightPlanCompanyNameE]);
             flight.Passengers = Convert.ToInt32(flightPlan[flightPlanPassangersE]);
             return flight;
         }
@@ -188,14 +188,10 @@ namespace FlightControlWeb
             return flights;
         }
 
-        public List<Flights> GetFlights(DateTime time, bool isExternal)
+        public List<Flights> GetFlights(DateTime time)
         {
             List<Flights> flights = new List<Flights>();
             flights = GetInternalFlights(time);
-            if (isExternal)
-            {
-                flights.AddRange(GetExternal(time));
-            }
             return flights;
         } 
 
@@ -238,8 +234,8 @@ namespace FlightControlWeb
             foreach (object[] server in tempServers)
             {
                 Server serv = new Server();
-                serv.ServerId = server[0].ToString();
-                serv.ServerURL = server[1].ToString();
+                serv.ServerId = Convert.ToString(server[0]);
+                serv.ServerURL = Convert.ToString(server[1]);
                 servers.Add(serv);
             }
 
@@ -277,7 +273,7 @@ namespace FlightControlWeb
             List<object[]> ids = ReadMultipleLines(conn, "SELECT Id FROM FlightPlanTable");
             foreach (object[] id in ids)
             {
-                list.Add(GetFlightPlan(id[0].ToString()));
+                list.Add(GetFlightPlan(Convert.ToString(id[0])));
             }
             conn.Close();
             return list;
@@ -456,7 +452,7 @@ namespace FlightControlWeb
             string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
             conn.Open();
-            //string com = "DROP Table FlightPlanTable";
+            //string com = "DROP Table SegmentsTable";
             //SqliteCommand delete = new SqliteCommand(com, conn);
             //delete.ExecuteReader();
             CreateFlightPlanTable(conn);

@@ -1,4 +1,4 @@
-﻿setInterval(DisplayFlights, 1000);
+﻿//setInterval(DisplayFlights, 1000);
 let isOnTime = {};
 const uninitialize = 0;
 const oldFlight = 1;
@@ -171,20 +171,20 @@ function RowInMyFlightList(flight) {
 }
 
 
-function DisplayFlights() {
-    let date = new Date().toISOString();
-    let curdate = date.split(".")[0] + "Z";
-    $.getJSON("/api/Flights?relative_to=" + curdate, (data) => {
-        // filter=iterates an array, flight is the item itself
-        ResetDictionaryOnTime();
-        data.filter(flight => {
-            RowInMyFlightList(flight);
-        });
-        RemoveFromFlightList();
-        UnDisplayMarkers();
-    }); 
+//function DisplayFlights() {
+//    let date = new Date().toISOString();
+//    let curdate = date.split(".")[0] + "Z";
+//    $.getJSON("/api/Flights?relative_to=" + curdate + "&sync_all", (data) => {
+//        // filter=iterates an array, flight is the item itself
+//        ResetDictionaryOnTime();
+//        data.filter(flight => {
+//            RowInMyFlightList(flight);
+//        });
+//        RemoveFromFlightList();
+//        UnDisplayMarkers();
+//    }); 
    
-}
+//}
 DisplayFlights();
 
 

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 namespace FlightControlWeb.Models
 {
-
+	[Serializable]
 	public class Flights
 	{
 		[JsonPropertyName("flight_id")]
