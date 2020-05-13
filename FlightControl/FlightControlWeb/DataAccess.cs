@@ -221,7 +221,7 @@ namespace FlightControlWeb
                 }
                 command = "SELECT * FROM SegmentsTable WHERE FlightId= '" + row[initialLocationIdE].ToString() + "'";
                 List<Object[]> sgements = ReadMultipleLines(conn, command);
-                flights.Add(CreateFlight(conn, row, sgements, true, time));
+                flights.Add(CreateFlight(conn, row, sgements, false, time));
             }
             query.Close();
             return flights;

@@ -37,9 +37,9 @@ namespace FlightControlWeb.Models
 
 
 
-        public List<Flights> GetRequestFromServer(Server server)
+        public List<Flights> GetRequestFromServer(Server server, DateTime time)
         {
-            string date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
+            string date = time.ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
             string url = server.ServerURL;
             string command = url + "/api/Flights?relative_to=" + date;
             //List<Flights> flights = new List<Flights>();
@@ -57,88 +57,34 @@ namespace FlightControlWeb.Models
                 strResult = streamReader.ReadToEnd();
                 streamReader.Close();
             }
-            Console.WriteLine(strResult);
-                
-            List<Flights> flights = JsonConvert.DeserializeObject<List<Flights>>(strResult);
-
-            //var dtoprojects = new List<Flights>();
-
-            //using (var client = new HttpClient())
-            //{
-            //    var uri = command;
-
-            //    var response = client.GetAsync(uri).Result;
-
-            //    if (!response.IsSuccessStatusCode)
-            //        throw new Exception(response.ToString());
-
-            //    var responseContent = response.Content;
-            //    var responseString = responseContent.ReadAsStringAsync().Result;
-
-            //    dynamic projects = JArray.Parse(responseString) as JArray;
-
-            //    foreach (var obj in projects)
-            //    {
-            //        Flights dto = obj.ToObject<Flights>();
-
-            //        dtoprojects.Add(dto);
-            //    }
-
-            //    return dtoprojects;
-            //}
-
-
-
-
-
-
-
-            //    WebRequest request = WebRequest.Create(command);
-            //request.Method = "GET";
-            //HttpWebResponse response = null;
-            //response = (HttpWebResponse)request.GetResponse();
-
-            //string strResult = null;
-
-            //using (Stream stream = response.GetResponseStream())
-            //{
-            //    StreamReader streamReader = new StreamReader(stream);
-            //    strResult = streamReader.ReadToEnd();
-            //    streamReader.Close();
-            //}
-
-            ////http://localhost:61896/api/Flights?relative_to=2020-05-13T09:55:00Z&sync_all
-            //List<Flights> flights = new List<Flights>();
-            ////JsonObject jo = JsonConvert.DeserializeObject<JsonObject>(strResult);
-            ////var listOfObjectsResult = Json.Decode<List<Flights>>(strResult);
-            ////    List<Flights> flights = JsonConvert.DeserializeObject<List<Flights>>(strResult);
-            ////List<Flights> flights = DeserializeFlightsFromJson(strResult);
-
-            //var responseContent = response.Content;
-            //var responseString = responseContent.ReadAsStringAsync().Result;
-            //dynamic projects = JArray.Parse(strResult) as JArray;
-
-            //foreach (var obj in projects)
-            //{
-            //    Flights dto = obj.ToObject<Flights>();
-
-            //    flights.Add(dto);
-            //}
-            //// Set the isExternal property to true.
-            //foreach (Flights f in flights)
-            //{
-            //    f.IsExternal = true;
-            //}
+            
+            List<Flights> flights = new List<Flights>();
+            var json = JArray.Parse(strResult);
+            int i = 0;
+            for (i = 0; i < json.Count; i++)
+            {
+                Flights flight = new Flights();
+                flight.FlightId = json[i]["flight_id"].ToString();
+                flight.CompanyName = json[i]["company_name"].ToString();
+                flight.Latitude = Convert.ToDouble(json[i]["latitude"]);
+                flight.Longitude = Convert.ToDouble(json[i]["longitude"]);
+                flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
+                flight.DateTime = time;
+                flight.IsExternal = true;
+                flights.Add(flight);
+            }
+            ////http://localhost:61896/api/Flights?relative_to=2020-05-13T10:39:00Z&sync_all
+          
             return flights;
         }
 
-        public List<Flights> GetFlightsFromServers(List<Server> servers )
+        public List<Flights> GetFlightsFromServers(List<Server> servers, DateTime time)
         {
             List<Flights> flights = new List<Flights>();
             //get flights.
             foreach (Server server in servers)
             {
-                flights.AddRange(GetRequestFromServer(server));
+                flights.AddRange(GetRequestFromServer(server,time));
             }
             return flights;
         }
@@ -158,7 +104,7 @@ namespace FlightControlWeb.Models
                 servers = s.GetServers();
             }
             flights = s.GetFlights(time);
-            flights.AddRange(GetFlightsFromServers(servers));
+            flights.AddRange(GetFlightsFromServers(servers, time));
             return flights;
         }
     }

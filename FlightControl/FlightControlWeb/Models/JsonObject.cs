@@ -7,7 +7,13 @@ namespace FlightControlWeb.Models
 {
     public class JsonObject
     {
-        public List<Flights> flights { get; set; }
-    }
+		private List<Flights> flights = new List<Flights>();
+	
+		public List<Flights> Flights
+		{
+			get { return flights; }
+			set { flights = value; }
+		}
+	}
 }
 
