@@ -89,6 +89,7 @@ namespace FlightControlWeb.Models
             return flights;
         }
 
+
         public List<Flights> GetAllFlights(string dateTime, bool isExternal)
         {
 
