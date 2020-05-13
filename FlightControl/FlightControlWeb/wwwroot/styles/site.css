@@ -114,7 +114,7 @@ body {
     width: 100%;
 }
 
-.drop-wrapper {
+/*.drop-wrapper {
     position: absolute;
     height: 250px;
     width: 100%;
@@ -122,8 +122,9 @@ body {
     top: -305px;
     left: 0;
     grid-area: 1 / 1 / 12 / 12;
-    z-index: 0;
-}
+    visibility:hidden;
+    z-index: 1;
+}*/
 
 .my-flights-list-wrapper {
     position: absolute;
@@ -132,7 +133,7 @@ body {
     left: 0;
     overflow-y: scroll;
     grid-area: 1 / 1 / 12 / 12;
-    z-index: -1;
+    z-index: 0;
 }
 
 .my-flights-wrapper {
@@ -167,11 +168,21 @@ body {
     cursor: pointer;
 }
 
-    .my-flights-list-item.highlighted {
-        background-color: palegreen;
-    }
+.my-flights-list-item.highlighted {
+    background-color: palegreen;
+}
+
+.highlightedRow {
+    background-color: palegreen;
+}
+
+  
 
 #my-flights-list [class*="flight-"] {
+    padding: 0.5rem 0.4rem;
+    display: inline-block;
+}
+#external-flights-list [class*="flight-"] {
     padding: 0.5rem 0.4rem;
     display: inline-block;
 }

@@ -67,11 +67,11 @@ namespace FlightControlWeb
  * 
  * may be add an icon of X.
  * 
- * GetFlights implementaition - GetExternal(other servers), linear interpulattion.
+ * GetFlights implementaition - linear interpulattion.
+ * 
+ * display external flightPlan.
  * 
  * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
- * 
- * Manager for Server.
  *  
  * startup dependency injection.
  * 

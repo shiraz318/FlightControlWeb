@@ -95,7 +95,7 @@ function addMarker(flight) {
 }
 function SetNewPosition(flight) {
     if (allFlightsMarker[flight.flight_id]) {
-        console.log("current position: lat: " + flight.latitude + ", lng: " + flight.longitude);
+       //console.log("current position: lat: " + flight.latitude + ", lng: " + flight.longitude);
         allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
     }
 }
@@ -114,8 +114,9 @@ function UnDisplayMarkers() {
     for (let key in allFlightsMarker) {
         if (allFlightsMarker[key]) {
             // If the marker exists.
-            let found = IsFound(key);
-            if (!found) {
+            let foundInInternal = IsFound(key, "#my-flights-list > li");
+            let foundInExternal = IsFound(key, "#external-flights-list > li");
+            if (!(foundInInternal || foundInExternal)) {
                 RemovwMareker(key);
             }
         }

@@ -31,8 +31,9 @@ function HideImage() {
 }
 
 function highlight(e) {
-    ShowImage();
     dropArea.classList.add("highlight");
+    ShowImage();
+    
 }
 
 function unhighlight(e) {

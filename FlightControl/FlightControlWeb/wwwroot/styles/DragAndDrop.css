@@ -3,14 +3,15 @@
     /*border-radius: 20px;*/
     /*width: 350px;
     height: 250px;*/
-    font-family: sans-serif;
-    margin: 100% auto;
-    padding: 20px;
+    font-family: system-ui;
+    /*margin: 100% auto;*/
+    /*padding: 20px;*/
 }
 
     #drop-area.highlight {
         border: 2px dashed #ccc;
         border-color: purple;
+        visibility:visible;
     }
 
 p {
