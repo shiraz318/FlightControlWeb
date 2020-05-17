@@ -1,6 +1,5 @@
 ﻿let dropArea = document.getElementById("drop-area");
 
-console.log("HELLO");
 ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
     dropArea.addEventListener(eventName, preventDefaults, false);
 });
@@ -19,15 +18,24 @@ function preventDefaults(e) {
     });
 
 
-
 function ShowImage() {
     let img = document.getElementById("myImageId");
-    img.style.visibility = "visible";
+    let dropArea = document.getElementById("drop-area");
+    dropArea.style.backgroundImage = "url(../images/DragandDrop.png)";
+   
+    //list.style.visibility = "hidden";
+    // img.style.visibility = "visible";
+   // img.style.opacity = 1.0;
     console.log("Visible");
 }
 function HideImage() {
     let img = document.getElementById("myImageId");
-    img.style.visibility = "hidden";
+    let dropArea = document.getElementById("drop-area");
+    dropArea.style.background = "none";
+   // let list = document.getElementById("my-flights-list");
+   // list.style.visibility = "visible";
+    //img.style.visibility = "hidden";
+   // img.style.opacity = 0.0;
 }
 
 function highlight(e) {

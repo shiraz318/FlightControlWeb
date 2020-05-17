@@ -15,30 +15,30 @@ namespace FlightControlWeb.Controllers
 
         // GET /api/FlightPlan.
         [HttpGet]
-        public FlightPlan[] GetAllFlightPlans()
+        public async Task<FlightPlan[]> GetAllFlightPlans()
         {
             FlightPlan[] flightPlans;
-            flightPlans = manager.GetAllFlightPlans();
+            flightPlans = await manager.GetAllFlightPlans();
             return flightPlans;
         }
 
         // GET /api/FlightPlan/{id}.
         [HttpGet("{id}", Name = "GetItem")]
-        public ActionResult GetItem(string id)
+        public async Task<ActionResult> GetItem(string id)
         {
             FlightPlan fp;
-            if ((fp = manager.GetFlightPlan(id)) != null)
+            if ((fp = await manager.GetFlightPlan(id)) != null)
             {
                 return Ok(fp);
             }
-            return NotFound(id);
+            return  NotFound(id);
         }
 
         // POST /api/FlightPlan.
         [HttpPost]
-        public ActionResult Post([FromBody] FlightPlan flightPlan)
+        public async Task<ActionResult> Post([FromBody] FlightPlan flightPlan)
         {
-            string id = manager.AddFlightPlan(flightPlan);
+            string id = await manager.AddFlightPlan(flightPlan);
             // Status 201 - created.
             //return CreatedAtAction(actionName: "GetItem", flightPlan);
             return CreatedAtAction(actionName: "GetItem", new { id = id }, flightPlan);

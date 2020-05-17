@@ -16,14 +16,25 @@ namespace FlightControlWeb.Controllers
 
         // GET: api/Servers
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<Server>> Get()
         {
             List<Server> servers = new List<Server>();
-            manager.Get();
-            return new string[] { "value1", "value2" };
+            return await manager.Get();
+        }
+        // GET: api/Servers/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Server>> GetUrl(string id)
+        {
+            Server server = await manager.GetServerByIdOfFlight(id);
+            if (server != null)
+            {
+                return Ok(server);
+            }
+            return NotFound(id);
+           
         }
 
-       
+
         // POST: api/Servers
         [HttpPost]
         public void Post([FromBody] Server server)

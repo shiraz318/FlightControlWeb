@@ -16,9 +16,13 @@ namespace FlightControlWeb.Models
         {
             s.DeleteServer(id);
         }
-        public List<Server> Get()
+        public async Task<List<Server>> Get()
         {
             return s.GetServers();
+        }
+        public async Task<Server> GetServerByIdOfFlight(string id)
+        {
+            return s.GetServerByIdOfFlight(id);
         }
     }
 }

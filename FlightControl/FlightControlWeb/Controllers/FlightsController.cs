@@ -16,9 +16,9 @@ namespace FlightControlWeb.Controllers
 
         // DELETE /api/Flights/{id}.
         [HttpDelete("{id}")]
-        public ActionResult Delete(string id)
+        public async Task<ActionResult> Delete(string id)
         {
-            if (manager.DeleteFlight(id))
+            if (await manager.DeleteFlight(id))
             {
                 return Ok();
             }
@@ -29,18 +29,18 @@ namespace FlightControlWeb.Controllers
         // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or /api/Flights?relative_to=<DATE_TIME>
         [HttpGet]
 
-        public ActionResult<Flights> Get([FromQuery] string relative_to)
+        public async Task<ActionResult<Flights>> Get([FromQuery] string relative_to)
         {
             string dateTime = relative_to;
             string s = Request.QueryString.Value;
             List<Flights> flights = new List<Flights>();
             if (s.Contains("sync_all"))
             {
-                flights = manager.GetAllFlights(dateTime, true);
+                flights = await manager.GetAllFlights(dateTime, true);
             }
             else
             {
-                flights = manager.GetAllFlights(dateTime, false);
+                flights = await manager.GetAllFlights(dateTime, false);
             }
 
             return Ok(flights);

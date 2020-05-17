@@ -9,19 +9,18 @@
     <title>shiraz and nili</title>
 </head>
 <body>
-
     <div id="page">
-        <header><h1 class="display-4">Flight Board</h1></header>
+        <header><h2 class="display-4" id="colorfull">Flight Board</h2></header>
         <main id="main">
             <div id="board-section">
                 <div id="flights-map">
-                    <h1> My Google Map</h1>
+                    <!--h1> My Google Map</!--h1-->
                     <div id="map"></div>
                 </div>
 
                 <!--class="overflow-auto"-->
                 <div id="flight-details-wrapper">
-                    <h2>Flight Details</h2>
+                    <h4 id="colorfull">Flight Details</h4>
                     <table class="table table-borderless" id="flight-details">
                         <thead>
                             <tr>
@@ -51,20 +50,20 @@
             <div id="flight-list-section">
                 <div class="my-flights-wrapper" id="my-flights-wrapper">
                    
-                    <h2>My Flights</h2>
+                    <h4 id="colorfull">My Flights</h4>
                     <div class="my-flights-list-wrapper" id="drop-area">
                         <form class="my-form">
                             <div id="gallery"></div>
                             <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
-                            <img id="myImageId" src="../images/DragAndDrop.png">
                         </form>
                         <ul id="my-flights-list">
                         </ul>
+                        <img id="myImageId" src="../images/dropn.jpg">
                     </div>                         
                 </div>
                 <div id="external-flights-wrapper" class="external-flights-wrapper">
                     <div id="external-flights">
-                        <h2>External Flights</h2>
+                        <h4 id="colorfull">External Flights</h4>
                         <div class="external-list-wrapper">
                             <ul id="external-flights-list">
                             </ul>

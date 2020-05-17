@@ -53,17 +53,36 @@ function Highlighted(id, name) {
     }
 }
 
-function DisplayFlightDetails(id, self) {
+//function GetFlightPlan(message) {
+//    $.getJSON(message + 0, (data) => {
+//        //$("#company-name-definition").html(data.company_name);
+//        //$("#number-of-passangers-definition").html(data.passengers);
+//        //$("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);
+//        //$("#end-location-definition").html(EndLocation(data.segments));
+//        //$("#start-time-definition").html(StartTime(data.initial_location.date_time));
+//        //$("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
+//        return data;
+//    });
+//}
 
-    $.getJSON("/api/FlightPlan/" + id, (data) => {
-        $("#company-name-definition").html(data.company_name);
-        $("#number-of-passangers-definition").html(data.passengers);
-        $("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);
-        $("#end-location-definition").html(EndLocation(data.segments));
-        $("#start-time-definition").html(StartTime(data.initial_location.date_time));
-        $("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
-
+function DisplayFlightDetails(id, isExternal) {
+    let message = "/api/FlightPlan/";
+    if (isExternal) {
+        // find the server that own the flight with the given id.
+        $.getJSON("/api/servers/" + id, (server) => {
+            message = server.ServerURL + "/api/FlightPlan/";
+        });
+    }
+        
+    $.getJSON(message + id, (data) => {
+            $("#company-name-definition").html(data.company_name);
+            $("#number-of-passangers-definition").html(data.passengers);
+            $("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);
+            $("#end-location-definition").html(EndLocation(data.segments));
+            $("#start-time-definition").html(StartTime(data.initial_location.date_time));
+            $("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
     });
+    // Color the row that is pressed and reset the other rows color.
     Highlighted(id, "#my-flights-list > li");
     Highlighted(id, "#external-flights-list > li");  
 }
@@ -71,6 +90,7 @@ function DisplayFlightDetails(id, self) {
 function DeleteFlight(id, self) {
     if (self.parent().hasClass(ColorRow)) {
         self.parent().removeClass(ColorRow);
+        ResetFlightDetails();
     } else {
         self.parent().fadeOut(600, function () { $(this).remove(); });
         $.ajax({
@@ -103,7 +123,6 @@ function IsFound(id, nameOfList) {
 function ResetDictionaryOnTime() {
     for (let key in isOnTime) {
         isOnTime[key] = uninitialize;
-        //console.log("reset" + isOnTime[key]);
     }
 }
 
@@ -113,7 +132,11 @@ function GetRow(id) {
     let size = listItems.length;
     for (j = 0; j < size; j++) {
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
+        console.log(id1);
+        console.log("need to find: ");
+        console.log(id);
         if (id1 === id) {
+            console.log("return row1");
             return listItems[j];
         }
     }
@@ -124,19 +147,19 @@ function GetRow(id) {
     for (j = 0; j < size; j++) {
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
         if (id1 === id) {
+            console.log("return row2");
             return listItems[j];
         }
     }
 }
 
 function RemoveFromFlightList() {
-    //console.log("I am in remove from flight lists");
-    //console.log(isOnTime);
+
     for (let key in isOnTime) {
+        // If we did not get this flight in the previous get requset.
         if (isOnTime[key] === uninitialize) {
-            //console.log("key: " + key);
             let row = GetRow(key);
-            //console.log("row: " + row);
+            // If the row of the flight was highlighted - it's details was in the display details.
             if (row.classList.contains(ColorRow)) {
                 ResetFlightDetails();
             }
@@ -147,56 +170,71 @@ function RemoveFromFlightList() {
 }
 
 function DisplayExternal(flight) {
+
     isOnTime[flight.flight_id] = newFlight;
-    let firstColunm = $("<span>").text("  ");
+    let firstColunm = $("<span class="+ "space"+">").text("X");
     let newflightCompanyName = $("<span class=" + "flight-company" + ">").text(flight.company_name);
     let newflightId = $("<span class=" + "flight-id" + ">").text(flight.flight_id);
+    let fakeSpan = $("<span class=" + "space" + ">").text("XXXXXXXXXXX");
     $("<li class=" + "d-flex my-flights-list-item" + "> ").append(
         firstColunm,
         newflightCompanyName,
-        newflightId).appendTo("#external-flights-list");
+        newflightId,
+        fakeSpan).appendTo("#external-flights-list");
 
 
     newflightId.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
     newflightCompanyName.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
     firstColunm.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
-    console.log(flight.flight_id);
+    fakeSpan.on("click", function () {
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
+        DisplayPath(flight.flight_id);
+    });
     addMarker(flight);
 }
 
 function DisplayInternal(flight) {
+
     isOnTime[flight.flight_id] = newFlight;
     let flightDelete = $("<span class=" + "flight-delete" + ">").text("X");
     let newflightCompanyName = $("<span class=" + "flight-company" + ">").text(flight.company_name);
     let newflightId = $("<span class=" + "flight-id" + ">").text(flight.flight_id);
+    let fakeSpan = $("<span class=" + "space" + ">").text("XXXXXXXXXXX");
     $("<li class=" + "d-flex my-flights-list-item" + "> ").append(
         flightDelete,
         newflightCompanyName,
-        newflightId).appendTo("#my-flights-list");
+        newflightId,
+        fakeSpan).appendTo("#my-flights-list");
 
 
     newflightId.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
+        console.log("click");
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
     newflightCompanyName.on("click", function () {
-        DisplayFlightDetails(flight.flight_id, $(this));
+        console.log("click");
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
     flightDelete.on("click", function () {
         DeleteFlight(flight.flight_id, $(this));
-        Reset();
+        ResetFlights();   
+        
     });
-    console.log(flight.flight_id);
+    fakeSpan.on("click", function () {
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
+        DisplayPath(flight.flight_id);
+    });
     addMarker(flight);
 }
 
@@ -214,15 +252,18 @@ function RowInMyFlightList(flight) {
             DisplayInternal(flight);
         }        
     }
+    // The id is not found in external and in internal.
     else {
         isOnTime[flight.flight_id] = oldFlight;
     }
+    // Set the position of the flight.
     SetNewPosition(flight);   
 }
 
 function DisplayFlights() {
     let date = new Date().toISOString();
     let curdate = date.split(".")[0] + "Z";
+    //$.getJSON("/api/Flights?relative_to=" + curdate, (data) => {
     $.getJSON("/api/Flights?relative_to=" + curdate + "&sync_all", (data) => {
         // filter=iterates an array, flight is the item itself
         ResetDictionaryOnTime();

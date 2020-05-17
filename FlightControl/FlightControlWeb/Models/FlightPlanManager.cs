@@ -33,7 +33,7 @@ namespace FlightControlWeb.Models
         }
 
        
-        public string AddFlightPlan(FlightPlan fp)
+        public async Task<string> AddFlightPlan(FlightPlan fp)
         {
             string id = setId();
 
@@ -43,12 +43,12 @@ namespace FlightControlWeb.Models
             //s.InsertFlight(flights);
         }
 
-        public FlightPlan GetFlightPlan(string id)
+        public async Task<FlightPlan> GetFlightPlan(string id)
         {      
-            return  s.GetFlightPlan(id);
+            return s.GetFlightPlan(id);
         }
 
-        public FlightPlan[] GetAllFlightPlans()
+        public async Task<FlightPlan[]> GetAllFlightPlans()
         {
             List<FlightPlan> flightPlans1 = s.GetAllFlightPlans();
             FlightPlan[] flightPlans = new FlightPlan[flightPlans1.Count];

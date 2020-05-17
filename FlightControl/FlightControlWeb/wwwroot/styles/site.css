@@ -72,7 +72,14 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
+    background-image: url("../images/back1.jpg");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
 }
+
 
 .footer {
     position: absolute;
@@ -126,6 +133,9 @@ body {
     z-index: 1;
 }*/
 
+/*.my-flights-list {
+    visibility: visible;
+}*/
 .my-flights-list-wrapper {
     position: absolute;
     height: 250px;
@@ -173,7 +183,7 @@ body {
 }
 
 .highlightedRow {
-    background-color: palegreen;
+    background-color: lightblue;
 }
 
   
@@ -193,6 +203,17 @@ body {
     color: red;
     font-size: 20px;
 }
+.flight-company {
+    font-weight: 500;
+}
+.flight-id {
+    font-weight:500;
+}
+.space {
+    font-weight: bold;
+    font-size: 20px;
+    opacity:0.0;
+}
 
 .flight-details-wrapper {
     height: 100px;
@@ -200,4 +221,11 @@ body {
 
 #flight-details tbody tr {
     height: 75px;
+}
+#colorfull {
+    color: darkred;
+}
+div {
+    text-align: center;
+    /*text-emphasis-color: #32CD32;*/
 }

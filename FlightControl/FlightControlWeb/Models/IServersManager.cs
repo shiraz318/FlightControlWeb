@@ -9,6 +9,7 @@ namespace FlightControlWeb.Models
     {
         void Post(Server server);
         void Delete(string id);
-        List<Server> Get();
+        Task<List<Server>> Get();
+        Task<Server> GetServerByIdOfFlight(string id);
     }
 }

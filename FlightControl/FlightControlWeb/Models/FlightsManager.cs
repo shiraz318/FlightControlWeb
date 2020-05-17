@@ -15,34 +15,37 @@ namespace FlightControlWeb.Models
     {
         //private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
         private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
-        public bool DeleteFlight(string id)
+        public async Task<bool> DeleteFlight(string id)
         {
             return s.DeleteFlightPlan(id);
         }
 
 
-        public List<Flights> DeserializeFlightsFromJson(string json)
-        {
-            List<Flights> flightsToReturn = new List<Flights>();
+        //public async Task<List<Flights>> DeserializeFlightsFromJson(string json)
+        //{
+        //    List<Flights> flightsToReturn = new List<Flights>();
 
-            string[] flights = json.Split('{');
-            foreach(string flight in flights)
-            {
-                Flights f = new Flights();
+        //    string[] flights = json.Split('{');
+        //    foreach(string flight in flights)
+        //    {
+        //        Flights f = new Flights();
 
-            }
+        //    }
 
-            return flightsToReturn;
-        }
+        //    return flightsToReturn;
+        //}
 
 
 
-        public List<Flights> GetRequestFromServer(Server server, DateTime time)
+        public async Task<List<Flights>> GetRequestFromServer(Server server, DateTime time)
         {
             string date = time.ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
             string url = server.ServerURL;
             string command = url + "/api/Flights?relative_to=" + date;
             //List<Flights> flights = new List<Flights>();
+            Uri myUri = new Uri(command, UriKind.Absolute);
+            //WebClient client = new WebClient();
+            //client.OpenRead(myUri);
 
             WebRequest request = WebRequest.Create(command);
             request.Method = "GET";
@@ -71,6 +74,7 @@ namespace FlightControlWeb.Models
                 flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
                 flight.DateTime = time;
                 flight.IsExternal = true;
+                s.InsertExtenalFlightId(server, flight.FlightId);
                 flights.Add(flight);
             }
             ////http://localhost:61896/api/Flights?relative_to=2020-05-13T10:39:00Z&sync_all
@@ -78,19 +82,19 @@ namespace FlightControlWeb.Models
             return flights;
         }
 
-        public List<Flights> GetFlightsFromServers(List<Server> servers, DateTime time)
+        public async Task<List<Flights>> GetFlightsFromServers(List<Server> servers, DateTime time)
         {
             List<Flights> flights = new List<Flights>();
             //get flights.
             foreach (Server server in servers)
             {
-                flights.AddRange(GetRequestFromServer(server,time));
+                flights.AddRange(await GetRequestFromServer(server,time));
             }
             return flights;
         }
 
 
-        public List<Flights> GetAllFlights(string dateTime, bool isExternal)
+        public async Task<List<Flights>> GetAllFlights(string dateTime, bool isExternal)
         {
 
             DateTime time = DateTime.Parse(dateTime).ToUniversalTime();
@@ -105,7 +109,7 @@ namespace FlightControlWeb.Models
                 servers = s.GetServers();
             }
             flights = s.GetFlights(time);
-            flights.AddRange(GetFlightsFromServers(servers, time));
+            flights.AddRange(await GetFlightsFromServers(servers, time));
             return flights;
         }
     }

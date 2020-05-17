@@ -79,6 +79,23 @@ namespace FlightControlWeb
 
         }
 
+        public void InsertExtenalFlightId(Server server, string id)
+        {
+            SqliteConnection conn = OpenConnection();
+            SqliteCommand insertCommand = new SqliteCommand();
+            insertCommand.Connection = conn;
+
+            insertCommand.CommandText = "INSERT INTO ExternalFlightsTable VALUES (@Id, @Url , @FlightId)";
+            insertCommand.Parameters.AddWithValue("@Id", server.ServerId);
+            insertCommand.Parameters.AddWithValue("@Url", server.ServerURL);
+            insertCommand.Parameters.AddWithValue("@FlightId", id);
+            try
+            {
+                insertCommand.ExecuteReader();
+            }
+            catch { }
+        }
+
         public void Create()
         {
             using (SQLiteConnection db = new SQLiteConnection(_path))
@@ -242,6 +259,20 @@ namespace FlightControlWeb
             return servers;
 
         }
+        public Server GetServerByIdOfFlight(string id)
+        {
+            SqliteConnection conn = OpenConnection();
+            object[] tempServer = ReadFromTableSingleRow(conn, "SELECT * FROM ExternalFlightsTable WHERE FlightId = '" + id + "'");
+            conn.Close();
+            Server server = new Server();
+            if (tempServer[0] == null)
+            {
+                return null;
+            }
+            server.ServerId = Convert.ToString(tempServer[0]);
+            server.ServerURL = Convert.ToString(tempServer[1]);
+            return server;
+        }
 
         public List<Server> GetServers()
         {
@@ -395,7 +426,10 @@ namespace FlightControlWeb
          public FlightPlan setFlightPlan(object[] basicData, object[] initialLocation, List<object[]> segments)
         {
             FlightPlan flightPlan = new FlightPlan();
-
+            if (basicData[0] == null)
+            {
+                return null;
+            }
             //flightPlan.Id = Convert.ToString(basicData[flightPlanIdE]);
             flightPlan.Passengers = Convert.ToInt32(basicData[flightPlanPassangersE]);
             flightPlan.CompanyName = Convert.ToString(basicData[flightPlanCompanyNameE]);
@@ -417,33 +451,40 @@ namespace FlightControlWeb
             return flightPlan;
         }
 
-        public static void CreateFlightPlanTable(SqliteConnection conn)
-        {
-            string tableCommand = @"CREATE TABLE IF NOT EXISTS FlightPlanTable (Id TEXT PRIMARY KEY, Passengers INTEGER, CompanyName TEXT)";
-            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
-            createTable.ExecuteReader();
-        }
+        //public static void CreateFlightPlanTable(SqliteConnection conn)
+        //{
+        //    string tableCommand = @"CREATE TABLE IF NOT EXISTS FlightPlanTable (Id TEXT PRIMARY KEY, Passengers INTEGER, CompanyName TEXT)";
+        //    SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+        //    createTable.ExecuteReader();
+        //}
 
-        public static void CreateInitialLocationTable(SqliteConnection conn)
-        {
-            string tableCommand = @"CREATE TABLE IF NOT EXISTS InitialLocationTable (Id TEXT PRIMARY KEY, Longitude REAL , Latitude REAL, DateTime TEXT)";
-            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
-            createTable.ExecuteReader();
-        }
+        //public static void CreateInitialLocationTable(SqliteConnection conn)
+        //{
+        //    string tableCommand = @"CREATE TABLE IF NOT EXISTS InitialLocationTable (Id TEXT PRIMARY KEY, Longitude REAL , Latitude REAL, DateTime TEXT)";
+        //    SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+        //    createTable.ExecuteReader();
+        //}
 
-        public static void CreateSegmentsTable(SqliteConnection conn)
-        {
-            string tableCommand = @"CREATE TABLE IF NOT EXISTS SegmentsTable (Id TEXT PRIMARY KEY, FlightId TEXT, Place INTEGER, Longitude REAL , Latitude REAL, TimespanSeconds INTEGER)";
-            SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
-            createTable.ExecuteReader();
-        }
+        //public static void CreateSegmentsTable(SqliteConnection conn)
+        //{
+        //    string tableCommand = @"CREATE TABLE IF NOT EXISTS SegmentsTable (Id TEXT PRIMARY KEY, FlightId TEXT, Place INTEGER, Longitude REAL , Latitude REAL, TimespanSeconds INTEGER)";
+        //    SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+        //    createTable.ExecuteReader();
+        //}
 
-        public static void CreateServersTable(SqliteConnection conn)
+        //public static void CreateServersTable(SqliteConnection conn)
+        //{
+        //    string tableCommand = @"CREATE TABLE IF NOT EXISTS ServersTable (Id TEXT PRIMARY KEY, Url TEXT)";
+        //    SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
+        //    createTable.ExecuteReader();
+        //}
+        public static void CreateTable(string nameOfTable, SqliteConnection conn, string columns)
         {
-            string tableCommand = @"CREATE TABLE IF NOT EXISTS ServersTable (Id TEXT PRIMARY KEY, Url TEXT)";
+            string tableCommand = @"CREATE TABLE IF NOT EXISTS " + nameOfTable + columns;
+            
             SqliteCommand createTable = new SqliteCommand(tableCommand, conn);
             createTable.ExecuteReader();
-        }
+    }
 
         public static void InitializeDatabase()
         {
@@ -452,13 +493,20 @@ namespace FlightControlWeb
             string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
             SqliteConnection conn = new SqliteConnection(@"Data Source = " + dbPath);
             conn.Open();
-            //string com = "DROP Table SegmentsTable";
+            //string com = "DROP Table ExternalFlightsTable";
             //SqliteCommand delete = new SqliteCommand(com, conn);
             //delete.ExecuteReader();
-            CreateFlightPlanTable(conn);
-            CreateInitialLocationTable(conn);
-            CreateSegmentsTable(conn);
-            CreateServersTable(conn);
+            CreateTable("ServersTable", conn, "(Id TEXT PRIMARY KEY, Url TEXT)");
+            CreateTable("SegmentsTable", conn, "(Id TEXT PRIMARY KEY, FlightId TEXT," +
+                " Place INTEGER, Longitude REAL, Latitude REAL, TimespanSeconds INTEGER)");
+
+            CreateTable("InitialLocationTable", conn, "(Id TEXT PRIMARY KEY, Longitude REAL, Latitude REAL, DateTime TEXT)");
+            CreateTable("FlightPlanTable", conn, "(Id TEXT PRIMARY KEY, Passengers INTEGER, CompanyName TEXT)");
+            CreateTable("ExternalFlightsTable", conn, "(Id TEXT PRIMARY KEY, Url TEXT, FlightId TEXT)");
+            //CreateFlightPlanTable(conn);
+            //CreateInitialLocationTable(conn);
+            //CreateSegmentsTable(conn);
+            //CreateServersTable(conn);
             conn.Close();
        }
     }

@@ -29,7 +29,7 @@ namespace FlightControlWeb
 
             services.AddRouting();
             services.AddControllers();
-
+            
             services.AddDbContext<FlightControlWebContext>(options =>
             options.UseSqlite(Configuration.GetConnectionString("FlightControlWebContext")));
 
@@ -46,9 +46,7 @@ namespace FlightControlWeb
             }
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

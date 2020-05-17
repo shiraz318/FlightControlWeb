@@ -12,19 +12,26 @@ function ResetFlightDetails() {
     $("#end-time-definition").html("");
 }
 
-function Reset() {
+function ResetRowsColor(name){
+    let listItems = document.querySelectorAll(name);
+    let i = 0;
+    let size = listItems.length;
+    for (i = 0; i < size; i++) {
+        listItems[i].classList.remove("highlightedRow");
+    }
+}
+
+function ResetFlights() {
     for (let key in allFlightsPath) {
         allFlightsPath[key].setMap(null);
         var icon = { url: regularImg };
         allFlightsMarker[key].setIcon(icon);
     }
-    let listItems = document.querySelectorAll("#my-flights-list > li");
-    let i = 0;
-    let size = listItems.length;
-    for (i = 0; i < size; i++) {
-        listItems[i].classList.remove("highlighted");
-    }
-    ResetFlightDetails();
+   
+}
+function ResetRowsColorsOnReset() {
+    ResetRowsColor("#my-flights-list > li");
+    ResetRowsColor("#external-flights-list > li");
 }
 
 
@@ -33,11 +40,13 @@ function initMap() {
     // Map options.
     let options = {
         zoom: 1,
-        center: { lat: 42.3601, lng: -71.0589 }
+        center: { lat: 0.00, lng: -71.0589 }
     };
     // New map.
     map = new google.maps.Map(document.getElementById("map"), options);
-    google.maps.event.addListener(map, "click", Reset);
+    google.maps.event.addListener(map, "click", ResetFlights);
+    google.maps.event.addListener(map, "click", ResetRowsColorsOnReset);
+    google.maps.event.addListener(map, "click", ResetFlightDetails);
 }
 
 function DisplayPath(id) {
@@ -95,7 +104,6 @@ function addMarker(flight) {
 }
 function SetNewPosition(flight) {
     if (allFlightsMarker[flight.flight_id]) {
-       //console.log("current position: lat: " + flight.latitude + ", lng: " + flight.longitude);
         allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
     }
 }
@@ -113,7 +121,7 @@ function UnDisplayMarkers() {
 
     for (let key in allFlightsMarker) {
         if (allFlightsMarker[key]) {
-            // If the marker exists.
+            // If the marker exists in either lists we keep it. otherwise - delete it.
             let foundInInternal = IsFound(key, "#my-flights-list > li");
             let foundInExternal = IsFound(key, "#external-flights-list > li");
             if (!(foundInInternal || foundInExternal)) {
