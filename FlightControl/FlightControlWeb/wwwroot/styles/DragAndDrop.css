@@ -4,6 +4,7 @@
     /*width: 350px;
     height: 250px;*/
     font-family: system-ui;
+    background: none;
     /*-webkit-backface-visibility: hidden; /* add to fix webkit bug jitter */
     /*-webkit-transform: perspective(1000px); /* add to fix webkit bug jitter */
     /*margin: 100% auto;*/
@@ -13,8 +14,11 @@
     #drop-area.highlight {
         border: 2px dashed #ccc;
         border-color: purple;
-        visibility:visible;
-        
+        visibility: visible;
+        background-image: url(../images/DragandDrop.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
     }
 
 p {

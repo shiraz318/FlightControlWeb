@@ -13,26 +13,41 @@ namespace FlightControlWeb.Controllers
     {
         IFlightPlanManager manager = new FlightPlanManager();
 
-        // GET /api/FlightPlan.
+        //// GET /api/FlightPlan.
+        //[HttpGet]
+        //public async Task<FlightPlan[]> GetAllFlightPlans()
+        //{
+        //    FlightPlan[] flightPlans;
+        //    flightPlans = await manager.GetAllFlightPlans();
+        //    return flightPlans;
+        //}
+
+        // GET /api/FlightPlan?id={id}&url={url}.
         [HttpGet]
-        public async Task<FlightPlan[]> GetAllFlightPlans()
+        public async Task<ActionResult<FlightPlan>> GetFlightPlanFromServer([FromQuery]string id, [FromQuery] string url)
         {
-            FlightPlan[] flightPlans;
-            flightPlans = await manager.GetAllFlightPlans();
-            return flightPlans;
+            FlightPlan fp;
+            if ((fp = manager.GetFlightPlanFromServer(id, url)) != null)
+            {
+                return Ok(fp);
+            }
+            return NotFound(id);
         }
 
-        // GET /api/FlightPlan/{id}.
+        // GET /api/FlightPlan/{id}/.
         [HttpGet("{id}", Name = "GetItem")]
         public async Task<ActionResult> GetItem(string id)
         {
+
             FlightPlan fp;
             if ((fp = await manager.GetFlightPlan(id)) != null)
             {
                 return Ok(fp);
             }
-            return  NotFound(id);
+            return NotFound(id);
         }
+
+       
 
         // POST /api/FlightPlan.
         [HttpPost]

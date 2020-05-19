@@ -53,35 +53,33 @@ function Highlighted(id, name) {
     }
 }
 
-//function GetFlightPlan(message) {
-//    $.getJSON(message + 0, (data) => {
-//        //$("#company-name-definition").html(data.company_name);
-//        //$("#number-of-passangers-definition").html(data.passengers);
-//        //$("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);
-//        //$("#end-location-definition").html(EndLocation(data.segments));
-//        //$("#start-time-definition").html(StartTime(data.initial_location.date_time));
-//        //$("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
-//        return data;
-//    });
-//}
+
+
+function FlightPlanDetails(message) {
+    $.getJSON(message, (data) => {
+        console.log(data);
+        $("#company-name-definition").html(data.company_name);
+        $("#number-of-passangers-definition").html(data.passengers);
+        $("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);
+        $("#end-location-definition").html(EndLocation(data.segments));
+        $("#start-time-definition").html(StartTime(data.initial_location.date_time));
+        $("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
+    });
+
+}
 
 function DisplayFlightDetails(id, isExternal) {
-    let message = "/api/FlightPlan/";
+    console.log("in displayflight detail");
     if (isExternal) {
         // find the server that own the flight with the given id.
         $.getJSON("/api/servers/" + id, (server) => {
-            message = server.ServerURL + "/api/FlightPlan/";
+            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
+            FlightPlanDetails(message);
         });
     }
-        
-    $.getJSON(message + id, (data) => {
-            $("#company-name-definition").html(data.company_name);
-            $("#number-of-passangers-definition").html(data.passengers);
-            $("#start-location-definition").html(data.initial_location.longitude + ", " + data.initial_location.latitude);
-            $("#end-location-definition").html(EndLocation(data.segments));
-            $("#start-time-definition").html(StartTime(data.initial_location.date_time));
-            $("#end-time-definition").html(EndTime(data.initial_location.date_time, data.segments));
-    });
+    else {
+        FlightPlanDetails("/api/FlightPlan/" + id);
+    }
     // Color the row that is pressed and reset the other rows color.
     Highlighted(id, "#my-flights-list > li");
     Highlighted(id, "#external-flights-list > li");  
@@ -159,12 +157,14 @@ function RemoveFromFlightList() {
         // If we did not get this flight in the previous get requset.
         if (isOnTime[key] === uninitialize) {
             let row = GetRow(key);
-            // If the row of the flight was highlighted - it's details was in the display details.
-            if (row.classList.contains(ColorRow)) {
-                ResetFlightDetails();
+            if (row) {
+                // If the row of the flight was highlighted - it's details was in the display details.
+                if (row.classList.contains(ColorRow)) {
+                    ResetFlightDetails();
+                }
+                row.remove();
+                delete isOnTime[key];
             }
-            row.remove();
-            delete isOnTime[key];    
         }
     }
 }
@@ -239,7 +239,6 @@ function DisplayInternal(flight) {
 }
 
 function RowInMyFlightList(flight) {
-  
     let foundInInternal = IsFound(flight.flight_id, "#my-flights-list > li");
     let foundInExternal = IsFound(flight.flight_id, "#external-flights-list > li");
     

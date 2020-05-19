@@ -2,7 +2,7 @@
 let allFlightsPath = {};
 let allFlightsMarker = {};
 const regularImg = "../images/small_black.png";
-const clickedImg = "../images/pink.png";
+const clickedImg = "../images/blue_light.png";
 function ResetFlightDetails() {
     $("#company-name-definition").html("");
     $("#number-of-passangers-definition").html("");
@@ -66,8 +66,9 @@ function DisplayPath(id) {
    
 }
 
-function CreatePath(id) {
-    $.getJSON("/api/FlightPlan/" + id, (data) => {
+function SetPath(id, message) {
+
+    $.getJSON(message, (data) => {
         let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
         let flightPlanCoordinates = [startLoc];
         data.segments.filter(segment => {
@@ -77,13 +78,27 @@ function CreatePath(id) {
         let flightPath = new google.maps.Polyline({
             path: flightPlanCoordinates,
             geodesic: true,
-            strokeColor: "#FF7F50",
+            strokeColor: "#FF0000",
             strokeOpacity: 1.0,
             strokeWeight: 2
         });
-       
+
         allFlightsPath[id] = flightPath;
     });
+}
+
+function CreatePath(id, isExternal) {
+
+    if (isExternal) {
+        $.getJSON("/api/servers/" + id, (server) => {
+            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;
+            SetPath(id, message);
+        });
+    }
+    else {
+        SetPath(id, "/api/FlightPlan/" + id);
+    }
+   
 }
 
 function addMarker(flight) {  
@@ -94,10 +109,10 @@ function addMarker(flight) {
     });
     allFlightsMarker[flight.flight_id] = marker;
 
-    CreatePath(flight.flight_id);
+    CreatePath(flight.flight_id, flight.is_external);
 
     marker.addListener("click", function () {
-        DisplayFlightDetails(flight.flight_id);
+        DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
 

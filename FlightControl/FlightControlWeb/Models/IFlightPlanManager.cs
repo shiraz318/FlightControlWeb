@@ -9,6 +9,7 @@ namespace FlightControlWeb.Models
     {
         Task<string> AddFlightPlan(FlightPlan fp);
         Task<FlightPlan> GetFlightPlan(string id);
-        Task<FlightPlan[]> GetAllFlightPlans();
+        //Task<FlightPlan[]> GetAllFlightPlans();
+        FlightPlan GetFlightPlanFromServer(string id, string url);
     }
 }

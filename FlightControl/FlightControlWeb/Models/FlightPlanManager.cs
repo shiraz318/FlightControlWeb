@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using static FlightControlWeb.Models.FlightPlan;
 
 namespace FlightControlWeb.Models
 {
@@ -32,7 +36,102 @@ namespace FlightControlWeb.Models
             return id;
         }
 
-       
+        public string SendRequest(string id, string url)
+        {
+            string command = url + "/api/FlightPlan/" + id;
+            Uri myUri = new Uri(command, UriKind.Absolute);
+
+            WebRequest request = WebRequest.Create(command);
+            request.Method = "GET";
+            HttpWebResponse response = null;
+            response = (HttpWebResponse)request.GetResponse();
+
+            string strResult = null;
+
+            using (Stream stream = response.GetResponseStream())
+            {
+                StreamReader streamReader = new StreamReader(stream);
+                strResult = streamReader.ReadToEnd();
+                streamReader.Close();
+            }
+            return strResult;
+        }
+
+        public FlightPlan CreateFlightPlanFromJson(string strResult)
+        {
+            FlightPlan flightPlan = new FlightPlan();
+            var json = JObject.Parse(strResult);
+            flightPlan.CompanyName = json["company_name"].ToString();
+            double longitude = Convert.ToDouble(json["initial_location"]["longitude"]);
+            double latitude = Convert.ToDouble(json["initial_location"]["latitude"]);
+            DateTime dateTime = Convert.ToDateTime(json["initial_location"]["date_time"]);
+            Location location = new Location(longitude, latitude, dateTime);
+            flightPlan.InitialLocation = location;
+            flightPlan.Passengers = Convert.ToInt32(json["passengers"]);
+            List<Segment> segments = new List<Segment>();
+            int i = 0;
+            JArray items = (JArray)json["segments"];
+            int length = items.Count;
+            for (i = 0; i < length; i++)
+            {
+                double longitude1 = Convert.ToDouble(json["segments"][i]["longitude"]);
+                double latitude1 = Convert.ToDouble(json["segments"][i]["latitude"]);
+                int timespnaSeconds = Convert.ToInt32(json["segments"][i]["timespan_seconds"]);
+                Segment segment = new Segment(longitude1, latitude1, timespnaSeconds);
+                segments.Add(segment);
+            }
+            flightPlan.Segments = segments;
+            return flightPlan;
+        }
+
+        public FlightPlan GetFlightPlanFromServer(string id, string url)
+        {
+
+            //string command = url + "/api/FlightPlan/" + id;
+            //Uri myUri = new Uri(command, UriKind.Absolute);
+
+            //WebRequest request = WebRequest.Create(command);
+            //request.Method = "GET";
+            //HttpWebResponse response = null;
+            //response = (HttpWebResponse)request.GetResponse();
+
+            //string strResult = null;
+
+            //using (Stream stream = response.GetResponseStream())
+            //{
+            //    StreamReader streamReader = new StreamReader(stream);
+            //    strResult = streamReader.ReadToEnd();
+            //    streamReader.Close();
+            //}
+            string strResult = SendRequest(id, url);
+
+            return CreateFlightPlanFromJson(strResult);
+            //FlightPlan flightPlan = new FlightPlan();
+            //var json = JObject.Parse(strResult);
+            //flightPlan.CompanyName = json["company_name"].ToString();
+            //double longitude = Convert.ToDouble(json["initial_location"]["longitude"]);
+            //double latitude = Convert.ToDouble(json["initial_location"]["latitude"]);
+            //DateTime dateTime = Convert.ToDateTime(json["initial_location"]["date_time"]);
+            //Location location = new Location(longitude, latitude, dateTime);
+            //flightPlan.InitialLocation = location;
+            //flightPlan.Passengers = Convert.ToInt32(json["passengers"]);
+            //List<Segment> segments = new List<Segment>();
+            //int i = 0;
+            //JArray items = (JArray)json["segments"];
+            //int length = items.Count;
+            //for (i = 0; i < length; i++)
+            //{
+            //    double longitude1 = Convert.ToDouble(json["segments"][i]["longitude"]);
+            //    double latitude1 = Convert.ToDouble(json["segments"][i]["latitude"]);
+            //    int timespnaSeconds = Convert.ToInt32(json["segments"][i]["timespan_seconds"]);
+            //    Segment segment = new Segment(longitude1, latitude1, timespnaSeconds);
+            //    segments.Add(segment);
+            //}
+            //flightPlan.Segments = segments;
+
+            //return flightPlan;
+        }
+
         public async Task<string> AddFlightPlan(FlightPlan fp)
         {
             string id = setId();
@@ -48,18 +147,18 @@ namespace FlightControlWeb.Models
             return s.GetFlightPlan(id);
         }
 
-        public async Task<FlightPlan[]> GetAllFlightPlans()
-        {
-            List<FlightPlan> flightPlans1 = s.GetAllFlightPlans();
-            FlightPlan[] flightPlans = new FlightPlan[flightPlans1.Count];
-            int i = 0;
-            foreach (FlightPlan fp in flightPlans1)
-            {
-                flightPlans[i] = fp;
-                i++;
-            }
+        //public async Task<FlightPlan[]> GetAllFlightPlans()
+        //{
+        //    List<FlightPlan> flightPlans1 = s.GetAllFlightPlans();
+        //    FlightPlan[] flightPlans = new FlightPlan[flightPlans1.Count];
+        //    int i = 0;
+        //    foreach (FlightPlan fp in flightPlans1)
+        //    {
+        //        flightPlans[i] = fp;
+        //        i++;
+        //    }
 
-            return flightPlans;
-        }
+        //    return flightPlans;
+        //}
     }
 }

@@ -20,9 +20,9 @@ function preventDefaults(e) {
 
 function ShowImage() {
     let img = document.getElementById("myImageId");
-    let dropArea = document.getElementById("drop-area");
-    dropArea.style.backgroundImage = "url(../images/DragandDrop.png)";
-   
+    //let dropArea = document.getElementById("drop-area");
+   // dropArea.style.backgroundImage = "url(../images/DragandDrop.png)";
+    
     //list.style.visibility = "hidden";
     // img.style.visibility = "visible";
    // img.style.opacity = 1.0;
@@ -30,8 +30,8 @@ function ShowImage() {
 }
 function HideImage() {
     let img = document.getElementById("myImageId");
-    let dropArea = document.getElementById("drop-area");
-    dropArea.style.background = "none";
+    //let dropArea = document.getElementById("drop-area");
+    //dropArea.style.background = "none";
    // let list = document.getElementById("my-flights-list");
    // list.style.visibility = "visible";
     //img.style.visibility = "hidden";
