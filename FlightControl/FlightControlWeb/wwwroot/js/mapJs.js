@@ -1,17 +1,12 @@
-﻿let map;
+﻿
+// Global variables.
+let map;
 let allFlightsPath = {};
 let allFlightsMarker = {};
 const regularImg = "../images/small_black.png";
 const clickedImg = "../images/blue_light.png";
-function ResetFlightDetails() {
-    $("#company-name-definition").html("");
-    $("#number-of-passangers-definition").html("");
-    $("#start-location-definition").html("");
-    $("#end-location-definition").html("");
-    $("#start-time-definition").html("");
-    $("#end-time-definition").html("");
-}
 
+// Reset a row color.
 function ResetRowsColor(name){
     let listItems = document.querySelectorAll(name);
     let i = 0;
@@ -21,21 +16,22 @@ function ResetRowsColor(name){
     }
 }
 
+// Reset markers and paths of all the flights.
 function ResetFlights() {
     for (let key in allFlightsPath) {
         allFlightsPath[key].setMap(null);
         var icon = { url: regularImg };
         allFlightsMarker[key].setIcon(icon);
     }
-   
 }
+
+// Reset the rows color in both lists.
 function ResetRowsColorsOnReset() {
     ResetRowsColor("#my-flights-list > li");
     ResetRowsColor("#external-flights-list > li");
 }
 
-
-
+// Initialize the map element.
 function initMap() {
     // Map options.
     let options = {
@@ -49,8 +45,9 @@ function initMap() {
     google.maps.event.addListener(map, "click", ResetFlightDetails);
 }
 
+// Display the path of a flight given it's id.
 function DisplayPath(id) {
-
+    // Iterate all the paths
     for (let key in allFlightsPath) {
         let icon;
         if (key === id) {
@@ -62,12 +59,13 @@ function DisplayPath(id) {
             icon = { url: regularImg };
             allFlightsMarker[key].setIcon(icon);
         }
-    }
-   
+    }   
 }
 
+// Set a path.
 function SetPath(id, message) {
 
+    // Send a get request that returns a FlightPlan.
     $.getJSON(message, (data) => {
         let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
         let flightPlanCoordinates = [startLoc];
@@ -75,6 +73,7 @@ function SetPath(id, message) {
             let loc = new google.maps.LatLng(segment.latitude, segment.longitude);
             flightPlanCoordinates.push(loc);
         });
+        // Create the path.
         let flightPath = new google.maps.Polyline({
             path: flightPlanCoordinates,
             geodesic: true,
@@ -82,14 +81,15 @@ function SetPath(id, message) {
             strokeOpacity: 1.0,
             strokeWeight: 2
         });
-
         allFlightsPath[id] = flightPath;
     });
 }
 
+// Create a path for a flight by it's id.
 function CreatePath(id, isExternal) {
 
     if (isExternal) {
+        // Get the server who own the flight.
         $.getJSON("/api/servers/" + id, (server) => {
             let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;
             SetPath(id, message);
@@ -97,16 +97,18 @@ function CreatePath(id, isExternal) {
     }
     else {
         SetPath(id, "/api/FlightPlan/" + id);
-    }
-   
+    } 
 }
 
-function addMarker(flight) {  
+// Add a marker on the map for a given flight.
+function AddMarker(flight) {  
+    // Create a new marker.
     let marker = new google.maps.Marker({
         position: new google.maps.LatLng(flight.latitude, flight.longitude),
         map: map,
         icon: regularImg
     });
+    // Add to the markers dictionary.
     allFlightsMarker[flight.flight_id] = marker;
 
     CreatePath(flight.flight_id, flight.is_external);
@@ -115,23 +117,28 @@ function addMarker(flight) {
         DisplayFlightDetails(flight.flight_id, flight.is_external);
         DisplayPath(flight.flight_id);
     });
-
 }
+
+// Set a new position for a given flight.
 function SetNewPosition(flight) {
     if (allFlightsMarker[flight.flight_id]) {
         allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
     }
 }
+
+// Remove a marker from the map by it's flight id.
 function RemovwMareker(id) {
-    allFlightsMarker[id].setMap(null);
-    delete allFlightsMarker[id];
+    if (allFlightsMarker[id]) {
+        allFlightsMarker[id].setMap(null);
+        delete allFlightsMarker[id];
+    }
     if (allFlightsPath[id]) {
         allFlightsPath[id].setMap(null);
     }
     delete allFlightsPath[id];
-
 }
 
+// Update the map by removing markers that theirs flights are not active.
 function UnDisplayMarkers() {
 
     for (let key in allFlightsMarker) {
@@ -139,6 +146,7 @@ function UnDisplayMarkers() {
             // If the marker exists in either lists we keep it. otherwise - delete it.
             let foundInInternal = IsFound(key, "#my-flights-list > li");
             let foundInExternal = IsFound(key, "#external-flights-list > li");
+            // Flight is not active.
             if (!(foundInInternal || foundInExternal)) {
                 RemovwMareker(key);
             }

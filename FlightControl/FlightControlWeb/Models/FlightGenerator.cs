@@ -8,48 +8,32 @@ namespace FlightControlWeb.Models
 {
     public class FlightGenerator
     {
-        int flightPlanIdE;
-        int flightPlanPassangersE;
-        int flightPlanCompanyNameE;
-
-        int initialLocationIdE;
         int initialLocationLongitudeE;
         int initialLocationLatitudeE;
         int initalLocationDateTimeE;
 
-        int segmentsIdE;
         int segmentFlightIdE;
-        int segmentPlaceE;
         int segmentLongitudeE;
         int segmentLatitudeE;
         int segmenTimespanSecondE;
 
-        string _path;
-        int segmentsCount = 0;
         public FlightGenerator()
         {
-            // FlightPlan Enum.
-            flightPlanIdE = (int)FlightPlanE.Id;
-            flightPlanPassangersE = (int)FlightPlanE.Passengers;
-            flightPlanCompanyNameE = (int)FlightPlanE.CompanyName;
-
             // InitialLocation Enum.
-            initialLocationIdE = (int)InitialLocationE.Id;
             initialLocationLongitudeE = (int)InitialLocationE.Longitude;
             initialLocationLatitudeE = (int)InitialLocationE.Latitude;
             initalLocationDateTimeE = (int)InitialLocationE.DateTime;
 
             // Segments Enum.
-            segmentsIdE = (int)SegmentsE.Id;
             segmentFlightIdE = (int)SegmentsE.FlightId;
-            segmentPlaceE = (int)SegmentsE.Place;
             segmentLongitudeE = (int)SegmentsE.Longitude;
             segmentLatitudeE = (int)SegmentsE.Latitude;
             segmenTimespanSecondE = (int)SegmentsE.TimespanSecond;
         }
-            public int CalculateCurrentSegment(out DateTime soFarDuration, List<Object[]> segements, DateTime initialTime, DateTime requierdTime)
-        {
 
+        // Calculate the number of the current segment.
+        private int CalculateCurrentSegment(out DateTime soFarDuration, List<Object[]> segements, DateTime initialTime, DateTime requierdTime)
+        {
             soFarDuration = initialTime;
             DateTime soFar = initialTime;
             int count = 0;
@@ -66,14 +50,13 @@ namespace FlightControlWeb.Models
                 }
                 count++;
                 soFarDuration = soFarDuration.AddSeconds(Convert.ToDouble(seg[segmenTimespanSecondE]));
-
             }
             return count;
-
         }
 
-        public void CalculatePartialPostition(out Location location, int segmentNumber,
-            List<Object[]> segments, object[] initialLocation, double partialTime)
+        // Calculate the partial position in the segment.
+        private void CalculatePartialPostition(out Location location, int segmentNumber,
+        List<Object[]> segments, object[] initialLocation, double partialTime)
         {
 
             location = new Location(0, 0, new DateTime());
@@ -96,13 +79,11 @@ namespace FlightControlWeb.Models
             // linear interpulation is needed.
             location.Latitude = prevSegmen.Latitude + ((currentSegment.Latitude - prevSegmen.Latitude) * partialTime);
             location.Longitude = prevSegmen.Longitude + ((currentSegment.Longitude - prevSegmen.Longitude) * partialTime);
-
         }
 
-
+        // Calculate the position.
         public Location CalculatePosition(DateTime soFar, DateTime time, int segmentNumber, List<Object[]> segmennts, object[] initialLocation)
         {
-
             Location location;
 
             // How mach time we are in the segment until the requierd time = timeInSegmnent.
@@ -117,9 +98,9 @@ namespace FlightControlWeb.Models
             location.DateTime = time;
 
             return location;
-
         }
 
+        // Create a FlightPlan object using a given data.
         public Flights CreateFlightFromGivenData(object[] initialLocation, List<Object[]> segements, bool isExternal, DateTime time)
         {
             Flights flight = new Flights();
@@ -133,10 +114,6 @@ namespace FlightControlWeb.Models
             flight.IsExternal = isExternal;
             flight.FlightId = segements[0][segmentFlightIdE].ToString();
             return flight;
-
         }
-
-
-
     }
 }

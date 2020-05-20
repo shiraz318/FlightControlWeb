@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static FlightControlWeb.Models.FlightsManager;
 
 namespace FlightControlWeb.Controllers
 {
@@ -18,11 +19,17 @@ namespace FlightControlWeb.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
-            if (await manager.DeleteFlight(id))
+            try
             {
-                return Ok();
+                if (await manager.DeleteFlight(id))
+                {
+                    return Ok();
+                }
+                return NotFound(id);
+            }catch(Exception e)
+            {
+                return NotFound(e.Message);
             }
-            return NotFound(id);
         }
 
         // example /api/Flights?relative_to=<2020-05-06T10:12:00/Z>&sync_all
@@ -31,19 +38,31 @@ namespace FlightControlWeb.Controllers
 
         public async Task<ActionResult<Flights>> Get([FromQuery] string relative_to)
         {
-            string dateTime = relative_to;
-            string s = Request.QueryString.Value;
-            List<Flights> flights = new List<Flights>();
-            if (s.Contains("sync_all"))
+            try
             {
-                flights = await manager.GetAllFlights(dateTime, true);
-            }
-            else
-            {
-                flights = await manager.GetAllFlights(dateTime, false);
-            }
+                string dateTime = relative_to;
+                string s = Request.QueryString.Value;
+                List<Flights> flights = new List<Flights>();
+                FlightsFromServers flightsFromServers = new FlightsFromServers(flights, false);
+                if (s.Contains("sync_all"))
+                {
+                    flightsFromServers = await manager.GetAllFlights(dateTime, true);
+                }
+                else
+                {
+                    flightsFromServers = await manager.GetAllFlights(dateTime, false);
+                }
+                // At least one server did not responed.
+                if (flightsFromServers.IsError)
+                {
 
-            return Ok(flights);
+                }
+                return Ok(flightsFromServers.FlightsList);
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
         }
     }
 }

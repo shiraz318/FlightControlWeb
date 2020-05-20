@@ -11,45 +11,51 @@
 <body>
     <div id="page">
         <header><br /></header>
+        <div class="alert alert-warning alert-dismissible fade show" id="error" role="alert">
+            <div id="error_message"></div>
+            <!--<strong>Holy guacamole!</strong> You should check in on some of those fields below.-->
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
         <main id="main">
+
             <div id="board-section">
                 <div id="flights-map">
-                    <!--h1> My Google Map</!--h1-->
                     <div id="map"></div>
                 </div>
-
-                <!--class="overflow-auto"-->
                 <div id="flight-details-wrapper">
                     <h4 id="colorfull">Flight Details</h4>
                     <table class="table table-borderless" id="flight-details">
                         <thead>
                             <tr>
-                                <th class="table-primary" id="company-name-label">Company Name</th>
-                                <th class="table-primary" id="number-of-passangers-label">Number of passangers</th>
-                                <th class="table-primary" id="start-location-label">Start location</th>
-                                <th class="table-primary" id="end-location-label">End location</th>
-                                <th class="table-primary" id="start-time-label">Start Time</th>
-                                <th class="table-primary" id="end-time-label">End Time</th>
+                                <th class="table-active" id="company-name-label">Company Name</th>
+                                <th class="table-active" id="number-of-passangers-label">Number of passangers</th>
+                                <th class="table-active" id="start-location-label">Start location</th>
+                                <th class="table-active" id="end-location-label">End location</th>
+                                <th class="table-active" id="start-time-label">Start Time</th>
+                                <th class="table-active" id="end-time-label">End Time</th>
 
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="table-primary" id="company-name-definition"> </td>
-                                <td class="table-primary" id="number-of-passangers-definition"> </td>
-                                <td class="table-primary" id="start-location-definition"> </td>
-                                <td class="table-primary" id="end-location-definition"> </td>
-                                <td class="table-primary" id="start-time-definition"> </td>
-                                <td class="table-primary" id="end-time-definition"> </td>
+                                <td class="table-active" id="company-name-definition"></td>
+                                <td class="table-active" id="number-of-passangers-definition"></td>
+                                <td class="table-active" id="start-location-definition"></td>
+                                <td class="table-active" id="end-location-definition"></td>
+                                <td class="table-active" id="start-time-definition"></td>
+                                <td class="table-active" id="end-time-definition"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-  
+
             <div id="flight-list-section">
                 <div class="my-flights-wrapper" id="my-flights-wrapper">
-                   
+
                     <h4 id="colorfull">My Flights</h4>
                     <div class="my-flights-list-wrapper" id="drop-area">
                         <form class="my-form">
@@ -59,7 +65,7 @@
                         <ul id="my-flights-list">
                         </ul>
                         <img id="myImageId" src="../images/dropn.jpg">
-                    </div>                         
+                    </div>
                 </div>
                 <div id="external-flights-wrapper" class="external-flights-wrapper">
                     <div id="external-flights">

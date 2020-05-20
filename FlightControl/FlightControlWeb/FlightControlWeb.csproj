@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Remove="Models\DummyFP.cs" />
     <Compile Remove="Models\DummyFPManager.cs" />
+    <Compile Remove="Models\JsonObject.cs" />
     <Compile Remove="Models\Temp.cs" />
   </ItemGroup>
 

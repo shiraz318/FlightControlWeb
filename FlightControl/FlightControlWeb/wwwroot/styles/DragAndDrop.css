@@ -68,3 +68,8 @@ p {
     position: absolute;
     top: 0;
 }
+.invisible {
+    /*visibility:hidden;*/
+    /*opacity:1.0;*/
+    /*text-emphasis-color:transparent;*/
+}

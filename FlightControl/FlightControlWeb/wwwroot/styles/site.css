@@ -104,12 +104,25 @@ body {
 
     #main [id*="-section"] {
         padding: 1rem;
+        max-height:50px;
     }
 
     #main #board-section {
         min-width: 830px;
     }
 
+    #main [id*="-label"] {
+        color: black;
+        font-weight: 700;
+        font-style: italic;
+        /* 'Maiandra GD'*/
+    }
+
+    #main [id*="-definition"] {
+        color: darkgreen;
+        font-weight: 600;
+        font-style: italic;
+    }
 .mapouter {
     position: relative;
     text-align: right;
@@ -179,6 +192,14 @@ body {
     cursor: pointer;
 }
 
+ul li:hover {
+    font-style: italic;
+}
+
+ul li {
+    font-size: 105%;
+}  
+
 .my-flights-list-item.highlighted {
     background-color: palegreen;
 }
@@ -187,12 +208,12 @@ body {
     background-color: lightblue;
 }
 
-  
-
+ 
 #my-flights-list [class*="flight-"] {
     padding: 0.5rem 0.4rem;
     display: inline-block;
 }
+
 #external-flights-list [class*="flight-"] {
     padding: 0.5rem 0.4rem;
     display: inline-block;
@@ -204,12 +225,15 @@ body {
     color: red;
     font-size: 20px;
 }
+
 .flight-company {
     font-weight: 600;
 }
+
 .flight-id {
     font-weight:600;
 }
+
 .space {
     font-weight: bold;
     font-size: 20px;
@@ -228,5 +252,8 @@ body {
 }
 div {
     text-align: center;
-    /*text-emphasis-color: #32CD32;*/
+}
+
+#error {
+   display:none;
 }

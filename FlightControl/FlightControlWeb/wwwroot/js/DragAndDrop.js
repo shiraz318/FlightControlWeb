@@ -19,21 +19,40 @@ function preventDefaults(e) {
 
 
 function ShowImage() {
-    let img = document.getElementById("myImageId");
+   // $("#myImageId").show();
+     //let img = document.getElementById("myImageId");
+    //let list = document.getElementById("my-flights-list");
+    //list.classList.add("invisible");
+    //let i = 0;
+    //let size = listItems.length;
+    //for (i = 0; i < size; i++) {
+    //    listItems[i].classList.add("invisible");
+    //}
+    //spans.classList.add("");
     //let dropArea = document.getElementById("drop-area");
    // dropArea.style.backgroundImage = "url(../images/DragandDrop.png)";
-    
+    //let list = document.getElementById("my-flights-list");
     //list.style.visibility = "hidden";
-    // img.style.visibility = "visible";
+     //img.style.visibility = "visible";
    // img.style.opacity = 1.0;
     console.log("Visible");
 }
 function HideImage() {
-    let img = document.getElementById("myImageId");
+   // $("#myImageId").hide();
+    //let list = document.getElementById("my-flights-list");
+    //list.classList.remove("invisible");
+
+    //let listItems = document.querySelectorAll("#my-flights-list > li");
+    //let i = 0;
+    //let size = listItems.length;
+    //for (i = 0; i < size; i++) {
+    //    listItems[i].classList.remove("invisible");
+    //}
+   // let img = document.getElementById("myImageId");
     //let dropArea = document.getElementById("drop-area");
     //dropArea.style.background = "none";
-   // let list = document.getElementById("my-flights-list");
-   // list.style.visibility = "visible";
+    //let list = document.getElementById("my-flights-list");
+    //list.style.visibility = "visible";
     //img.style.visibility = "hidden";
    // img.style.opacity = 0.0;
 }

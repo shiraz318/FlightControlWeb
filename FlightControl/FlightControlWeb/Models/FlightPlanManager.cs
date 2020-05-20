@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using static FlightControlWeb.Models.FlightPlan;
 
@@ -11,11 +12,11 @@ namespace FlightControlWeb.Models
 {
     public class FlightPlanManager : IFlightPlanManager
     {
-        //private SQLiteDb s = new SQLiteDb(Environment.CurrentDirectory + @"\Database.sqlite");
         private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
+
+        // Create the random letters in the id.
         private string CreateLetters()
         {
-           
             string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ";
             int length = 2;
 
@@ -28,7 +29,9 @@ namespace FlightControlWeb.Models
             }
             return new String(chars);
         }
-        public string setId()
+        
+        // Set an unique id.
+        private string SetId()
         {
             Random rnd = new Random();
             long randomNamber = rnd.Next(100000, 1000000000);
@@ -36,28 +39,36 @@ namespace FlightControlWeb.Models
             return id;
         }
 
-        public string SendRequest(string id, string url)
+        // Send get request to a given url.
+        private async Task<string> SendRequest(string id, string url)
         {
             string command = url + "/api/FlightPlan/" + id;
-            Uri myUri = new Uri(command, UriKind.Absolute);
+            using var client = new HttpClient();
 
-            WebRequest request = WebRequest.Create(command);
-            request.Method = "GET";
-            HttpWebResponse response = null;
-            response = (HttpWebResponse)request.GetResponse();
+            string content = await client.GetStringAsync(command);
+            return content;
 
-            string strResult = null;
+           
+            //Uri myUri = new Uri(command, UriKind.Absolute);
 
-            using (Stream stream = response.GetResponseStream())
-            {
-                StreamReader streamReader = new StreamReader(stream);
-                strResult = streamReader.ReadToEnd();
-                streamReader.Close();
-            }
-            return strResult;
+            //WebRequest request = WebRequest.Create(command);
+            //request.Method = "GET";
+            //HttpWebResponse response = null;
+            //response = (HttpWebResponse)request.GetResponse();
+
+            //string strResult = null;
+
+            //using (Stream stream = response.GetResponseStream())
+            //{
+            //    StreamReader streamReader = new StreamReader(stream);
+            //    strResult = streamReader.ReadToEnd();
+            //    streamReader.Close();
+            //}
+            //return strResult;
         }
 
-        public FlightPlan CreateFlightPlanFromJson(string strResult)
+        // Create a FlightPlan object from a json file.
+        private FlightPlan CreateFlightPlanFromJson(string strResult)
         {
             FlightPlan flightPlan = new FlightPlan();
             var json = JObject.Parse(strResult);
@@ -84,81 +95,28 @@ namespace FlightControlWeb.Models
             return flightPlan;
         }
 
-        public FlightPlan GetFlightPlanFromServer(string id, string url)
+        // Get a FlightPlan from a server with a given url and id.
+        public async Task<FlightPlan> GetFlightPlanFromServer(string id, string url)
         {
-
-            //string command = url + "/api/FlightPlan/" + id;
-            //Uri myUri = new Uri(command, UriKind.Absolute);
-
-            //WebRequest request = WebRequest.Create(command);
-            //request.Method = "GET";
-            //HttpWebResponse response = null;
-            //response = (HttpWebResponse)request.GetResponse();
-
-            //string strResult = null;
-
-            //using (Stream stream = response.GetResponseStream())
-            //{
-            //    StreamReader streamReader = new StreamReader(stream);
-            //    strResult = streamReader.ReadToEnd();
-            //    streamReader.Close();
-            //}
-            string strResult = SendRequest(id, url);
+            string strResult = await SendRequest(id, url);
 
             return CreateFlightPlanFromJson(strResult);
-            //FlightPlan flightPlan = new FlightPlan();
-            //var json = JObject.Parse(strResult);
-            //flightPlan.CompanyName = json["company_name"].ToString();
-            //double longitude = Convert.ToDouble(json["initial_location"]["longitude"]);
-            //double latitude = Convert.ToDouble(json["initial_location"]["latitude"]);
-            //DateTime dateTime = Convert.ToDateTime(json["initial_location"]["date_time"]);
-            //Location location = new Location(longitude, latitude, dateTime);
-            //flightPlan.InitialLocation = location;
-            //flightPlan.Passengers = Convert.ToInt32(json["passengers"]);
-            //List<Segment> segments = new List<Segment>();
-            //int i = 0;
-            //JArray items = (JArray)json["segments"];
-            //int length = items.Count;
-            //for (i = 0; i < length; i++)
-            //{
-            //    double longitude1 = Convert.ToDouble(json["segments"][i]["longitude"]);
-            //    double latitude1 = Convert.ToDouble(json["segments"][i]["latitude"]);
-            //    int timespnaSeconds = Convert.ToInt32(json["segments"][i]["timespan_seconds"]);
-            //    Segment segment = new Segment(longitude1, latitude1, timespnaSeconds);
-            //    segments.Add(segment);
-            //}
-            //flightPlan.Segments = segments;
-
-            //return flightPlan;
         }
 
+        // Add a given FlightPlan into the data base.
         public async Task<string> AddFlightPlan(FlightPlan fp)
         {
-            string id = setId();
+            string id = SetId();
 
             s.InsertFlightPlan(fp, id);
             return id;
-            //Flights flights = CreateFlight(fp);
-            //s.InsertFlight(flights);
         }
 
+        // Get a FlightPlan by a given id.
         public async Task<FlightPlan> GetFlightPlan(string id)
         {      
-            return s.GetFlightPlan(id);
+            return await s.GetFlightPlan(id);
         }
 
-        //public async Task<FlightPlan[]> GetAllFlightPlans()
-        //{
-        //    List<FlightPlan> flightPlans1 = s.GetAllFlightPlans();
-        //    FlightPlan[] flightPlans = new FlightPlan[flightPlans1.Count];
-        //    int i = 0;
-        //    foreach (FlightPlan fp in flightPlans1)
-        //    {
-        //        flightPlans[i] = fp;
-        //        i++;
-        //    }
-
-        //    return flightPlans;
-        //}
     }
 }

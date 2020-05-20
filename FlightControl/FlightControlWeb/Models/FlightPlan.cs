@@ -66,13 +66,7 @@ namespace FlightControlWeb.Models
 			get { return segments; }
 			set { segments = value; }
 		}
-		//[JsonPropertyName("id")]
-		//public string Id { get; set; }
 
-		//public FlightPlan(string id)
-		//{
-			//Id = id;
-		//}
 		public FlightPlan()
 		{
 		}
