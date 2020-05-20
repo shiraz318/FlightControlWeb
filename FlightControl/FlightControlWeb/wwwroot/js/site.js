@@ -1,5 +1,5 @@
 ﻿
-setInterval(DisplayFlights, 1000);
+setInterval(DisplayFlights, 5000);
 
 // Global variables.
 let isOnTime = {};

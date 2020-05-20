@@ -43,7 +43,8 @@ namespace FlightControlWeb.Models
             string url = server.ServerURL;
             string command = url + "/api/Flights?relative_to=" + date;
             using var client = new HttpClient();
-            TimeSpan timeout = new TimeSpan(0,0,0,10);
+
+            TimeSpan timeout = new TimeSpan(0,0,0,20);
             string strResult;
             client.Timeout = timeout;
             try
@@ -71,21 +72,29 @@ namespace FlightControlWeb.Models
             //}
             
             List<Flights> flights = new List<Flights>();
-            var json = JArray.Parse(strResult);
-            int i = 0;
-            for (i = 0; i < json.Count; i++)
+            try
             {
-                Flights flight = new Flights();
-                flight.FlightId = json[i]["flight_id"].ToString();
-                flight.CompanyName = json[i]["company_name"].ToString();
-                flight.Latitude = Convert.ToDouble(json[i]["latitude"]);
-                flight.Longitude = Convert.ToDouble(json[i]["longitude"]);
-                flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
-                flight.DateTime = time;
-                flight.IsExternal = true;
-                s.InsertExtenalFlightId(server, flight.FlightId);
-                flights.Add(flight);
-            }          
+                var json = JArray.Parse(strResult);
+                int i = 0;
+                for (i = 0; i < json.Count; i++)
+                {
+                    Flights flight = new Flights();
+                    flight.FlightId = json[i]["flight_id"].ToString();
+                    flight.CompanyName = json[i]["company_name"].ToString();
+                    flight.Latitude = Convert.ToDouble(json[i]["latitude"]);
+                    flight.Longitude = Convert.ToDouble(json[i]["longitude"]);
+                    flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
+                    flight.DateTime = time;
+                    flight.IsExternal = true;
+                    s.InsertExtenalFlightId(server, flight.FlightId);
+                    flights.Add(flight);
+                }
+            } catch(Exception e)
+            {
+                var json = JObject.Parse(strResult);
+                return null;
+            
+        }
             return flights;
         }
 
@@ -95,7 +104,7 @@ namespace FlightControlWeb.Models
             List<Flights> flights = new List<Flights>();
             bool isError = false;
             //get flights.
-            foreach (Server server in servers)
+            foreach (Server server in servers.ToList())
             {
                 List<Flights> flights1 = new List<Flights>();
                 flights1 = await GetRequestFromServer(server, time);

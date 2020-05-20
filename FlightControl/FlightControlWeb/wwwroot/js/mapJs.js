@@ -65,8 +65,14 @@ function DisplayPath(id) {
 // Set a path.
 function SetPath(id, message) {
 
+    console.log("message: ");
+    console.log(message);
     // Send a get request that returns a FlightPlan.
+    
     $.getJSON(message, (data) => {
+        
+        console.log("data: " );
+        console.log(data);
         let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
         let flightPlanCoordinates = [startLoc];
         data.segments.filter(segment => {
@@ -91,7 +97,9 @@ function CreatePath(id, isExternal) {
     if (isExternal) {
         // Get the server who own the flight.
         $.getJSON("/api/servers/" + id, (server) => {
-            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;
+            console.log("ServerURL: ");
+            console.log(server.ServerURL);
+            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
             SetPath(id, message);
         });
     }

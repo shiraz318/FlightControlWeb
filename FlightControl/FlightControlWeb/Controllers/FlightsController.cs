@@ -55,7 +55,7 @@ namespace FlightControlWeb.Controllers
                 // At least one server did not responed.
                 if (flightsFromServers.IsError)
                 {
-
+                    
                 }
                 return Ok(flightsFromServers.FlightsList);
             }

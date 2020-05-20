@@ -24,7 +24,10 @@ namespace FlightControlWeb.Controllers
                 {
                     return Ok(fp);
                 }
-                return NotFound(id);
+                else
+                {
+                    return NotFound(id);
+                }
             } catch(Exception e)
             {
                 return NotFound(e.Message);
