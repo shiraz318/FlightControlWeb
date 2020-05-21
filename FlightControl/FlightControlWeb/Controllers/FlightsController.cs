@@ -13,23 +13,28 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightsController : ControllerBase
     {
-        IFlightsManager manager = new FlightsManager();
+        private IFlightsManager manager;
+
+        public FlightsController(IFlightsManager manager)
+        {
+            this.manager = manager;
+        }
 
         // DELETE /api/Flights/{id}.
         [HttpDelete("{id}")]
         public ActionResult Delete(string id)
         {
-            try
-            {
+            //try
+            //{
                 if (manager.DeleteFlight(id))
                 {
                     return Ok();
                 }
                 return NotFound(id);
-            }catch(Exception e)
-            {
-                return NotFound(e.Message);
-            }
+            //}catch(Exception e)
+            //{
+            //    return NotFound(e.Message);
+            //}
         }
 
         // example /api/Flights?relative_to=<2020-05-06T10:12:00/Z>&sync_all
@@ -38,8 +43,8 @@ namespace FlightControlWeb.Controllers
 
         public async Task<ActionResult<Flights>> Get([FromQuery] string relative_to)
         {
-            try
-            {
+            //try
+            //{
                 string dateTime = relative_to;
                 string s = Request.QueryString.Value;
                 List<Flights> flights = new List<Flights>();
@@ -58,11 +63,11 @@ namespace FlightControlWeb.Controllers
                     
                 }
                 return Ok(flightsFromServers.FlightsList);
-            }
-            catch (Exception e)
-            {
-                return NotFound(e.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    return NotFound(e.Message);
+            //}
         }
     }
 }

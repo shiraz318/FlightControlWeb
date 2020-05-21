@@ -11,14 +11,19 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
-        IFlightPlanManager manager = new FlightPlanManager();
+        IFlightPlanManager manager;
+
+        public FlightPlanController(IFlightPlanManager manager)
+        {
+            this.manager = manager;
+        }
 
         // GET /api/FlightPlan?id={id}&url={url}.
         [HttpGet]
         public async Task<ActionResult<FlightPlan>> GetFlightPlanFromServer([FromQuery]string id, [FromQuery] string url)
         {
-            try
-            {
+            //try
+            //{
                 FlightPlan fp;
                 if ((fp = await manager.GetFlightPlanFromServer(id, url)) != null)
                 {
@@ -28,29 +33,29 @@ namespace FlightControlWeb.Controllers
                 {
                     return NotFound(id);
                 }
-            } catch(Exception e)
-            {
-                return NotFound(e.Message);
-            }
+            //} catch(Exception e)
+            //{
+            //    return NotFound(e.Message);
+            //}
         }
 
         // GET /api/FlightPlan/{id}/.
         [HttpGet("{id}", Name = "GetItem")]
-        public ActionResult GetItem(string id)
+        public ActionResult<FlightPlan> GetItem(string id)
         {
-            try
-            {
+            //try
+            //{
                 FlightPlan fp;
                 if ((fp = manager.GetFlightPlan(id)) != null)
                 {
                     return Ok(fp);
                 }
                 return NotFound(id);
-            }
-            catch (Exception e)
-            {
-                return NotFound(e.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    return NotFound(e.Message);
+            //}
         }
             
 
@@ -58,18 +63,19 @@ namespace FlightControlWeb.Controllers
 
         // POST /api/FlightPlan.
         [HttpPost]
-        public ActionResult Post([FromBody] FlightPlan flightPlan)
+        public ActionResult<string> Post([FromBody] FlightPlan flightPlan)
         {
-            try
-            {
+            //try
+            //{
                 string id =  manager.AddFlightPlan(flightPlan);
                 // Status 201 - created.
                 //return CreatedAtAction(actionName: "GetItem", flightPlan);
-                return CreatedAtAction(actionName: "GetItem", new { id = id }, flightPlan);
-            }catch(Exception e)
-            {
-                return NotFound(e.Message);
-            }
+                return Ok(id);
+                //return CreatedAtAction(actionName: "GetItem", new { id = id }, flightPlan);
+            //}catch(Exception e)
+            //{
+            //    return NotFound(e.Message);
+            //}
         }
         
     }

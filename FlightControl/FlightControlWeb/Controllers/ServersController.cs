@@ -12,7 +12,12 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class ServersController : ControllerBase
     {
-        IServersManager manager = new ServersManager();
+        IServersManager manager;
+
+        public ServersController(IServersManager manager)
+        {
+            this.manager = manager;
+        }
 
         // GET: api/Servers
         [HttpGet]
@@ -34,18 +39,18 @@ namespace FlightControlWeb.Controllers
         [HttpGet("{id}")]
         public ActionResult<Server> GetUrl(string id)
         {
-            try
-            {
+            //try
+            //{
                 Server server = manager.GetServerByIdOfFlight(id);
                 if (server != null)
                 {
                     return Ok(server);
                 }
                 return NotFound(id);
-            } catch(Exception e)
-            {
-                return NotFound(e.Message);
-            }
+            //} catch(Exception e)
+            //{
+            //    return NotFound(e.Message);
+            //}
         }
 
 

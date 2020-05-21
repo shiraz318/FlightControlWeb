@@ -12,7 +12,12 @@ namespace FlightControlWeb.Models
 {
     public class FlightPlanManager : IFlightPlanManager
     {
-        private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
+        private IDataAccess s;
+
+        public FlightPlanManager(IDataAccess dataAccess)
+        {
+            s = dataAccess;
+        }
 
         // Create the random letters in the id.
         private string CreateLetters()

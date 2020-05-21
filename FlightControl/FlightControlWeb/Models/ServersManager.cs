@@ -7,7 +7,12 @@ namespace FlightControlWeb.Models
 {
     public class ServersManager :  IServersManager
     {
-        private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
+        private IDataAccess s;
+
+        public ServersManager(IDataAccess dataAccess)
+        {
+            s = dataAccess;
+        }
 
         // Post a server to the data base.
         public void Post(Server server)

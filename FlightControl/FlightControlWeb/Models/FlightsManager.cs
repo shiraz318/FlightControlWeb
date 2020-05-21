@@ -16,7 +16,12 @@ namespace FlightControlWeb.Models
 
      public class FlightsManager : IFlightsManager
     {
+        private IDataAccess s;
 
+        public FlightsManager(IDataAccess dataAccess)
+        {
+            s = dataAccess;
+        }
         public struct FlightsFromServers
         {
             public FlightsFromServers(List<Flights> flights, bool isError)
@@ -29,7 +34,6 @@ namespace FlightControlWeb.Models
             public bool IsError { get; set; }
         }
 
-        private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
 
         // Delete a Flight from the data base by a given id.
         public bool DeleteFlight(string id)
@@ -73,8 +77,6 @@ namespace FlightControlWeb.Models
             //}
 
             List<Flights> flights = new List<Flights>();
-            try
-            {
                 var json = JArray.Parse(strResult);
                 int i = 0;
                 for (i = 0; i < json.Count; i++)
@@ -90,12 +92,6 @@ namespace FlightControlWeb.Models
                     s.InsertExtenalFlightId(server, flight.FlightId);
                     flights.Add(flight);
                 }
-            } catch(Exception e)
-            {
-                var json = JObject.Parse(strResult);
-                return null;
-            
-        }
             return flights;
         }
 
@@ -108,16 +104,8 @@ namespace FlightControlWeb.Models
             foreach (Server server in servers.ToList())
             {
                 List<Flights> flights1 = new List<Flights>();
-                try
-                {
-                    flights1 =  await GetRequestFromServer(server, time);
-                }
-                catch (Exception e)
-                {
-                    string m = e.Message;
-                    FlightsFromServers flightsFromServersInternal4 = new FlightsFromServers(flights, false);
-                    return flightsFromServersInternal4;
-                }
+                flights1 =  await GetRequestFromServer(server, time);
+                
                 // Server did not responsed.
                 if (flights1 == null)
                 {
@@ -142,33 +130,17 @@ namespace FlightControlWeb.Models
             List<Server> servers = new List<Server>();
             //List<FlightPlan> flightPlans = new List<FlightPlan>();
             // flightPlans = s.GetAllFlightPlans(isExternal);
-            try
+            if (isExternal)
             {
-                if (isExternal)
-                {
-                    servers.AddRange(s.GetServers());
-                }
-            } catch(Exception e)
-            {
-                string m = e.Message;
-                FlightsFromServers flightsFromServersInternal3 = new FlightsFromServers(flights, false);
-                return flightsFromServersInternal3;
+                servers.AddRange(s.GetServers());
             }
             flights =  s.GetFlights(time);
             FlightsFromServers flightsFromServersInternal = new FlightsFromServers(flights, false);
-            try
-            {
-                FlightsFromServers flightsFromServersExernal =  await GetFlightsFromServers(servers, time);
+            FlightsFromServers flightsFromServersExernal =  await GetFlightsFromServers(servers, time);
 
-                flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
-                flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;
-            }
-            catch (Exception e)
-            {
-                string m = e.Message;
-                FlightsFromServers flightsFromServersInternal4 = new FlightsFromServers(flights, false);
-                return flightsFromServersInternal4;
-            }
+            flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
+            flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;
+           
             return flightsFromServersInternal;
         }
     }

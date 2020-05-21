@@ -554,7 +554,7 @@ namespace FlightControlWeb
         Latitude,
         TimespanSecond
     }
-    public class SQLiteDb
+    public class DataAccess : IDataAccess
     {
         private int flightPlanPassangersE;
         private int flightPlanCompanyNameE;
@@ -568,15 +568,14 @@ namespace FlightControlWeb
         private int segmentLatitudeE;
         private int segmenTimespanSecondE;
 
-        private string _path;
+       // private string _path;
         private static SqliteConnection conn;
         private static Mutex mutex = new Mutex();
         private FlightGenerator flightGenerator = new FlightGenerator();
 
         // Constructor.
-        public SQLiteDb(string path)
+        public DataAccess()
         {
-            _path = path;
             // FlightPlan Enum.
             flightPlanPassangersE = (int)FlightPlanE.Passengers;
             flightPlanCompanyNameE = (int)FlightPlanE.CompanyName;
@@ -618,7 +617,7 @@ namespace FlightControlWeb
 
         public void Create()
         {
-            using (SQLiteConnection db = new SQLiteConnection(_path))
+            using (SQLiteConnection db = new SQLiteConnection(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite"))
             {
 
 
@@ -1022,6 +1021,7 @@ namespace FlightControlWeb
             createTable.ExecuteReader();
         }
 
+        // Delete all the tables if exists.
         public static void ResetTables ()
         {
             string com = "DROP Table ExternalFlightsTable";

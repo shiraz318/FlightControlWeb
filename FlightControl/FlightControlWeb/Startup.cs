@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using FlightControlWeb.Data;
+using FlightControlWeb.Models;
 
 namespace FlightControlWeb
 {
@@ -29,12 +30,12 @@ namespace FlightControlWeb
 
             services.AddRouting();
             services.AddControllers();
-            
-            services.AddDbContext<FlightControlWebContext>(options =>
-            options.UseSqlite(Configuration.GetConnectionString("FlightControlWebContext")));
 
-            //services.AddDbContext<FlightControlWebContext>(options =>
-            //        options.UseSqlServer(Configuration.GetConnectionString("FlightControlWebContext")));
+            services.AddScoped<IDataAccess, DataAccess>();
+            services.AddScoped<IFlightsManager, FlightsManager>();
+            services.AddScoped<IFlightPlanManager, FlightPlanManager>();
+            services.AddScoped<IServersManager, ServersManager>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +54,7 @@ namespace FlightControlWeb
             {
                 endpoints.MapControllers();
             });
-            SQLiteDb.InitializeDatabase();
+            DataAccess.InitializeDatabase();
         }
     }
 }
@@ -62,12 +63,6 @@ namespace FlightControlWeb
  * TODO:
  *
  * may be needs to uninstall the toolbox befor submit.
- * 
- * may be add an icon of X.
- * 
- * GetFlights implementaition - linear interpulattion.
- * 
- * display external flightPlan.
  * 
  * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
  *  
@@ -84,6 +79,8 @@ namespace FlightControlWeb
  * 
  * 
  * 
+ * check death cyrcle.
+ * unit tests.
  * 
  */
 
