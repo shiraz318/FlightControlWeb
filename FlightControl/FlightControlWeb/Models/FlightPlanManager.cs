@@ -104,7 +104,7 @@ namespace FlightControlWeb.Models
         }
 
         // Add a given FlightPlan into the data base.
-        public async Task<string> AddFlightPlan(FlightPlan fp)
+        public string AddFlightPlan(FlightPlan fp)
         {
             string id = SetId();
 
@@ -113,9 +113,9 @@ namespace FlightControlWeb.Models
         }
 
         // Get a FlightPlan by a given id.
-        public async Task<FlightPlan> GetFlightPlan(string id)
+        public FlightPlan GetFlightPlan(string id)
         {      
-            return await s.GetFlightPlan(id);
+            return s.GetFlightPlan(id);
         }
 
     }

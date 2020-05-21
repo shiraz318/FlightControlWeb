@@ -9,6 +9,6 @@ namespace FlightControlWeb.Models
     public interface IFlightsManager
     {
         Task<FlightsFromServers> GetAllFlights(string dataTime, bool isExternal);
-        Task<bool> DeleteFlight(string id);
+        bool DeleteFlight(string id);
     }
 }

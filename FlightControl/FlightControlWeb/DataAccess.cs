@@ -612,6 +612,8 @@ namespace FlightControlWeb
         {
             using (SQLiteConnection db = new SQLiteConnection(_path))
             {
+
+
             }
         }
 
@@ -700,7 +702,7 @@ namespace FlightControlWeb
         private Flights CreateFlight(object[] initialLocation, List<Object[]> segements, bool isExternal, DateTime time)
         {
             Flights flight = flightGenerator.CreateFlightFromGivenData(initialLocation, segements, isExternal, time);
-            object[] flightPlan = ReadFromTableSingleRow("SELECT * FROM FlightPlanTable WHERE Id = '" + flight.FlightId + "'");
+            object[] flightPlan =  ReadFromTableSingleRow("SELECT * FROM FlightPlanTable WHERE Id = '" + flight.FlightId + "'");
             flight.CompanyName = Convert.ToString(flightPlan[flightPlanCompanyNameE]);
             flight.Passengers = Convert.ToInt32(flightPlan[flightPlanPassangersE]);
             return flight;
@@ -800,7 +802,7 @@ namespace FlightControlWeb
         {
             List<Server> servers = new List<Server>();
 
-            foreach (object[] server in tempServers)
+            foreach (object[] server in tempServers.ToArray())
             {
                 Server serv = new Server();
                 serv.ServerId = Convert.ToString(server[0]);
@@ -812,11 +814,11 @@ namespace FlightControlWeb
 
         }
         // Get a Server by a given FlightId.
-        public async Task<Server> GetServerByIdOfFlight(string id)
+        public Server GetServerByIdOfFlight(string id)
         {
-            await conn.OpenAsync();
+            conn.Open();
             object[] tempServer = ReadFromTableSingleRow("SELECT * FROM ExternalFlightsTable WHERE FlightId = '" + id + "'");
-            await conn.CloseAsync();
+            conn.Close();
             Server server = new Server();
             if (tempServer[0] == null)
             {
@@ -826,25 +828,26 @@ namespace FlightControlWeb
             server.ServerURL = Convert.ToString(tempServer[1]);
             return server;
         }
-        // Get all servers from the data base.
-        public async Task<List<Server>> GetServers()
+        // Get all servers from the data base
+
+        public List<Server> GetServers()
         {
-            await conn.OpenAsync();
+             conn.Open();
             List<Server> servers = new List<Server>();
             List<object[]> tempServers = ReadMultipleLines("SELECT * FROM ServersTable");
             servers = CreateServers(tempServers);
-            await conn.CloseAsync();
+             conn.Close();
             return servers;
 
         }
         // Get a FlightPlan by a given id.
-        public async Task<FlightPlan> GetFlightPlan(string id)
+        public FlightPlan GetFlightPlan(string id)
         {
-            await conn.OpenAsync();
-            object[] basicData = ReadFromTableSingleRow("SELECT * FROM FlightPlanTable WHERE Id = '" + id + "'");
-            object[] initialLocation = ReadFromTableSingleRow("SELECT * FROM InitialLocationTable WHERE Id= '" + id + "'");
+             conn.Open();
+            object[] basicData =  ReadFromTableSingleRow("SELECT * FROM FlightPlanTable WHERE Id = '" + id + "'");
+            object[] initialLocation =  ReadFromTableSingleRow("SELECT * FROM InitialLocationTable WHERE Id= '" + id + "'");
             List<object[]> segments = ReadMultipleLines("SELECT * FROM SegmentsTable  WHERE FlightId= '" + id + "' ORDER BY Place ASC");
-            await conn.CloseAsync();
+             conn.Close();
             return setFlightPlan(basicData, initialLocation, segments);
         }
         //// Get all the fl
@@ -936,31 +939,56 @@ namespace FlightControlWeb
             }
         }
         // Insert a FlightPlan into the data base.
-        public async void InsertFlightPlan(FlightPlan flightPlan, string id)
+        public void InsertFlightPlan(FlightPlan flightPlan, string id)
         {
-            await conn.OpenAsync();
+            conn.Open();
             InsertToFlightPlanTable(flightPlan, id);
             InsertToInitialLocationTable(flightPlan, id);
             InsertToSegmentsTable(flightPlan, id);
-            await conn.CloseAsync();
+             conn.Close();
         }
         // Delete a Server with the given id.
-        public void DeleteServer(string id)
+        public bool DeleteServer(string id)
         {
+            if (!IsExist("ServersTable", "Id", id))
+            {
+                return false;
+            }
             conn.Open();
             SqliteCommand deleteCommand = new SqliteCommand();
             deleteCommand.Connection = conn;
             deleteCommand.CommandText = "DELETE FROM ServersTable WHERE Id='" + id + "'";
             deleteCommand.ExecuteReader();
             conn.Close();
+            return true;
         }
+
+        // Check if a given id is in the given tableNam in the given isColumn.
+        private bool IsExist(string tableName, string idColumn, string id)
+        {
+            conn.Open();
+            object[] returnValue = ReadFromTableSingleRow("SELECT * FROM " + tableName + " WHERE " + idColumn + " = '" + id + "'");
+            conn.Close();
+            // id was not found.
+            if (returnValue[0] == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
         // Delete a FlightPlan with the given id.
-        public async Task<bool> DeleteFlightPlan(string id)
+        public bool DeleteFlightPlan(string id)
         {
             int i = 0;
             bool returnVal = true;
-            await conn.OpenAsync();
 
+            if (!IsExist("FlightPlanTable", "Id", id))
+            {
+                return false;
+            }
+
+            conn.Open();
             string[] tables = { "FlightPlanTable", "InitialLocationTable", "SegmentsTable" };
 
             for (i = 0; i < tables.Length; i++)
@@ -970,7 +998,7 @@ namespace FlightControlWeb
                 deleteCommand.CommandText = "DELETE FROM " + tables[i] + " WHERE Id='" + id + "'";
                 deleteCommand.ExecuteReader();
             }
-            await conn.CloseAsync();
+            conn.Close();
             return returnVal;
         }
         // Create a FlightPlan object.
@@ -991,7 +1019,7 @@ namespace FlightControlWeb
             Location location = new Location(longitude, latitude, dateTime);
             flightPlan.InitialLocation = location;
 
-            foreach (object[] segment in segments)
+            foreach (object[] segment in segments.ToArray())
             {
                 double longitudeS = Convert.ToDouble(segment[segmentLongitudeE]);
                 double latitudeS = Convert.ToDouble(segment[segmentLatitudeE]);
@@ -1011,12 +1039,12 @@ namespace FlightControlWeb
         }
 
         // Initialize the data base connection and tables.
-        public async static void InitializeDatabase()
+        public static void InitializeDatabase()
         {
 
             string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
             conn = new SqliteConnection(@"Data Source = " + dbPath);
-            await conn.OpenAsync ();
+            conn.Open();
 
 
             string com = "DROP Table ExternalFlightsTable";
@@ -1043,7 +1071,7 @@ namespace FlightControlWeb
             CreateTable("InitialLocationTable", "(Id TEXT PRIMARY KEY, Longitude REAL, Latitude REAL, DateTime TEXT)");
             CreateTable("FlightPlanTable", "(Id TEXT PRIMARY KEY, Passengers INTEGER, CompanyName TEXT)");
             CreateTable("ExternalFlightsTable", "(Id TEXT, Url TEXT, FlightId TEXT PRIMARY KEY)");
-            await conn.CloseAsync();
+            conn.Close();
         }
     }
 }

@@ -92,15 +92,16 @@ function uploadFile(file) {
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         xhr.addEventListener("readystatechange", function (e) {
-            if (xhr.readyState === 4 && xhr.status === 201) {
+            if (xhr.readyState === 4 && (xhr.status === 201 || xhr.status === 200)) {
                 //NewRow(reader.result);
                 // Done. Inform the user
 
                 console.log("GOOD");
             }
-            else if (xhr.readyState === 4 && xhr.status !== 201) {
+            else if (xhr.readyState === 4 && xhr.status !== 201 && xhr.status !== 200) {
                 // Error. Inform the user
                 console.log(xhr.status);
+                Alert("Oops! Somethis Is Wrong. Json File Is Not Valid");
             }
         });
 

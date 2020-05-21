@@ -64,14 +64,11 @@ function DisplayPath(id) {
 
 // Set a path.
 function SetPath(id, message) {
-
     console.log("message: ");
     console.log(message);
-    // Send a get request that returns a FlightPlan.
-    
+    // Send a get request that returns a FlightPlan.  
     $.getJSON(message, (data) => {
-        
-        console.log("data: " );
+        console.log("data: ");
         console.log(data);
         let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
         let flightPlanCoordinates = [startLoc];
@@ -88,7 +85,13 @@ function SetPath(id, message) {
             strokeWeight: 2
         });
         allFlightsPath[id] = flightPath;
-    });
+    }).fail(function (jqXHR) {
+        if (jqXHR.status == 404) {
+            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan. Status: 404 Not Found");
+        } else {
+            Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
+        }
+    }); 
 }
 
 // Create a path for a flight by it's id.
@@ -101,6 +104,12 @@ function CreatePath(id, isExternal) {
             console.log(server.ServerURL);
             let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
             SetPath(id, message);
+        }).fail(function (jqXHR) {
+            if (jqXHR.status == 404) {
+                Alert("Oops! Something Is Wrong. Couldn't Find The Requested Server. Status: 404 Not Found");
+            } else {
+                Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id + ". Status: " + jqXHR.status);
+            }
         });
     }
     else {

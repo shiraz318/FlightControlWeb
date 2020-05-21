@@ -8,8 +8,8 @@ namespace FlightControlWeb.Models
     public interface IServersManager
     {
         void Post(Server server);
-        void Delete(string id);
-        Task<List<Server>> Get();
-        Task<Server> GetServerByIdOfFlight(string id);
+        bool Delete(string id);
+        List<Server> Get();
+        Server GetServerByIdOfFlight(string id);
     }
 }

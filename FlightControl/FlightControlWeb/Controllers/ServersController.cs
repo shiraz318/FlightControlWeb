@@ -16,12 +16,12 @@ namespace FlightControlWeb.Controllers
 
         // GET: api/Servers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Server>>> Get()
+        public ActionResult<IEnumerable<Server>> Get()
         {
             try
             {
                 List<Server> servers = new List<Server>();
-                servers = await manager.Get();
+                servers =  manager.Get();
                 return Ok(servers);
 
             }catch(Exception e)
@@ -32,11 +32,11 @@ namespace FlightControlWeb.Controllers
 
         // GET: api/Servers/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Server>> GetUrl(string id)
+        public ActionResult<Server> GetUrl(string id)
         {
             try
             {
-                Server server = await manager.GetServerByIdOfFlight(id);
+                Server server = manager.GetServerByIdOfFlight(id);
                 if (server != null)
                 {
                     return Ok(server);
@@ -58,9 +58,13 @@ namespace FlightControlWeb.Controllers
 
         // DELETE: api/servers/{id}
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public ActionResult<bool> Delete(string id)
         {
-            manager.Delete(id);
+           if (manager.Delete(id))
+            {
+                return Ok(id);
+            }
+            return NotFound(id);
         }
     }
 }

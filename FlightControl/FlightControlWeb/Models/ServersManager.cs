@@ -16,21 +16,21 @@ namespace FlightControlWeb.Models
         }
 
         // Delete a server from the data base by a given id.
-        public void Delete(string id)
+        public bool Delete(string id)
         {
-            s.DeleteServer(id);
+            return s.DeleteServer(id);
         }
 
         // Get all the servers in the data base.
-        public async Task<List<Server>> Get()
+        public List<Server> Get()
         {
-            return await s.GetServers();
+            return s.GetServers();
         }
 
         // Get a server by it's given Flght id.
-        public async Task<Server> GetServerByIdOfFlight(string id)
+        public Server GetServerByIdOfFlight(string id)
         {
-            return await s.GetServerByIdOfFlight(id);
+            return  s.GetServerByIdOfFlight(id);
         }
     }
 }

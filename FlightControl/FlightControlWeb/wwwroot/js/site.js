@@ -120,8 +120,6 @@ function Alert(message) {
 // Handeling X button click.
 function DeleteFlight(id, self) {
 
-    Alert("this is an error message. think about what you did");
-
     // If the given row is highlighted.
     if (self.parent().hasClass(ColorRow)) {
         self.parent().removeClass(ColorRow);
@@ -138,7 +136,7 @@ function DeleteFlight(id, self) {
             }
         }).fail(function (jqXHR) {
             if (jqXHR.status == 404) {
-                Alert("Oops! Something Is Wrong. Couldn't Find The Requested Flight. Status: 404 Not Found");
+                Alert("Oops! Something Is Wrong. Couldn't Delete The Requested Flight. Status: 404 Not Found");
             } else {
                 Alert("Oops! Something Is Wrong. Couldn't Delete The Flight With Id = " + id + ". Status: " + jqXHR.status);
             }

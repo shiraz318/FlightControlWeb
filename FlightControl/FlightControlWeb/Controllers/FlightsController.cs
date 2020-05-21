@@ -17,11 +17,11 @@ namespace FlightControlWeb.Controllers
 
         // DELETE /api/Flights/{id}.
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
+        public ActionResult Delete(string id)
         {
             try
             {
-                if (await manager.DeleteFlight(id))
+                if (manager.DeleteFlight(id))
                 {
                     return Ok();
                 }

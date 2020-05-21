@@ -80,6 +80,11 @@ namespace FlightControlWeb
  *
  * invalid json file - no segmnents, and other things.
  * 
+ * server/servers not active - we set timeout to check if resposed in time but what should we do in this case.
+ * 
+ * 
+ * 
+ * 
  */
 
 

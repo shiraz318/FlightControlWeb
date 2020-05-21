@@ -36,12 +36,12 @@ namespace FlightControlWeb.Controllers
 
         // GET /api/FlightPlan/{id}/.
         [HttpGet("{id}", Name = "GetItem")]
-        public async Task<ActionResult> GetItem(string id)
+        public ActionResult GetItem(string id)
         {
             try
             {
                 FlightPlan fp;
-                if ((fp = await manager.GetFlightPlan(id)) != null)
+                if ((fp = manager.GetFlightPlan(id)) != null)
                 {
                     return Ok(fp);
                 }
@@ -58,11 +58,11 @@ namespace FlightControlWeb.Controllers
 
         // POST /api/FlightPlan.
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] FlightPlan flightPlan)
+        public ActionResult Post([FromBody] FlightPlan flightPlan)
         {
             try
             {
-                string id = await manager.AddFlightPlan(flightPlan);
+                string id =  manager.AddFlightPlan(flightPlan);
                 // Status 201 - created.
                 //return CreatedAtAction(actionName: "GetItem", flightPlan);
                 return CreatedAtAction(actionName: "GetItem", new { id = id }, flightPlan);

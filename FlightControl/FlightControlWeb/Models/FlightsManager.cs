@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static FlightControlWeb.Models.FlightsManager;
 
 namespace FlightControlWeb.Models
 {
@@ -31,9 +32,9 @@ namespace FlightControlWeb.Models
         private SQLiteDb s = new SQLiteDb(AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite");
 
         // Delete a Flight from the data base by a given id.
-        public async Task<bool> DeleteFlight(string id)
+        public bool DeleteFlight(string id)
         {
-            return await s.DeleteFlightPlan(id);
+            return s.DeleteFlightPlan(id);
         }
 
         // Get a flights from an external server relative to a given time.
@@ -134,9 +135,9 @@ namespace FlightControlWeb.Models
             // flightPlans = s.GetAllFlightPlans(isExternal);
             if (isExternal)
             {
-                servers = await s.GetServers();
+                servers = s.GetServers();
             }
-            flights = s.GetFlights(time);
+            flights =  s.GetFlights(time);
             FlightsFromServers flightsFromServersInternal = new FlightsFromServers(flights, false);
             FlightsFromServers flightsFromServersExernal = await GetFlightsFromServers(servers, time);
 
