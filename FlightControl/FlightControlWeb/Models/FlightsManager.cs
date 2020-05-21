@@ -50,12 +50,13 @@ namespace FlightControlWeb.Models
             client.Timeout = timeout;
             try
             {
-                 strResult = await client.GetStringAsync(command);
-            } catch(Exception t)
+                strResult = await client.GetStringAsync(command);
+            }
+            catch (Exception t)
             {
                 return null;
             }
-            
+
             //Uri myUri = new Uri(command, UriKind.Absolute);
 
             //WebRequest request = WebRequest.Create(command);
@@ -63,7 +64,6 @@ namespace FlightControlWeb.Models
             //HttpWebResponse response = null;
             //response = (HttpWebResponse)request.GetResponse();
 
-            //string strResult = null;
 
             //using (Stream stream = response.GetResponseStream())
             //{
@@ -71,7 +71,7 @@ namespace FlightControlWeb.Models
             //    strResult = streamReader.ReadToEnd();
             //    streamReader.Close();
             //}
-            
+
             List<Flights> flights = new List<Flights>();
             try
             {
@@ -108,7 +108,16 @@ namespace FlightControlWeb.Models
             foreach (Server server in servers.ToList())
             {
                 List<Flights> flights1 = new List<Flights>();
-                flights1 = await GetRequestFromServer(server, time);
+                try
+                {
+                    flights1 =  await GetRequestFromServer(server, time);
+                }
+                catch (Exception e)
+                {
+                    string m = e.Message;
+                    FlightsFromServers flightsFromServersInternal4 = new FlightsFromServers(flights, false);
+                    return flightsFromServersInternal4;
+                }
                 // Server did not responsed.
                 if (flights1 == null)
                 {
@@ -133,17 +142,33 @@ namespace FlightControlWeb.Models
             List<Server> servers = new List<Server>();
             //List<FlightPlan> flightPlans = new List<FlightPlan>();
             // flightPlans = s.GetAllFlightPlans(isExternal);
-            if (isExternal)
+            try
             {
-                servers = s.GetServers();
+                if (isExternal)
+                {
+                    servers.AddRange(s.GetServers());
+                }
+            } catch(Exception e)
+            {
+                string m = e.Message;
+                FlightsFromServers flightsFromServersInternal3 = new FlightsFromServers(flights, false);
+                return flightsFromServersInternal3;
             }
             flights =  s.GetFlights(time);
             FlightsFromServers flightsFromServersInternal = new FlightsFromServers(flights, false);
-            FlightsFromServers flightsFromServersExernal = await GetFlightsFromServers(servers, time);
+            try
+            {
+                FlightsFromServers flightsFromServersExernal =  await GetFlightsFromServers(servers, time);
 
-            flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
-            flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;
-
+                flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
+                flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;
+            }
+            catch (Exception e)
+            {
+                string m = e.Message;
+                FlightsFromServers flightsFromServersInternal4 = new FlightsFromServers(flights, false);
+                return flightsFromServersInternal4;
+            }
             return flightsFromServersInternal;
         }
     }

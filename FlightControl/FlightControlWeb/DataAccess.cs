@@ -526,6 +526,8 @@ using System.Collections.Generic;
 using FlightControlWeb.Models;
 using static FlightControlWeb.Models.FlightPlan;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace FlightControlWeb
 {
@@ -567,7 +569,8 @@ namespace FlightControlWeb
         private int segmenTimespanSecondE;
 
         private string _path;
-        static private SqliteConnection conn;
+        private static SqliteConnection conn;
+        private static Mutex mutex = new Mutex();
         private FlightGenerator flightGenerator = new FlightGenerator();
 
         // Constructor.
@@ -593,6 +596,8 @@ namespace FlightControlWeb
         // Insert a Server and FlightId to the ExternalFlightsTable.
         public void InsertExtenalFlightId(Server server, string id)
         {
+            mutex.WaitOne();
+
             conn.Open();
             SqliteCommand insertCommand = new SqliteCommand();
             insertCommand.Connection = conn;
@@ -606,6 +611,9 @@ namespace FlightControlWeb
                 insertCommand.ExecuteReader();
             }
             catch { }
+            conn.Close();
+            mutex.ReleaseMutex();
+
         }
 
         public void Create()
@@ -621,18 +629,17 @@ namespace FlightControlWeb
         // Read a single row from the data base.
         private object[] ReadFromTableSingleRow(string commendText)
         {
-
-            SqliteCommand selectCommand = new SqliteCommand();
-            selectCommand.Connection = conn;
-            selectCommand.CommandText = commendText;
-            SqliteDataReader query = selectCommand.ExecuteReader();
-            object[] row = new object[query.FieldCount];
-            if (query.Read())
-            {
-                query.GetValues(row);
-            }
-            query.Close();
-            return row;
+             SqliteCommand selectCommand = new SqliteCommand();
+             selectCommand.Connection = conn;
+             selectCommand.CommandText = commendText;
+             SqliteDataReader query = selectCommand.ExecuteReader();
+             object[] row = new object[query.FieldCount];
+             if (query.Read())
+             {
+                  query.GetValues(row);
+             }
+             query.Close();
+             return row;
         }
         // Read multiple rows from the data base.
         private List<object[]> ReadMultipleLines(string commendText)
@@ -654,21 +661,6 @@ namespace FlightControlWeb
             return rows;
 
         }
-
-        //public void GetSegmentsCount(SqliteConnection conn, string id)
-        //{
-
-        //    SqliteCommand selectCommand = new SqliteCommand();
-        //    selectCommand.Connection = conn;
-
-        //    selectCommand.CommandText = "SELECT MAX(Place) FROM SegmentsTable WHERE FlightId = '" + id + "'";
-
-        //    SqliteDataReader query = selectCommand.ExecuteReader();
-        //    if (query.Read())
-        //    {
-        //        segmentsCount = query.GetInt32(0);
-        //    }
-        //}
 
         // Check if a Flight started already.
         private bool NotStarted(object[] initialLocation, DateTime requiredTime)
@@ -708,16 +700,11 @@ namespace FlightControlWeb
             return flight;
         }
 
-        //public List<Flights> GetExternal(DateTime time)
-        //{
-        //    List<Flights> flights = new List<Flights>();
-        //    return flights;
-        //}
-
         // Get all internal Flights from the data base.
         public List<Flights> GetFlights(DateTime time)
         {
             List<Flights> flights = new List<Flights>();
+            mutex.WaitOne();
 
             conn.Open();
             // Get all Flights's initialLocation.
@@ -735,8 +722,11 @@ namespace FlightControlWeb
             }
             query.Close();
             conn.Close();
+            mutex.ReleaseMutex();
+
             return flights;
         }
+
         // Read from the data bade all initial locations.
         private SqliteDataReader GetAllInitialLocationsQuery()
         {
@@ -746,6 +736,7 @@ namespace FlightControlWeb
             SqliteDataReader query = selectCommand.ExecuteReader();
             return query;
         }
+
         // Cheack if a flight is currently active.
         private Flights LocationIterationCurrentFlights(DateTime time, SqliteDataReader query)
         {
@@ -774,29 +765,6 @@ namespace FlightControlWeb
             return CreateFlight(location, sgements, false, time);
         }
 
-        //public List<Flights> GetInternalFlights(DateTime time)
-        //{
-        //    List<Flights> flights = new List<Flights>();
-
-        //    conn.Open();
-        //    // Get all Flights's initialLocation.
-        //    SqliteDataReader query = GetAllInitialLocationsQuery();
-
-        //    // For each location.
-        //    while (query.Read())
-        //    {
-        //        // Checks if the Flight of the current location is currently flying.
-        //        Flights flight1 = LocationIterationCurrentFlights(time, query);
-        //        if (flight1 != null)
-        //        {
-        //            flights.Add(flight1);
-        //        }
-        //    }
-        //    query.Close();
-        //    conn.Close();
-        //    return flights;
-        //}
-
         // Create Servers Collection.
         private List<Server> CreateServers(List<object[]> tempServers)
         {
@@ -816,9 +784,14 @@ namespace FlightControlWeb
         // Get a Server by a given FlightId.
         public Server GetServerByIdOfFlight(string id)
         {
+            mutex.WaitOne();
+
             conn.Open();
             object[] tempServer = ReadFromTableSingleRow("SELECT * FROM ExternalFlightsTable WHERE FlightId = '" + id + "'");
+
             conn.Close();
+            mutex.ReleaseMutex();
+
             Server server = new Server();
             if (tempServer[0] == null)
             {
@@ -826,47 +799,42 @@ namespace FlightControlWeb
             }
             server.ServerId = Convert.ToString(tempServer[0]);
             server.ServerURL = Convert.ToString(tempServer[1]);
+            
             return server;
         }
-        // Get all servers from the data base
 
+        // Get all servers from the data base
         public List<Server> GetServers()
         {
-             conn.Open();
+            mutex.WaitOne();
+            conn.Open();
             List<Server> servers = new List<Server>();
             List<object[]> tempServers = ReadMultipleLines("SELECT * FROM ServersTable");
+            conn.Close();
+            mutex.ReleaseMutex();
             servers = CreateServers(tempServers);
-             conn.Close();
+
             return servers;
 
         }
         // Get a FlightPlan by a given id.
         public FlightPlan GetFlightPlan(string id)
         {
-             conn.Open();
+            mutex.WaitOne();
+            conn.Open();
             object[] basicData =  ReadFromTableSingleRow("SELECT * FROM FlightPlanTable WHERE Id = '" + id + "'");
             object[] initialLocation =  ReadFromTableSingleRow("SELECT * FROM InitialLocationTable WHERE Id= '" + id + "'");
             List<object[]> segments = ReadMultipleLines("SELECT * FROM SegmentsTable  WHERE FlightId= '" + id + "' ORDER BY Place ASC");
-             conn.Close();
+            conn.Close();
+            mutex.ReleaseMutex();
+
             return setFlightPlan(basicData, initialLocation, segments);
         }
-        //// Get all the fl
-        //public List<FlightPlan> GetAllFlightPlans()
-        //{
-        //    SqliteConnection conn = OpenConnection();
-        //    List<FlightPlan> list = new List<FlightPlan>();
-        //    List<object[]> ids = ReadMultipleLines(conn, "SELECT Id FROM FlightPlanTable");
-        //    foreach (object[] id in ids)
-        //    {
-        //        list.Add(GetFlightPlan(Convert.ToString(id[0])));
-        //    }
-        //    conn.Close();
-        //    return list;
-        //}
 
         // Insert the given Server into the ServersTable.
         public void InsertServer(Server server)
         {
+            mutex.WaitOne();
             conn.Open();
             SqliteCommand insertCommand = new SqliteCommand();
             insertCommand.Connection = conn;
@@ -881,6 +849,8 @@ namespace FlightControlWeb
             catch { }
 
             conn.Close();
+            mutex.ReleaseMutex();
+
         }
         // Insert the given FlightPlan into the FlightPlanTable.
         private void InsertToFlightPlanTable(FlightPlan flightPlan, string id)
@@ -941,11 +911,15 @@ namespace FlightControlWeb
         // Insert a FlightPlan into the data base.
         public void InsertFlightPlan(FlightPlan flightPlan, string id)
         {
+            mutex.WaitOne();
+
             conn.Open();
             InsertToFlightPlanTable(flightPlan, id);
             InsertToInitialLocationTable(flightPlan, id);
             InsertToSegmentsTable(flightPlan, id);
-             conn.Close();
+            conn.Close();
+            mutex.ReleaseMutex();
+
         }
         // Delete a Server with the given id.
         public bool DeleteServer(string id)
@@ -954,21 +928,28 @@ namespace FlightControlWeb
             {
                 return false;
             }
+            mutex.WaitOne();
+
             conn.Open();
             SqliteCommand deleteCommand = new SqliteCommand();
             deleteCommand.Connection = conn;
             deleteCommand.CommandText = "DELETE FROM ServersTable WHERE Id='" + id + "'";
             deleteCommand.ExecuteReader();
             conn.Close();
+            mutex.ReleaseMutex();
+
             return true;
         }
 
         // Check if a given id is in the given tableNam in the given isColumn.
         private bool IsExist(string tableName, string idColumn, string id)
         {
+            mutex.WaitOne();
             conn.Open();
             object[] returnValue = ReadFromTableSingleRow("SELECT * FROM " + tableName + " WHERE " + idColumn + " = '" + id + "'");
             conn.Close();
+            mutex.ReleaseMutex();
+
             // id was not found.
             if (returnValue[0] == null)
             {
@@ -987,7 +968,7 @@ namespace FlightControlWeb
             {
                 return false;
             }
-
+            mutex.WaitOne();
             conn.Open();
             string[] tables = { "FlightPlanTable", "InitialLocationTable", "SegmentsTable" };
 
@@ -999,8 +980,10 @@ namespace FlightControlWeb
                 deleteCommand.ExecuteReader();
             }
             conn.Close();
+            mutex.ReleaseMutex();
             return returnVal;
         }
+
         // Create a FlightPlan object.
         private FlightPlan setFlightPlan(object[] basicData, object[] initialLocation, List<object[]> segments)
         {
@@ -1029,6 +1012,7 @@ namespace FlightControlWeb
             }
             return flightPlan;
         }
+
         // Create a table.
         public static void CreateTable(string nameOfTable, string columns)
         {
@@ -1038,15 +1022,8 @@ namespace FlightControlWeb
             createTable.ExecuteReader();
         }
 
-        // Initialize the data base connection and tables.
-        public static void InitializeDatabase()
+        public static void ResetTables ()
         {
-
-            string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
-            conn = new SqliteConnection(@"Data Source = " + dbPath);
-            conn.Open();
-
-
             string com = "DROP Table ExternalFlightsTable";
             SqliteCommand delete = new SqliteCommand(com, conn);
             delete.ExecuteReader();
@@ -1063,6 +1040,18 @@ namespace FlightControlWeb
             delete = new SqliteCommand(com, conn);
             delete.ExecuteReader();
 
+        }
+
+        // Initialize the data base connection and tables.
+        public static void InitializeDatabase()
+        {
+            string dbPath = AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite";
+            conn = new SqliteConnection(@"Data Source = " + dbPath);
+            mutex = new Mutex();
+            mutex.WaitOne();
+            conn.Open();
+
+            ResetTables();
 
             CreateTable("ServersTable", "(Id TEXT PRIMARY KEY, Url TEXT)");
             CreateTable("SegmentsTable", "(Id TEXT PRIMARY KEY, FlightId TEXT," +
@@ -1072,6 +1061,7 @@ namespace FlightControlWeb
             CreateTable("FlightPlanTable", "(Id TEXT PRIMARY KEY, Passengers INTEGER, CompanyName TEXT)");
             CreateTable("ExternalFlightsTable", "(Id TEXT, Url TEXT, FlightId TEXT PRIMARY KEY)");
             conn.Close();
+            mutex.ReleaseMutex();
         }
     }
 }

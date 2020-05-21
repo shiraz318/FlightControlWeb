@@ -6,6 +6,20 @@ let allFlightsMarker = {};
 const regularImg = "../images/small_black.png";
 const clickedImg = "../images/blue_light.png";
 
+// Initialize the map element.
+function initMap() {
+    // Map options.
+    let options = {
+        zoom: 1,
+        center: { lat: 0.00, lng: -71.0589 }
+    };
+    // New map.
+    map = new google.maps.Map(document.getElementById("map"), options);
+    google.maps.event.addListener(map, "click", ResetFlights);
+    google.maps.event.addListener(map, "click", ResetRowsColorsOnReset);
+    google.maps.event.addListener(map, "click", ResetFlightDetails);
+}
+
 // Reset a row color.
 function ResetRowsColor(name){
     let listItems = document.querySelectorAll(name);
@@ -29,20 +43,6 @@ function ResetFlights() {
 function ResetRowsColorsOnReset() {
     ResetRowsColor("#my-flights-list > li");
     ResetRowsColor("#external-flights-list > li");
-}
-
-// Initialize the map element.
-function initMap() {
-    // Map options.
-    let options = {
-        zoom: 1,
-        center: { lat: 0.00, lng: -71.0589 }
-    };
-    // New map.
-    map = new google.maps.Map(document.getElementById("map"), options);
-    google.maps.event.addListener(map, "click", ResetFlights);
-    google.maps.event.addListener(map, "click", ResetRowsColorsOnReset);
-    google.maps.event.addListener(map, "click", ResetFlightDetails);
 }
 
 // Display the path of a flight given it's id.

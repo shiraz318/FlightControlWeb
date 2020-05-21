@@ -48,7 +48,7 @@ namespace FlightControlWeb.Models
             string content = await client.GetStringAsync(command);
             return content;
 
-           
+
             //Uri myUri = new Uri(command, UriKind.Absolute);
 
             //WebRequest request = WebRequest.Create(command);

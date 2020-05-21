@@ -46,7 +46,7 @@ namespace FlightControlWeb.Controllers
                 FlightsFromServers flightsFromServers = new FlightsFromServers(flights, false);
                 if (s.Contains("sync_all"))
                 {
-                    flightsFromServers = await manager.GetAllFlights(dateTime, true);
+                    flightsFromServers =  await manager.GetAllFlights(dateTime, true);
                 }
                 else
                 {
