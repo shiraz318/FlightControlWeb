@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using FlightControlWeb.Data;
 using FlightControlWeb.Models;
 
 namespace FlightControlWeb
@@ -78,9 +77,6 @@ namespace FlightControlWeb
  * server/servers not active - we set timeout to check if resposed in time but what should we do in this case.
  * 
  * 
- * 
- * check death cyrcle.
- * unit tests.
  * 
  */
 

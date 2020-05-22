@@ -1,5 +1,5 @@
 ﻿
-setInterval(DisplayFlights, 2000);
+setInterval(DisplayFlights,2000);
 
 // Global variables.
 let isOnTime = {};
@@ -249,7 +249,7 @@ function DisplayExternal(flight) {
         DisplayPath(flight.flight_id);
     });
     // Add a new marker on the map.
-    AddMarker(flight);
+     AddMarker(flight);
 }
 
 // Display a given flight in the internal flight list.
@@ -297,7 +297,7 @@ function RowInMyFlightList(flight) {
         if (flight.is_external) {
             DisplayExternal(flight);
         } else {
-            DisplayInternal(flight);
+           DisplayInternal(flight);
         }        
     }
     // The given flight is already in one of the lists.

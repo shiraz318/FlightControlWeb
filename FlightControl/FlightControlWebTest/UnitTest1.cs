@@ -13,11 +13,9 @@ namespace FlightControlWebTest
         public void TestMethod1()
         {
         }
-
         [TestMethod]
         public void TestGetFlightPlanController()
         {
-            string id = null;
             // Arrange
             
             // Fake.
@@ -31,14 +29,14 @@ namespace FlightControlWebTest
 
             // Post.
             FlightPlan flightPlan = FakeFlightPlanObject();
-            string id1 = flightPlanController.Post(flightPlan).Value;
+            string id = flightPlanController.Post(flightPlan).Value;
             // Set return value of DataAccess.
 
             // Act
-            FlightPlan testesFlightPlan = flightPlanController.GetItem(id1).Value;
+            FlightPlan testesFlightPlan = flightPlanController.GetItem(id).Value;
 
             // Assert
-            Assert.AreEqual(testesFlightPlan,fakeFlightPlanController.GetItem(id1));
+            Assert.AreEqual(testesFlightPlan,fakeFlightPlanController.GetItem(id));
         }
 
 

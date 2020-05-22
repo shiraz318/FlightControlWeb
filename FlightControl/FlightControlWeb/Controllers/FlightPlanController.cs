@@ -43,19 +43,19 @@ namespace FlightControlWeb.Controllers
         [HttpGet("{id}", Name = "GetItem")]
         public ActionResult<FlightPlan> GetItem(string id)
         {
-            //try
-            //{
+            try
+            {
                 FlightPlan fp;
                 if ((fp = manager.GetFlightPlan(id)) != null)
                 {
                     return Ok(fp);
                 }
                 return NotFound(id);
-            //}
-            //catch (Exception e)
-            //{
-            //    return NotFound(e.Message);
-            //}
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
         }
             
 

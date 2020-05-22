@@ -135,21 +135,6 @@ body {
     width: 100%;
 }
 
-/*.drop-wrapper {
-    position: absolute;
-    height: 250px;
-    width: 100%;
-    margin-top: 100px;
-    top: -305px;
-    left: 0;
-    grid-area: 1 / 1 / 12 / 12;
-    visibility:hidden;
-    z-index: 1;
-}*/
-
-/*.my-flights-list {
-    visibility: visible;
-}*/
 .my-flights-list-wrapper {
     position: absolute;
     height: 250px;

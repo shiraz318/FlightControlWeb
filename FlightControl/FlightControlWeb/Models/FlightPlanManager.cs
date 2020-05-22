@@ -47,11 +47,18 @@ namespace FlightControlWeb.Models
         // Send get request to a given url.
         private async Task<string> SendRequest(string id, string url)
         {
-            string command = url + "/api/FlightPlan/" + id;
-            using var client = new HttpClient();
+            try
+            {
+                string command = url + "/api/FlightPlan/" + id;
+                using var client = new HttpClient();
 
-            string content = await client.GetStringAsync(command);
-            return content;
+                string content = await client.GetStringAsync(command);
+                return content;
+            }catch(Exception t)
+            {
+                string g = t.Message;
+                return null;
+            }
 
 
             //Uri myUri = new Uri(command, UriKind.Absolute);

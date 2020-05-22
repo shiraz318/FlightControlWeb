@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -48,7 +49,6 @@ namespace FlightControlWeb.Models
             string url = server.ServerURL;
             string command = url + "/api/Flights?relative_to=" + date;
             using var client = new HttpClient();
-
             TimeSpan timeout = new TimeSpan(0,0,0,20);
             string strResult;
             client.Timeout = timeout;
@@ -58,6 +58,7 @@ namespace FlightControlWeb.Models
             }
             catch (Exception t)
             {
+                string message = t.Message;
                 return null;
             }
 
@@ -75,8 +76,9 @@ namespace FlightControlWeb.Models
             //    strResult = streamReader.ReadToEnd();
             //    streamReader.Close();
             //}
-
-            List<Flights> flights = new List<Flights>();
+            try
+            {
+                List<Flights> flights = new List<Flights>();
                 var json = JArray.Parse(strResult);
                 int i = 0;
                 for (i = 0; i < json.Count; i++)
@@ -92,7 +94,12 @@ namespace FlightControlWeb.Models
                     s.InsertExtenalFlightId(server, flight.FlightId);
                     flights.Add(flight);
                 }
-            return flights;
+                return flights;
+            }catch(Exception t)
+            {
+                List<Flights> flights1 = new List<Flights>();
+                return flights1;
+            }
         }
 
         // Get flights from all the servers in the data base.

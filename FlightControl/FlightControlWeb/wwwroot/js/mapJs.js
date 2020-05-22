@@ -94,9 +94,9 @@ function SetPath(id, message) {
     }); 
 }
 
+
 // Create a path for a flight by it's id.
 function CreatePath(id, isExternal) {
-
     if (isExternal) {
         // Get the server who own the flight.
         $.getJSON("/api/servers/" + id, (server) => {
@@ -127,7 +127,6 @@ function AddMarker(flight) {
     });
     // Add to the markers dictionary.
     allFlightsMarker[flight.flight_id] = marker;
-
     CreatePath(flight.flight_id, flight.is_external);
 
     marker.addListener("click", function () {

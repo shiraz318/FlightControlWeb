@@ -43,8 +43,8 @@ namespace FlightControlWeb.Controllers
 
         public async Task<ActionResult<Flights>> Get([FromQuery] string relative_to)
         {
-            //try
-            //{
+            try
+            {
                 string dateTime = relative_to;
                 string s = Request.QueryString.Value;
                 List<Flights> flights = new List<Flights>();
@@ -63,11 +63,11 @@ namespace FlightControlWeb.Controllers
                     
                 }
                 return Ok(flightsFromServers.FlightsList);
-            //}
-            //catch (Exception e)
-            //{
-            //    return NotFound(e.Message);
-            //}
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
         }
     }
 }
