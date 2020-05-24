@@ -76,6 +76,13 @@ namespace FlightControlWeb
  * 
  * server/servers not active - we set timeout to check if resposed in time but what should we do in this case.
  * 
+ * delete try catchs.
+ * 
+ * lines length not pass 100.
+ * 
+ * menengful names.
+ * 
+ * 
  * 
  * 
  */

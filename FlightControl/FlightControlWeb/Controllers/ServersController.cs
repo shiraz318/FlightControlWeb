@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
@@ -23,34 +24,22 @@ namespace FlightControlWeb.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Server>> Get()
         {
-            try
-            {
-                List<Server> servers = new List<Server>();
-                servers =  manager.Get();
-                return Ok(servers);
-
-            }catch(Exception e)
-            {
-                return NotFound(e.Message);
-            }
+            List<Server> servers = new List<Server>();
+            servers =  manager.Get();
+            return Ok(servers);
         }
 
         // GET: api/Servers/{id}
         [HttpGet("{id}")]
         public ActionResult<Server> GetUrl(string id)
         {
-            //try
-            //{
-                Server server = manager.GetServerByIdOfFlight(id);
-                if (server != null)
-                {
-                    return Ok(server);
-                }
-                return NotFound(id);
-            //} catch(Exception e)
-            //{
-            //    return NotFound(e.Message);
-            //}
+            Server server = manager.GetServerByIdOfFlight(id);
+
+            if (server != null)
+            {
+                return Ok(server);
+            }
+            return NotFound(id);
         }
 
 

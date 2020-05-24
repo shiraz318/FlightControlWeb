@@ -32,16 +32,17 @@ namespace FlightControlWeb.Models
         }
 
         // Calculate the number of the current segment.
-        private int CalculateCurrentSegment(out DateTime soFarDuration, List<Object[]> segements, DateTime initialTime, DateTime requierdTime)
+        private int CalculateCurrentSegment(out DateTime soFarDuration, List<Object[]> segements,
+            DateTime initialTime, DateTime requierdTime)
         {
             soFarDuration = initialTime;
             DateTime soFar = initialTime;
             int count = 0;
             foreach (object[] seg in segements)
             {
-                TimeSpan duration = new TimeSpan(0, 0, 0, Convert.ToInt32(seg[segmenTimespanSecondE]));
+                TimeSpan duration = new TimeSpan(0, 0, 0,
+                    Convert.ToInt32(seg[segmenTimespanSecondE]));
                 soFar = soFar.AddSeconds(Convert.ToDouble(seg[segmenTimespanSecondE]));
-                //soFar.Add(duration);
                 int result = DateTime.Compare(requierdTime, soFar);
                 // requierdTime is earlier than soFar
                 if (result < 0)
@@ -49,7 +50,8 @@ namespace FlightControlWeb.Models
                     return count;
                 }
                 count++;
-                soFarDuration = soFarDuration.AddSeconds(Convert.ToDouble(seg[segmenTimespanSecondE]));
+                soFarDuration = 
+                    soFarDuration.AddSeconds(Convert.ToDouble(seg[segmenTimespanSecondE]));
             }
             return count;
         }
@@ -77,12 +79,15 @@ namespace FlightControlWeb.Models
 
             }
             // linear interpulation is needed.
-            location.Latitude = prevSegmen.Latitude + ((currentSegment.Latitude - prevSegmen.Latitude) * partialTime);
-            location.Longitude = prevSegmen.Longitude + ((currentSegment.Longitude - prevSegmen.Longitude) * partialTime);
+            location.Latitude = prevSegmen.Latitude + 
+                ((currentSegment.Latitude - prevSegmen.Latitude) * partialTime);
+            location.Longitude = prevSegmen.Longitude + 
+                ((currentSegment.Longitude - prevSegmen.Longitude) * partialTime);
         }
 
         // Calculate the position.
-        public Location CalculatePosition(DateTime soFar, DateTime time, int segmentNumber, List<Object[]> segmennts, object[] initialLocation)
+        public Location CalculatePosition(DateTime soFar, DateTime time, int segmentNumber,
+            List<Object[]> segmennts, object[] initialLocation)
         {
             Location location;
 
@@ -94,20 +99,24 @@ namespace FlightControlWeb.Models
             double timespan = Convert.ToDouble(segmennts[segmentNumber][segmenTimespanSecondE]);
             double partialTime = timeToGo / timespan;
 
-            CalculatePartialPostition(out location, segmentNumber, segmennts, initialLocation, partialTime);
+            CalculatePartialPostition(out location, segmentNumber, segmennts,
+                initialLocation, partialTime);
             location.DateTime = time;
 
             return location;
         }
 
         // Create a FlightPlan object using a given data.
-        public Flights CreateFlightFromGivenData(object[] initialLocation, List<Object[]> segements, bool isExternal, DateTime time)
+        public Flights CreateFlightFromGivenData(object[] initialLocation,
+            List<Object[]> segements, bool isExternal, DateTime time)
         {
             Flights flight = new Flights();
             DateTime soFar;
 
-            int segmentNumber = CalculateCurrentSegment(out soFar, segements, Convert.ToDateTime(initialLocation[initalLocationDateTimeE]), time);
-            Location location = CalculatePosition(soFar, time, segmentNumber, segements, initialLocation);
+            int segmentNumber = CalculateCurrentSegment(out soFar, segements,
+                Convert.ToDateTime(initialLocation[initalLocationDateTimeE]), time);
+            Location location = CalculatePosition(soFar, time, segmentNumber,
+                segements, initialLocation);
             flight.DateTime = location.DateTime;
             flight.Latitude = location.Latitude;
             flight.Longitude = location.Longitude;

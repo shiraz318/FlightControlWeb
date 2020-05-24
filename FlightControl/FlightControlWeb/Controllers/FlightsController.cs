@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
@@ -24,39 +25,32 @@ namespace FlightControlWeb.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(string id)
         {
-            //try
-            //{
-                if (manager.DeleteFlight(id))
-                {
-                    return Ok();
-                }
-                return NotFound(id);
-            //}catch(Exception e)
-            //{
-            //    return NotFound(e.Message);
-            //}
+            if (manager.DeleteFlight(id))
+            {
+                return Ok();
+            }
+            return NotFound(id);
         }
 
-        // example /api/Flights?relative_to=<2020-05-06T10:12:00/Z>&sync_all
-        // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or /api/Flights?relative_to=<DATE_TIME>
+        // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or
+        // /api/Flights?relative_to=<DATE_TIME>
         [HttpGet]
-
         public async Task<ActionResult<Flights>> Get([FromQuery] string relative_to)
         {
             try
             {
-                string dateTime = relative_to;
-                string s = Request.QueryString.Value;
+                string urlRequest = Request.QueryString.Value;
                 List<Flights> flights = new List<Flights>();
                 FlightsFromServers flightsFromServers = new FlightsFromServers(flights, false);
-                if (s.Contains("sync_all"))
+                if (urlRequest.Contains("sync_all"))
                 {
-                    flightsFromServers =  await manager.GetAllFlights(dateTime, true);
+                    flightsFromServers =  await manager.GetAllFlights(relative_to, true);
                 }
                 else
                 {
-                    flightsFromServers = await manager.GetAllFlights(dateTime, false);
+                    flightsFromServers = await manager.GetAllFlights(relative_to, false);
                 }
+               
                 // At least one server did not responed.
                 if (flightsFromServers.IsError)
                 {

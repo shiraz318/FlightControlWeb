@@ -78,7 +78,7 @@ function FlightPlanDetails(message) {
         $("#start-time-definition").html(StartTime(flightPlan.initial_location.date_time));
         $("#end-time-definition").html(EndTime(flightPlan.initial_location.date_time, flightPlan.segments));
     }).fail(function (jqXHR) {
-        if (jqXHR.status == 404) {
+        if (jqXHR.status === 404) {
             Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan. Status: 404 Not Found");
         } else {
             Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
@@ -95,7 +95,7 @@ function DisplayFlightDetails(id, isExternal) {
              // Display the details of the given flight.
             FlightPlanDetails(message);
         }).fail(function (jqXHR) {
-            if (jqXHR.status == 404) {
+            if (jqXHR.status === 404) {
                 Alert("Oops! Something Is Wrong. Couldn't Find The Requested Server. Status: 404 Not Found");
             } else {
                 Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id + ". Status: " + jqXHR.status);
@@ -125,17 +125,16 @@ function DeleteFlight(id, self) {
         self.parent().removeClass(ColorRow);
         ResetFlightDetails();
         ResetFlights(); 
-    } else {
+    }// else {
         // Delete the flight.
         self.parent().fadeOut(600, function () { $(this).remove(); });
         $.ajax({
             url: "/api/Flights/" + id,
             type: "DELETE",
             success: function (result) {
-                console.log("DELETED");
             }
         }).fail(function (jqXHR) {
-            if (jqXHR.status == 404) {
+            if (jqXHR.status === 404) {
                 Alert("Oops! Something Is Wrong. Couldn't Delete The Requested Flight. Status: 404 Not Found");
             } else {
                 Alert("Oops! Something Is Wrong. Couldn't Delete The Flight With Id = " + id + ". Status: " + jqXHR.status);
@@ -143,7 +142,7 @@ function DeleteFlight(id, self) {
         }); 
         // Remove the matching marker from the map.
         RemovwMareker(id);
-    }
+    //}
 }
 
 // Check if a given id's flight is in a given list.
@@ -329,7 +328,7 @@ function DisplayFlights() {
         UnDisplayMarkers();
 
     }).fail(function (jqXHR) {
-        if (jqXHR.status == 404) {
+        if (jqXHR.status === 404) {
             Alert("404 Not Found");
         } else {
             Alert("Oops! Something Is Wrong. Couldn't Get All Flights Properly. Status: " + jqXHR.status);
@@ -340,22 +339,6 @@ function DisplayFlights() {
 $('.alert .close').on('click', function (e) {
     $(this).parent().hide();
 });
-
-
-//$.getJSON("/api/FlightPlan/0", (data) => {
-//    console.log(data);
-//    // Error.
-//    if (!data) {
-//        Alert("Oops! Something Is Wrong. Couldn't Get All Flights Properly");
-//    }
-//}).fail(function (jqXHR) {
-//    if (jqXHR.status == 404) {
-//        Alert(<strong>Oops!</strong> + " Something Is Wrong. Couldn't Find The Requested Flight. Status: 404 Not Found");
-//    } else {
-//        Alert(<strong>Oops!</strong> + " Something Is Wrong. Couldn't Find The Requested Flight. Status: 404 Not Found");
-//    }
-//});
-
 
 DisplayFlights();
 

@@ -17,11 +17,11 @@ namespace FlightControlWeb.Models
 
      public class FlightsManager : IFlightsManager
     {
-        private IDataAccess s;
+        private IDataAccess dataAccess;
 
         public FlightsManager(IDataAccess dataAccess)
         {
-            s = dataAccess;
+            this.dataAccess = dataAccess;
         }
         public struct FlightsFromServers
         {
@@ -39,7 +39,7 @@ namespace FlightControlWeb.Models
         // Delete a Flight from the data base by a given id.
         public bool DeleteFlight(string id)
         {
-            return s.DeleteFlightPlan(id);
+            return dataAccess.DeleteFlightPlan(id);
         }
 
         // Get a flights from an external server relative to a given time.
@@ -49,33 +49,19 @@ namespace FlightControlWeb.Models
             string url = server.ServerURL;
             string command = url + "/api/Flights?relative_to=" + date;
             using var client = new HttpClient();
-            TimeSpan timeout = new TimeSpan(0,0,0,20);
+            TimeSpan timeout = new TimeSpan(0,0,0,15);
             string strResult;
             client.Timeout = timeout;
             try
             {
                 strResult = await client.GetStringAsync(command);
             }
+            // Server is not responsing in 15 seconds time.
             catch (Exception t)
             {
                 string message = t.Message;
                 return null;
             }
-
-            //Uri myUri = new Uri(command, UriKind.Absolute);
-
-            //WebRequest request = WebRequest.Create(command);
-            //request.Method = "GET";
-            //HttpWebResponse response = null;
-            //response = (HttpWebResponse)request.GetResponse();
-
-
-            //using (Stream stream = response.GetResponseStream())
-            //{
-            //    StreamReader streamReader = new StreamReader(stream);
-            //    strResult = streamReader.ReadToEnd();
-            //    streamReader.Close();
-            //}
             try
             {
                 List<Flights> flights = new List<Flights>();
@@ -91,19 +77,21 @@ namespace FlightControlWeb.Models
                     flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
                     flight.DateTime = time;
                     flight.IsExternal = true;
-                    s.InsertExtenalFlightId(server, flight.FlightId);
+                    dataAccess.InsertExtenalFlightId(server, flight.FlightId);
                     flights.Add(flight);
                 }
                 return flights;
+                // Server response is not a valid json file.
             }catch(Exception t)
             {
-                List<Flights> flights1 = new List<Flights>();
-                return flights1;
+                string message = t.Message;
+                return null;
             }
         }
 
         // Get flights from all the servers in the data base.
-        public async Task<FlightsFromServers> GetFlightsFromServers(List<Server> servers, DateTime time)
+        public async Task<FlightsFromServers> GetFlightsFromServers(List<Server> servers,
+            DateTime time)
         {
             List<Flights> flights = new List<Flights>();
             bool isError = false;
@@ -132,18 +120,21 @@ namespace FlightControlWeb.Models
         {
             DateTime time = DateTime.Parse(dateTime).ToUniversalTime();
 
-            //string str = time.ToString();
             List<Flights> flights = new List<Flights>();
             List<Server> servers = new List<Server>();
-            //List<FlightPlan> flightPlans = new List<FlightPlan>();
-            // flightPlans = s.GetAllFlightPlans(isExternal);
+ 
             if (isExternal)
             {
-                servers.AddRange(s.GetServers());
+                servers.AddRange(dataAccess.GetServers());
+                Console.WriteLine("in get servers");
+
             }
-            flights =  s.GetFlights(time);
+            flights =  dataAccess.GetFlights(time);
+            Console.WriteLine("got al my flights");
+
             FlightsFromServers flightsFromServersInternal = new FlightsFromServers(flights, false);
-            FlightsFromServers flightsFromServersExernal =  await GetFlightsFromServers(servers, time);
+            FlightsFromServers flightsFromServersExernal = 
+                await GetFlightsFromServers(servers, time);
 
             flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
             flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;

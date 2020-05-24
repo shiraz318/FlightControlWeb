@@ -9,7 +9,7 @@ namespace FlightControlWeb
 {
     public interface IDataAccess
     {
-        void Create();
+        //void Create();
         List<Flights> GetFlights(DateTime time);
         Server GetServerByIdOfFlight(string id);
         List<Server> GetServers();

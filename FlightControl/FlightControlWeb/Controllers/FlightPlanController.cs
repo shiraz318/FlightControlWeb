@@ -20,23 +20,18 @@ namespace FlightControlWeb.Controllers
 
         // GET /api/FlightPlan?id={id}&url={url}.
         [HttpGet]
-        public async Task<ActionResult<FlightPlan>> GetFlightPlanFromServer([FromQuery]string id, [FromQuery] string url)
+        public async Task<ActionResult<FlightPlan>> GetFlightPlanFromServer([FromQuery]string id,
+            [FromQuery] string url)
         {
-            //try
-            //{
-                FlightPlan fp;
-                if ((fp = await manager.GetFlightPlanFromServer(id, url)) != null)
-                {
-                    return Ok(fp);
-                }
-                else
-                {
-                    return NotFound(id);
-                }
-            //} catch(Exception e)
-            //{
-            //    return NotFound(e.Message);
-            //}
+            FlightPlan fp = await manager.GetFlightPlanFromServer(id, url);
+            if (fp != null)
+            {
+                return Ok(fp);
+            }
+            else
+            {
+                return NotFound(id);
+            }
         }
 
         // GET /api/FlightPlan/{id}/.
@@ -45,8 +40,8 @@ namespace FlightControlWeb.Controllers
         {
             try
             {
-                FlightPlan fp;
-                if ((fp = manager.GetFlightPlan(id)) != null)
+                FlightPlan fp = manager.GetFlightPlan(id);
+                if (fp != null)
                 {
                     return Ok(fp);
                 }
@@ -58,24 +53,12 @@ namespace FlightControlWeb.Controllers
             }
         }
             
-
-       
-
         // POST /api/FlightPlan.
         [HttpPost]
         public ActionResult<string> Post([FromBody] FlightPlan flightPlan)
         {
-            //try
-            //{
-                string id =  manager.AddFlightPlan(flightPlan);
-                // Status 201 - created.
-                //return CreatedAtAction(actionName: "GetItem", flightPlan);
-                return Ok(id);
-                //return CreatedAtAction(actionName: "GetItem", new { id = id }, flightPlan);
-            //}catch(Exception e)
-            //{
-            //    return NotFound(e.Message);
-            //}
+            string id =  manager.AddFlightPlan(flightPlan);
+            return Ok(id);
         }
         
     }

@@ -12,11 +12,11 @@ namespace FlightControlWeb.Models
 {
     public class FlightPlanManager : IFlightPlanManager
     {
-        private IDataAccess s;
+        private IDataAccess dataAccess;
 
         public FlightPlanManager(IDataAccess dataAccess)
         {
-            s = dataAccess;
+            this.dataAccess = dataAccess;
         }
 
         // Create the random letters in the id.
@@ -40,7 +40,8 @@ namespace FlightControlWeb.Models
         {
             Random rnd = new Random();
             long randomNamber = rnd.Next(100000, 1000000000);
-            string id = CreateLetters() + randomNamber.ToString().Substring(0, 5) + CreateLetters();
+            string id = CreateLetters() + randomNamber.ToString().Substring(0, 5)
+                + CreateLetters();
             return id;
         }
 
@@ -51,32 +52,18 @@ namespace FlightControlWeb.Models
             {
                 string command = url + "/api/FlightPlan/" + id;
                 using var client = new HttpClient();
+                TimeSpan timeout = new TimeSpan(0, 0, 0, 15);
+                client.Timeout = timeout;
 
                 string content = await client.GetStringAsync(command);
                 return content;
+                // Server did not responsed in 15 seconds.
             }catch(Exception t)
             {
                 string g = t.Message;
                 return null;
             }
 
-
-            //Uri myUri = new Uri(command, UriKind.Absolute);
-
-            //WebRequest request = WebRequest.Create(command);
-            //request.Method = "GET";
-            //HttpWebResponse response = null;
-            //response = (HttpWebResponse)request.GetResponse();
-
-            //string strResult = null;
-
-            //using (Stream stream = response.GetResponseStream())
-            //{
-            //    StreamReader streamReader = new StreamReader(stream);
-            //    strResult = streamReader.ReadToEnd();
-            //    streamReader.Close();
-            //}
-            //return strResult;
         }
 
         // Create a FlightPlan object from a json file.
@@ -95,11 +82,13 @@ namespace FlightControlWeb.Models
             int i = 0;
             JArray items = (JArray)json["segments"];
             int length = items.Count;
+            // Create segments.
             for (i = 0; i < length; i++)
             {
                 double longitude1 = Convert.ToDouble(json["segments"][i]["longitude"]);
                 double latitude1 = Convert.ToDouble(json["segments"][i]["latitude"]);
-                int timespnaSeconds = Convert.ToInt32(json["segments"][i]["timespan_seconds"]);
+                int timespnaSeconds = 
+                    Convert.ToInt32(json["segments"][i]["timespan_seconds"]);
                 Segment segment = new Segment(longitude1, latitude1, timespnaSeconds);
                 segments.Add(segment);
             }
@@ -111,8 +100,18 @@ namespace FlightControlWeb.Models
         public async Task<FlightPlan> GetFlightPlanFromServer(string id, string url)
         {
             string strResult = await SendRequest(id, url);
-
-            return CreateFlightPlanFromJson(strResult);
+            if (strResult == null)
+            {
+                return null;
+            }
+            try
+            {
+                return CreateFlightPlanFromJson(strResult);
+            } catch(Exception e)
+            {
+                string message = e.Message;
+                return null;
+            }
         }
 
         // Add a given FlightPlan into the data base.
@@ -120,14 +119,14 @@ namespace FlightControlWeb.Models
         {
             string id = SetId();
 
-            s.InsertFlightPlan(fp, id);
+            dataAccess.InsertFlightPlan(fp, id);
             return id;
         }
 
         // Get a FlightPlan by a given id.
         public FlightPlan GetFlightPlan(string id)
         {      
-            return s.GetFlightPlan(id);
+            return dataAccess.GetFlightPlan(id);
         }
 
     }
