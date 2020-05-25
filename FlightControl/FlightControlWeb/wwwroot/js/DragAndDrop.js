@@ -20,11 +20,27 @@ function preventDefaults(e) {
 
 function Highlight(e) {
     dropArea.classList.add("highlight");
+    let listItems = document.querySelectorAll("#my-flights-list > li");
+    let i = 0;
+    let size = listItems.length;
+    for (i = 0; i < size; i++) {
+        let spanX = listItems[i].getElementsByTagName("span")[0];
+        spanX.classList.add("disappear");
+        listItems[i].classList.add("disappear");
+    }
 }
 
 
 function Unhighlight(e) {
     dropArea.classList.remove("highlight");
+    let listItems = document.querySelectorAll("#my-flights-list > li");
+    let i = 0;
+    let size = listItems.length;
+    for (i = 0; i < size; i++) {
+        let spanX = listItems[i].getElementsByTagName("span")[0];
+        spanX.classList.remove("disappear");
+        listItems[i].classList.remove("disappear");
+    }
 }
 dropArea.addEventListener("drop", HandleDrop, false);
 
@@ -66,14 +82,3 @@ function UploadFile(file) {
         Alert("Oops! Somethis Is Wrong. " + reader.error);
     };
 }
-
-////
-//function PreviewFile(file) {
-//    let reader = new FileReader();
-//    reader.readAsDataURL(file);
-//    reader.onloadend = function () {
-//        let img = document.createElement("img");
-//        img.src = reader.result;
-//        document.getElementById("gallery").appendChild(img);
-//    };
-//}

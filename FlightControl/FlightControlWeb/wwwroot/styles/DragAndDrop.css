@@ -20,7 +20,11 @@ p {
 .my-form {
     margin-bottom: 10px;
 }
-
+.disappear {
+    color:transparent;
+    background-color:transparent;
+    text-emphasis-color:transparent;
+}
 #gallery {
     margin-top: 10px;
 }

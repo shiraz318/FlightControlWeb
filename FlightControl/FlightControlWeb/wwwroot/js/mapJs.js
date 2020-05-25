@@ -64,12 +64,8 @@ function DisplayPath(id) {
 
 // Set a path.
 function SetPath(id, message) {
-    console.log("message: ");
-    console.log(message);
     // Send a get request that returns a FlightPlan.  
     $.getJSON(message, (data) => {
-        console.log("data: ");
-        console.log(data);
         let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
         let flightPlanCoordinates = [startLoc];
         data.segments.filter(segment => {
@@ -86,8 +82,8 @@ function SetPath(id, message) {
         });
         allFlightsPath[id] = flightPath;
     }).fail(function (jqXHR) {
-        if (jqXHR.status == 404) {
-            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan. Status: 404 Not Found");
+        if (jqXHR.status === 404) {
+            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan while setting path. Status: 404 Not Found");
         } else {
             Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
         }
@@ -100,12 +96,10 @@ function CreatePath(id, isExternal) {
     if (isExternal) {
         // Get the server who own the flight.
         $.getJSON("/api/servers/" + id, (server) => {
-            console.log("ServerURL: ");
-            console.log(server.ServerURL);
             let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
             SetPath(id, message);
         }).fail(function (jqXHR) {
-            if (jqXHR.status == 404) {
+            if (jqXHR.status === 404) {
                 Alert("Oops! Something Is Wrong. Couldn't Find The Requested Server. Status: 404 Not Found");
             } else {
                 Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id + ". Status: " + jqXHR.status);

@@ -310,7 +310,7 @@ namespace FlightControlWeb
                 " FlightId= '" + id + "' ORDER BY Place ASC");
             CloseConncetion();
 
-            return setFlightPlan(basicData, initialLocation, segments);
+            return SetFlightPlan(basicData, initialLocation, segments);
         }
 
         // Insert the given Server into the ServersTable.
@@ -463,7 +463,7 @@ namespace FlightControlWeb
         }
 
         // Create a FlightPlan object.
-        private FlightPlan setFlightPlan(object[] basicData, object[] initialLocation,
+        private FlightPlan SetFlightPlan(object[] basicData, object[] initialLocation,
             List<object[]> segments)
         {
             FlightPlan flightPlan = new FlightPlan();

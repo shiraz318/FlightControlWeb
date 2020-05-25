@@ -51,10 +51,10 @@ namespace FlightControlWeb.Controllers
                     flightsFromServers = await manager.GetAllFlights(relative_to, false);
                 }
                
-                // At least one server did not responed.
+                // At least one response in not valid.
                 if (flightsFromServers.IsError)
                 {
-                    
+                    return BadRequest();
                 }
                 return Ok(flightsFromServers.FlightsList);
             }

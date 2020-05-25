@@ -6,7 +6,14 @@ let isOnTime = {};
 const uninitialize = 0;
 const oldFlight = 1;
 const newFlight = 2;
+const deleted = 3;
 const ColorRow = "highlightedRow";
+
+// Sleep for ms mili seconds.
+async function Sleep(ms) {
+    await new Promise(r => setTimeout(r, ms));
+}
+
 
 // Reset flight details.
 function ResetFlightDetails() {
@@ -79,7 +86,7 @@ function FlightPlanDetails(message) {
         $("#end-time-definition").html(EndTime(flightPlan.initial_location.date_time, flightPlan.segments));
     }).fail(function (jqXHR) {
         if (jqXHR.status === 404) {
-            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan. Status: 404 Not Found");
+            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan while display detailes. Status: 404 Not Found");
         } else {
             Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
         }
@@ -125,13 +132,17 @@ function DeleteFlight(id, self) {
         self.parent().removeClass(ColorRow);
         ResetFlightDetails();
         ResetFlights(); 
-    }// else {
+    }
         // Delete the flight.
         self.parent().fadeOut(600, function () { $(this).remove(); });
         $.ajax({
             url: "/api/Flights/" + id,
             type: "DELETE",
             success: function (result) {
+                RemoveRow(id);
+                // Remove the matching marker from the map.
+                RemovwMareker(id);
+                isOnTime[id] = deleted;
             }
         }).fail(function (jqXHR) {
             if (jqXHR.status === 404) {
@@ -140,9 +151,6 @@ function DeleteFlight(id, self) {
                 Alert("Oops! Something Is Wrong. Couldn't Delete The Flight With Id = " + id + ". Status: " + jqXHR.status);
             }
         }); 
-        // Remove the matching marker from the map.
-        RemovwMareker(id);
-    //}
 }
 
 // Check if a given id's flight is in a given list.
@@ -166,7 +174,9 @@ function IsFound(id, nameOfList) {
 // Reset the isOnTime dictionary.
 function ResetDictionaryOnTime() {
     for (let key in isOnTime) {
-        isOnTime[key] = uninitialize;
+        if (isOnTime[key] !== deleted) {
+            isOnTime[key] = uninitialize;
+        }
     }
 }
 
@@ -196,21 +206,26 @@ function GetRow(id) {
     }
 }
 
+// Remove a row from the list.
+function RemoveRow(key) {
+    let row = GetRow(key);
+    if (row) {
+        // If the row of the flight was highlighted - it's details was in the display details.
+        if (row.classList.contains(ColorRow)) {
+            ResetFlightDetails();
+        }
+        row.remove();
+    }
+    isOnTime[key] = deleted;
+}
+
 // Remove a deleted flight from the list.
 function RemoveFromFlightList() {
 
     for (let key in isOnTime) {
         // If we did not get this flight in the previous get requset.
         if (isOnTime[key] === uninitialize) {
-            let row = GetRow(key);
-            if (row) {
-                // If the row of the flight was highlighted - it's details was in the display details.
-                if (row.classList.contains(ColorRow)) {
-                    ResetFlightDetails();
-                }
-                row.remove();
-            }
-            delete isOnTime[key];
+            RemoveRow(key);
         }
     }
 }
@@ -254,6 +269,9 @@ function DisplayExternal(flight) {
 // Display a given flight in the internal flight list.
 function DisplayInternal(flight) {
 
+    if (isOnTime[flight.flight_id] === deleted) {
+        return;
+    }
     isOnTime[flight.flight_id] = newFlight;
     let flightDelete = $("<span class=" + "flight-delete" + ">").text("X");
     let newflightCompanyName = $("<span class=" + "flight-company" + ">").text(flight.company_name);
@@ -309,7 +327,6 @@ function RowInMyFlightList(flight) {
 
 // Display all the flights in the lists.
 function DisplayFlights() {
-
     // Gets the current date in the requierd format.
     let date = new Date().toISOString();
     let curdate = date.split(".")[0] + "Z";
@@ -330,7 +347,7 @@ function DisplayFlights() {
     }).fail(function (jqXHR) {
         if (jqXHR.status === 404) {
             Alert("404 Not Found");
-        } else {
+        }else {
             Alert("Oops! Something Is Wrong. Couldn't Get All Flights Properly. Status: " + jqXHR.status);
         }
     });     
