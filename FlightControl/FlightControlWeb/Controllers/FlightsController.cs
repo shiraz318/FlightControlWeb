@@ -35,7 +35,7 @@ namespace FlightControlWeb.Controllers
         // Get /api/Flights?relative_to=<DATE_TIME>&sync_all or
         // /api/Flights?relative_to=<DATE_TIME>
         [HttpGet]
-        public async Task<ActionResult<Flights>> Get([FromQuery] string relative_to)
+        public async Task<ActionResult<List<Flights>>> Get([FromQuery] string relative_to)
         {
             try
             {

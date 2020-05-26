@@ -22,7 +22,7 @@ namespace FlightControlWeb.Controllers
 
         // GET: api/Servers
         [HttpGet]
-        public ActionResult<IEnumerable<Server>> Get()
+        public ActionResult<List<Server>> Get()
         {
             List<Server> servers = new List<Server>();
             servers =  manager.Get();

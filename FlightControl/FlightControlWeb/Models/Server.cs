@@ -16,5 +16,17 @@ namespace FlightControlWeb.Models
 		[Required]
 		[JsonPropertyName("ServerURL")]
 		public string ServerURL { get; set; }
+		public override bool Equals(Object other)
+		{
+			Server otherServer = (Server)other;
+			if (otherServer.ServerURL.CompareTo(this.ServerURL) == 0)
+			{
+				if (otherServer.ServerId.CompareTo(this.ServerId) == 0)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

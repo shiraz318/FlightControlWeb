@@ -44,6 +44,9 @@ namespace FlightControlWeb.Models
         {
             try
             {
+                // Reset the flights of the server.
+               // dataAccess.DeleteServerFromExternalFlight(server);
+
                 List<Flights> flights = new List<Flights>();
                 var json = JArray.Parse(strResult);
                 int i = 0;
@@ -57,6 +60,7 @@ namespace FlightControlWeb.Models
                     flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
                     flight.DateTime = time;
                     flight.IsExternal = true;
+                  
                     dataAccess.InsertExtenalFlightId(server, flight.FlightId);
                     flights.Add(flight);
                 }
@@ -181,22 +185,23 @@ namespace FlightControlWeb.Models
 
             List<Flights> flights = new List<Flights>();
             List<Server> servers = new List<Server>();
- 
+            
+            flights = dataAccess.GetFlights(time);
+            FlightsFromServers flightsFromServersInternal = new FlightsFromServers(flights, false);
+
             if (isExternal)
             {
                 servers.AddRange(dataAccess.GetServers());
-
+                FlightsFromServers flightsFromServersExernal =
+               await GetFlightsFromServers(servers, time);
+                flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
+                flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;
+                //return flightsFromServersInternal;
             }
-            flights =  dataAccess.GetFlights(time);
 
-            FlightsFromServers flightsFromServersInternal = new FlightsFromServers(flights, false);
-            FlightsFromServers flightsFromServersExernal = 
-                await GetFlightsFromServers(servers, time);
-
-            flightsFromServersInternal.FlightsList.AddRange(flightsFromServersExernal.FlightsList);
-            flightsFromServersInternal.IsError = flightsFromServersExernal.IsError;
-           
             return flightsFromServersInternal;
+
+           
         }
     }
 }

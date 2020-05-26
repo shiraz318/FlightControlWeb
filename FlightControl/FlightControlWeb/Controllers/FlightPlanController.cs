@@ -36,11 +36,11 @@ namespace FlightControlWeb.Controllers
 
         // GET /api/FlightPlan/{id}/.
         [HttpGet("{id}", Name = "GetItem")]
-        public ActionResult<FlightPlan> GetItem(string id)
+        public async Task<ActionResult<FlightPlan>> GetItem(string id)
         {
             try
             {
-                FlightPlan fp = manager.GetFlightPlan(id);
+                FlightPlan fp = await manager.GetFlightPlan(id);
                 if (fp != null)
                 {
                     return Ok(fp);

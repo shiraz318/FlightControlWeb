@@ -124,9 +124,19 @@ namespace FlightControlWeb.Models
         }
 
         // Get a FlightPlan by a given id.
-        public FlightPlan GetFlightPlan(string id)
+        public async Task<FlightPlan> GetFlightPlan(string id)
         {      
-            return dataAccess.GetFlightPlan(id);
+            FlightPlan flightPlan = dataAccess.GetFlightPlan(id); ;
+            if (flightPlan != null)
+            {
+                return flightPlan;
+            }
+            Server server = dataAccess.GetServerByIdOfFlight(id);
+            if (server != null)
+            {
+                return await GetFlightPlanFromServer(id, server.ServerURL);
+            }
+            return null;
         }
 
     }

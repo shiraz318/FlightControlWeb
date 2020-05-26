@@ -19,5 +19,6 @@ namespace FlightControlWeb
         void InsertExtenalFlightId(Server server, string id);
         void InsertFlightPlan(FlightPlan flightPlan, string id);
         void InsertServer(Server server);
+        void DeleteServerFromExternalFlight(Server server);
     }
 }

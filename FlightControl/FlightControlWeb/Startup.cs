@@ -63,26 +63,13 @@ namespace FlightControlWeb
  *
  * may be needs to uninstall the toolbox befor submit.
  * 
- * may be need to move all code of DataAccess to the dbContext or maybe just to have an instance of dataAccess.
- *  
- * startup dependency injection.
- * 
  * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
  *  
  *  delete all console.log before submitting.
+ *  
  * End points events:
  *
  * invalid json file - no segmnents, and other things.
- * 
- * server/servers not active - we set timeout to check if resposed in time but what should we do in this case.
- * 
- * delete try catchs.
- * 
- * lines length not pass 100.
- * 
- * menengful names.
- * 
- * 
  * 
  * 
  */

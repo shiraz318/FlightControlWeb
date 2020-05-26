@@ -8,7 +8,7 @@ namespace FlightControlWeb.Models
     public interface IFlightPlanManager
     {
         string AddFlightPlan(FlightPlan fp);
-        FlightPlan GetFlightPlan(string id);
+        Task<FlightPlan> GetFlightPlan(string id);
         Task<FlightPlan> GetFlightPlanFromServer(string id, string url);
     }
 }

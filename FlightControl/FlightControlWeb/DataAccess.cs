@@ -72,6 +72,23 @@ namespace FlightControlWeb
             segmenTimespanSecondE = (int)SegmentsE.TimespanSecond;
 
         }
+        // Delete all flights of a given server.
+        public void DeleteServerFromExternalFlight(Server server)
+        {
+            string id = server.ServerId;
+            if (IsExist("ExternalFlightsTable", "Id", id))
+            {
+                OpenConnection();
+                SqliteCommand deleteOtherCommand = new SqliteCommand();
+                deleteOtherCommand.Connection = conn;
+                deleteOtherCommand.CommandText = "DELETE FROM ExternalFlightsTable WHERE Id='" + id + "'";
+                deleteOtherCommand.ExecuteReader();
+                CloseConncetion();
+            }
+        }
+
+
+
         // Insert a Server and FlightId to the ExternalFlightsTable.
         public void InsertExtenalFlightId(Server server, string id)
         {
@@ -298,6 +315,16 @@ namespace FlightControlWeb
             return servers;
 
         }
+
+        //private FlightPlan GetFlightPlanFromServers(string id)
+        //{
+        //    OpenConnection();
+        //    object[] urlObject = ReadFromTableSingleRow("SELECT Url FROM ExternalFlightsTable" +
+        //        " WHERE FlightId = '" + id + "'");
+        //    string url = Convert.ToString(urlObject[0]);
+
+        //}
+
         // Get a FlightPlan by a given id.
         public FlightPlan GetFlightPlan(string id)
         {
@@ -309,7 +336,6 @@ namespace FlightControlWeb
             List<object[]> segments = ReadMultipleLines("SELECT * FROM SegmentsTable  WHERE" +
                 " FlightId= '" + id + "' ORDER BY Place ASC");
             CloseConncetion();
-
             return SetFlightPlan(basicData, initialLocation, segments);
         }
 
@@ -419,6 +445,17 @@ namespace FlightControlWeb
             deleteCommand.ExecuteReader();
             CloseConncetion();
 
+            if (IsExist("ExternalFlightsTable", "Id", id))
+            {
+                OpenConnection();
+                SqliteCommand deleteOtherCommand = new SqliteCommand();
+                deleteOtherCommand.Connection = conn;
+                deleteOtherCommand.CommandText = "DELETE FROM ExternalFlightsTable WHERE Id='" + id + "'";
+                deleteOtherCommand.ExecuteReader();
+                CloseConncetion();
+            }
+
+           
             return true;
         }
 
