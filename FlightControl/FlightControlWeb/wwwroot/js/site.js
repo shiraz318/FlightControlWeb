@@ -8,6 +8,9 @@ const oldFlight = 1;
 const newFlight = 2;
 const deleted = 3;
 const ColorRow = "highlightedRow";
+const LongitudeBorder = 180;
+const LatitudeBorder = 90;
+
 
 // Sleep for ms mili seconds.
 async function Sleep(ms) {
@@ -78,18 +81,18 @@ function Highlighted(id, name) {
 // Send a get request by a given message and display the returned data.
 function FlightPlanDetails(message) {
     $.getJSON(message, (flightPlan) => {
-        $("#company-name-definition").html(flightPlan.company_name);
-        $("#number-of-passangers-definition").html(flightPlan.passengers);
-        $("#start-location-definition").html(flightPlan.initial_location.longitude + ", " + flightPlan.initial_location.latitude);
-        $("#end-location-definition").html(EndLocation(flightPlan.segments));
-        $("#start-time-definition").html(StartTime(flightPlan.initial_location.date_time));
-        $("#end-time-definition").html(EndTime(flightPlan.initial_location.date_time, flightPlan.segments));
-    }).fail(function (jqXHR) {
-        if (jqXHR.status === 404) {
-            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan while display detailes. Status: 404 Not Found");
-        } else {
-            Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
+        if (CheckValidityOfFlightPlan(flightPlan)) {
+            $("#company-name-definition").html(flightPlan.company_name);
+            $("#number-of-passangers-definition").html(flightPlan.passengers);
+            $("#start-location-definition").html(flightPlan.initial_location.longitude
+                + ", " + flightPlan.initial_location.latitude);
+            $("#end-location-definition").html(EndLocation(flightPlan.segments));
+            $("#start-time-definition").html(StartTime(flightPlan.initial_location.date_time));
+            $("#end-time-definition").html(EndTime(flightPlan.initial_location.date_time,
+                flightPlan.segments));
         }
+    }).fail(function (jqXHR) {
+        Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
     }); 
 }
 
@@ -102,11 +105,8 @@ function DisplayFlightDetails(id, isExternal) {
              // Display the details of the given flight.
             FlightPlanDetails(message);
         }).fail(function (jqXHR) {
-            if (jqXHR.status === 404) {
-                Alert("Oops! Something Is Wrong. Couldn't Find The Requested Server. Status: 404 Not Found");
-            } else {
-                Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id + ". Status: " + jqXHR.status);
-            }
+            Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id
+                + ". Status: " + jqXHR.status);
         }); 
     }
     else {
@@ -124,6 +124,8 @@ function Alert(message) {
     $('#error').show();
 }
 
+
+
 // Handeling X button click.
 function DeleteFlight(id, self) {
 
@@ -133,24 +135,21 @@ function DeleteFlight(id, self) {
         ResetFlightDetails();
         ResetFlights(); 
     }
-        // Delete the flight.
-        self.parent().fadeOut(600, function () { $(this).remove(); });
-        $.ajax({
-            url: "/api/Flights/" + id,
-            type: "DELETE",
-            success: function (result) {
-                RemoveRow(id);
-                // Remove the matching marker from the map.
-                RemovwMareker(id);
-                isOnTime[id] = deleted;
-            }
-        }).fail(function (jqXHR) {
-            if (jqXHR.status === 404) {
-                Alert("Oops! Something Is Wrong. Couldn't Delete The Requested Flight. Status: 404 Not Found");
-            } else {
-                Alert("Oops! Something Is Wrong. Couldn't Delete The Flight With Id = " + id + ". Status: " + jqXHR.status);
-            }
-        }); 
+    // Delete the flight.
+    self.parent().fadeOut(600, function () { $(this).remove(); });
+    $.ajax({
+        url: "/api/Flights/" + id,
+        type: "DELETE",
+        success: function (result) {
+            RemoveRow(id);
+            // Remove the matching marker from the map.
+            RemovwMareker(id);
+            isOnTime[id] = deleted;
+        }
+    }).fail(function (jqXHR) {
+        Alert("Oops! Something Is Wrong. Couldn't Delete The Flight With Id = " + id
+            + ". Status: " + jqXHR.status);
+    }); 
 }
 
 // Check if a given id's flight is in a given list.
@@ -235,7 +234,8 @@ function DisplayExternal(flight) {
 
     isOnTime[flight.flight_id] = newFlight;
     let firstColunm = $("<span class="+ "space"+">").text("X");
-    let newflightCompanyName = $("<span class=" + "flight-company" + ">").text(flight.company_name);
+    let newflightCompanyName = $("<span class=" + "flight-company" + ">").
+        text(flight.company_name);
     let newflightId = $("<span class=" + "flight-id" + ">").text(flight.flight_id);
     let fakeSpan = $("<span class=" + "space" + ">").text("XXXXXXXXXXX");
     // Add the flight to the list.
@@ -274,7 +274,8 @@ function DisplayInternal(flight) {
     }
     isOnTime[flight.flight_id] = newFlight;
     let flightDelete = $("<span class=" + "flight-delete" + ">").text("X");
-    let newflightCompanyName = $("<span class=" + "flight-company" + ">").text(flight.company_name);
+    let newflightCompanyName = $("<span class=" + "flight-company" + ">").
+        text(flight.company_name);
     let newflightId = $("<span class=" + "flight-id" + ">").text(flight.flight_id);
     let fakeSpan = $("<span class=" + "space" + ">").text("XXXXXXXXXXX");
     // Add the flight to the list.
@@ -325,6 +326,81 @@ function RowInMyFlightList(flight) {
     SetNewPosition(flight);   
 }
 
+// Check the validity of a given flightPlan.
+function CheckValidityOfFlightPlan(flightPlan) {
+    if (flightPlan.initial_location.longitude > LongitudeBorder || flightPlan.initial_location.longitude < -LongitudeBorder) {
+        Alert("Opps! Something Is Wrong. Flight Plan Initial Location Is Invalid");
+        return false;
+    }
+    if (flightPlan.initial_location.latitude > LatitudeBorder || flightPlan.initial_location.latitude < -LatitudeBorder) {
+        Alert("Opps! Something Is Wrong. Flight Plan Initial Location Is Invalid");
+        return false;
+    }
+    if (flightPlan.passengers < 0) {
+        Alert("Opps! Something Is Wrong. Flight Plan Passengers Number Is Invalid");
+        return false;
+    }
+    if (flightPlan.company_name === null) {
+        Alert("Opps! Something Is Wrong. Flight Plan Company Name Is Invalid");
+        return false;
+    }
+    if (flightPlan.segments.length === 0) {
+        Alert("Opps! Something Is Wrong. Flight Plan Segments Is Invalid");
+        return false;
+    }
+    for (let segment in flightPlan.segments) {
+        if (segment.longitude > LongitudeBorder || segment.longitude < -LongitudeBorder) {
+            Alert("Opps! Something Is Wrong. Flight Plan Segment Location Is Invalid");
+            return false;
+        }
+        if (segment.latitude > LatitudeBorder || segment.latitude < -LatitudeBorder) {
+            Alert("Opps! Something Is Wrong. Flight Plan Segment Location Is Invalid");
+            return false;
+        }
+        if (segment.timespan_seconds < 0) {
+            Alert("Opps! Something Is Wrong. Flight Plan Segment Timespan Seconds Is Invalid");
+            return false;
+        }
+    }
+    return true;
+}
+
+
+// Check the validity of a given flight.
+function CheckValidityOfFlight(flight) {
+    if (flight.longitude > LongitudeBorder || flight.longitude < -LongitudeBorder) {
+        Alert("Opps! Something Is Wrong. Flight Location Is Invalid");
+        return false;
+    }
+    if (flight.latitude > LatitudeBorder || flight.latitude < -LatitudeBorder) {
+        Alert("Opps! Something Is Wrong. Flight Location Is Invalid");
+        return false;
+    }
+    if (flight.passengers < 0) {
+        Alert("Opps! Something Is Wrong. Flight Passengers Number Is Invalid");
+        return false;
+    }
+    if (flight.company_name === null) {
+        Alert("Opps! Something Is Wrong. Flight Company Name Is Invalid");
+        return false;
+    }
+    if (flight.flight_id === null) {
+        Alert("Opps! Something Is Wrong. Flight Id Is Invalid");
+        return false;
+    }
+    return true;
+}
+
+// Iterate the flights.
+function FlightIteration(data) {
+    data.filter(flight => {
+        if (CheckValidityOfFlight(flight)) {
+            // Create a row in one of the lists.
+            RowInMyFlightList(flight);
+        }
+    });
+}
+
 // Display all the flights in the lists.
 function DisplayFlights() {
     // Gets the current date in the requierd format.
@@ -334,22 +410,14 @@ function DisplayFlights() {
     // Get all active flights.
     $.getJSON("/api/Flights?relative_to=" + curdate + "&sync_all", (data) => {
         ResetDictionaryOnTime();
-        // filter = iterates an array, flight is the item itself
-        data.filter(flight => {
-            // Create a row in one of the lists.
-            RowInMyFlightList(flight);
-        });
+        FlightIteration(data);
         // Update the lists by removing flights that are not active.
         RemoveFromFlightList();
         // Update the map by removing markers that theirs flights are not active.
         UnDisplayMarkers();
 
     }).fail(function (jqXHR) {
-        if (jqXHR.status === 404) {
-            Alert("404 Not Found");
-        }else {
-            Alert("Oops! Something Is Wrong. Couldn't Get All Flights Properly. Status: " + jqXHR.status);
-        }
+        Alert("Oops! Something Is Wrong. Couldn't Get All Flights Properly. Status: " + jqXHR.status);
     });     
 }
 

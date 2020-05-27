@@ -34,7 +34,7 @@ function ResetRowsColor(name){
 function ResetFlights() {
     for (let key in allFlightsPath) {
         allFlightsPath[key].setMap(null);
-        var icon = { url: regularImg };
+        let icon = { url: regularImg };
         allFlightsMarker[key].setIcon(icon);
     }
 }
@@ -62,31 +62,36 @@ function DisplayPath(id) {
     }   
 }
 
+//Segment Iteration.
+function SegmentIteration(flightPlan, flightPlanCoordinates) {
+    flightPlan.segments.filter(segment => {
+        let loc = new google.maps.LatLng(segment.latitude, segment.longitude);
+        flightPlanCoordinates.push(loc);
+    });
+}
+
 // Set a path.
 function SetPath(id, message) {
     // Send a get request that returns a FlightPlan.  
-    $.getJSON(message, (data) => {
-        let startLoc = new google.maps.LatLng(data.initial_location.latitude, data.initial_location.longitude);
-        let flightPlanCoordinates = [startLoc];
-        data.segments.filter(segment => {
-            let loc = new google.maps.LatLng(segment.latitude, segment.longitude);
-            flightPlanCoordinates.push(loc);
-        });
-        // Create the path.
-        let flightPath = new google.maps.Polyline({
-            path: flightPlanCoordinates,
-            geodesic: true,
-            strokeColor: "#FF0000",
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
-        allFlightsPath[id] = flightPath;
-    }).fail(function (jqXHR) {
-        if (jqXHR.status === 404) {
-            Alert("Oops! Something Is Wrong. Couldn't Find The Requested FlightPlan while setting path. Status: 404 Not Found");
-        } else {
-            Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
+    $.getJSON(message, (flightPlan) => {
+        if (CheckValidityOfFlightPlan(flightPlan)) {
+            let startLoc = new google.maps.LatLng(flightPlan.initial_location.latitude,
+                flightPlan.initial_location.longitude);
+            let flightPlanCoordinates = [startLoc];
+            SegmentIteration(flightPlan, flightPlanCoordinates);
+            // Create the path.
+            let flightPath = new google.maps.Polyline({
+                path: flightPlanCoordinates,
+                geodesic: true,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+            allFlightsPath[id] = flightPath;
         }
+    }).fail(function (jqXHR) {
+        Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan while" +
+           "setting path.Status: " + jqXHR.status);
     }); 
 }
 
@@ -99,11 +104,8 @@ function CreatePath(id, isExternal) {
             let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
             SetPath(id, message);
         }).fail(function (jqXHR) {
-            if (jqXHR.status === 404) {
-                Alert("Oops! Something Is Wrong. Couldn't Find The Requested Server. Status: 404 Not Found");
-            } else {
-                Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id + ". Status: " + jqXHR.status);
-            }
+            Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = "
+                + id + ". Status: " + jqXHR.status);
         });
     }
     else {
@@ -132,7 +134,8 @@ function AddMarker(flight) {
 // Set a new position for a given flight.
 function SetNewPosition(flight) {
     if (allFlightsMarker[flight.flight_id]) {
-        allFlightsMarker[flight.flight_id].setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
+        allFlightsMarker[flight.flight_id].
+            setPosition(new google.maps.LatLng(flight.latitude, flight.longitude));
     }
 }
 
@@ -152,14 +155,15 @@ function RemovwMareker(id) {
 function UnDisplayMarkers() {
 
     for (let key in allFlightsMarker) {
-        if (allFlightsMarker[key]) {
-            // If the marker exists in either lists we keep it. otherwise - delete it.
-            let foundInInternal = IsFound(key, "#my-flights-list > li");
-            let foundInExternal = IsFound(key, "#external-flights-list > li");
-            // Flight is not active.
-            if (!(foundInInternal || foundInExternal)) {
-                RemovwMareker(key);
-            }
+        if (!allFlightsMarker[key]) {
+            continue;
+        }
+        // If the marker exists in either lists we keep it. otherwise - delete it.
+        let foundInInternal = IsFound(key, "#my-flights-list > li");
+        let foundInExternal = IsFound(key, "#external-flights-list > li");
+        // Flight is not active.
+        if (!(foundInInternal || foundInExternal)) {
+            RemovwMareker(key);
         }
     }
 }

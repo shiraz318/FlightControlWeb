@@ -24,7 +24,6 @@
     ".NETCoreApp,Version=v3.1": {
       "FlightControlWeb/1.0.0": {
         "dependencies": {
-          "Cake.Issues.EsLint": "0.7.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "3.1.2",
           "Microsoft.EntityFrameworkCore.Sqlite": "3.1.2",
           "Microsoft.EntityFrameworkCore.Tools": "3.1.2",
@@ -307,17 +306,6 @@
         },
         "compile": {
           "FlightControlWeb.dll": {}
-        }
-      },
-      "Cake.Issues.EsLint/0.7.0": {
-        "runtime": {
-          "lib/netstandard2.0/Cake.Issues.EsLint.dll": {
-            "assemblyVersion": "0.7.0.0",
-            "fileVersion": "0.7.0.0"
-          }
-        },
-        "compile": {
-          "lib/netstandard2.0/Cake.Issues.EsLint.dll": {}
         }
       },
       "Microsoft.AspNetCore.Html.Abstractions/2.2.0": {
@@ -3991,13 +3979,6 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
-    },
-    "Cake.Issues.EsLint/0.7.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-AzmIvJT7MekZYv3x8Az5IeQVL/Inepvbn0TzO2aO8/D9BjpVM7sKdXcoo2Bu0fpt0isqo0usqxJbHOaH6kMKDQ==",
-      "path": "cake.issues.eslint/0.7.0",
-      "hashPath": "cake.issues.eslint.0.7.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Html.Abstractions/2.2.0": {
       "type": "package",

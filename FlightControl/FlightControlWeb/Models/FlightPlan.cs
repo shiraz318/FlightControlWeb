@@ -10,27 +10,39 @@ namespace FlightControlWeb.Models
 {
 	public class FlightPlan
 	{
+		private const int LongitudeBorder = 180;
+		private const int LatitudeBorder = 90;
+
+		private int passengers = -1;
+		private Location location = new Location(LongitudeBorder + 1, LatitudeBorder + 1, new DateTime());
+		private List<Segment> segments = new List<Segment>();
+
+
 		[Required]
 		[JsonPropertyName("passengers")]
-		public int Passengers { get; set; }
+		public int Passengers { get { return passengers; } set { passengers = value; } }
 		[Required]
 		[JsonPropertyName("company_name")]
 		public string CompanyName { get; set; }
 
 		public struct Location
 		{
-			public Location(double longitudeStruct, double latitudeStruct, DateTime dateTimeStruct)
+			private double longitude;
+			private double latitude;
+			public Location(double longitudeStruct, double latitudeStruct, DateTime dateTimeStruct) :this()
 			{
+				this.longitude = LongitudeBorder + 1;
+				this.latitude = LatitudeBorder + 1;
 				Longitude = longitudeStruct;
 				Latitude = latitudeStruct;
 				DateTime = dateTimeStruct;
 			}
 			[Required]
 			[JsonPropertyName("longitude")]
-			public double Longitude { get; set; }
+			public double Longitude { get { return longitude; } set { longitude = value; } }
 			[Required]
 			[JsonPropertyName("latitude")]
-			public double Latitude { get; set; }
+			public double Latitude { get { return latitude; } set { latitude = value; } }
 			[Required]
 			[JsonPropertyName("date_time")]
 			public DateTime DateTime { get; set; }
@@ -54,30 +66,35 @@ namespace FlightControlWeb.Models
 				
 				return true;
 			}
-
-
 		}
+
 		[Required]
 		[JsonPropertyName("initial_location")]
-		public Location InitialLocation { get; set; }
+		public Location InitialLocation { get { return location; } set { location = value; } }
 
 		public struct Segment
 		{
-			public Segment(double longitudeStruct, double latitudeStruct, int timespanSecondsStruct)
+			private double longitude;
+			private double latitude;
+			private int timespanSeconds;
+			public Segment(double longitudeStruct, double latitudeStruct, int timespanSecondsStruct) : this()
 			{
+				this.longitude = LongitudeBorder + 1;
+				this.latitude = LatitudeBorder + 1;
+				this.timespanSeconds = -1;
 				Longitude = longitudeStruct;
 				Latitude = latitudeStruct;
 				TimespanSeconds = timespanSecondsStruct;
 			}
 			[Required]
 			[JsonPropertyName("longitude")]
-			public double Longitude { get; set; }
+			public double Longitude { get { return longitude; } set { longitude = value; } }
 			[Required]
 			[JsonPropertyName("latitude")]
-			public double Latitude { get; set; }
+			public double Latitude { get { return latitude; } set { latitude = value; } }
 			[Required]
 			[JsonPropertyName("timespan_seconds")]
-			public int TimespanSeconds { get; set; }
+			public int TimespanSeconds { get { return timespanSeconds; } set { timespanSeconds = value; } }
 
 			public override string ToString() => $"({Latitude}, {Longitude})";
 			public override bool Equals(Object other)
@@ -100,7 +117,6 @@ namespace FlightControlWeb.Models
 
 		}
 
-		private List<Segment> segments = new List<Segment>();
 		[Required]
 		[JsonPropertyName("segments")]
 		public List<Segment> Segments
@@ -111,6 +127,13 @@ namespace FlightControlWeb.Models
 
 		public FlightPlan()
 		{
+		}
+		public FlightPlan(int passengers, string companyName, Location location, List<Segment> segments)
+		{
+			this.passengers = passengers;
+			this.CompanyName = companyName;
+			this.InitialLocation = location;
+			this.Segments = segments;
 		}
 		public override bool Equals(Object other)
 		{

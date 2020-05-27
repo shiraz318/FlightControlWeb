@@ -2,8 +2,8 @@
     "passengers": 200,
     "company_name": "New",
     "initial_location": {
-        "longitude": 0.98,
-        "latitude": 2.36,
+        "longitude": 20,
+        "latitude": 10,
         "date_time": "2020-05-24T10:57:00Z"
     },
     "segments": [

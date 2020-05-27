@@ -55,7 +55,8 @@ function HandleDrop(e) {
 function HandleFiles(files) {
     [...files].forEach(UploadFile);
 }
- 
+
+
 // Upload a file to the server.
 function UploadFile(file) {
 
@@ -68,16 +69,15 @@ function UploadFile(file) {
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
         xhr.addEventListener("readystatechange", function (e) {
-             if (xhr.readyState === 4 && xhr.status !== 201 && xhr.status !== 200) {
+            if (xhr.readyState === 4 && xhr.status !== 201 && xhr.status !== 200) {
                 // Error. Inform the user
                 Alert("Oops! Somethis Is Wrong. Json File Is Not Valid");
             }
         });
-
         formData.append("file", file);
         xhr.send(reader.result);
-    };
 
+    };
     reader.onerror = function () {
         Alert("Oops! Somethis Is Wrong. " + reader.error);
     };

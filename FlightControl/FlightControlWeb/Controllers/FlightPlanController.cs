@@ -5,12 +5,16 @@ using System.Threading.Tasks;
 using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static FlightControlWeb.Models.FlightPlan;
+
 namespace FlightControlWeb.Controllers
 {
     [Route("api/FlightPlan")]
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
+        public const int LongitudeBorder = 180;
+        public const int LatitudeBorder = 90;
         IFlightPlanManager manager;
 
         public FlightPlanController(IFlightPlanManager manager)
@@ -52,11 +56,58 @@ namespace FlightControlWeb.Controllers
                 return NotFound(e.Message);
             }
         }
-            
+
+        // Check the validation of a given flightPlan.
+        private bool CheckValidationOfFlightPlan(FlightPlan flightPlan)
+        {
+            if (flightPlan.InitialLocation.Longitude > LongitudeBorder
+                || flightPlan.InitialLocation.Longitude < -LongitudeBorder)
+            {
+                return false;
+            }
+            if (flightPlan.InitialLocation.Latitude > LatitudeBorder 
+                || flightPlan.InitialLocation.Latitude < -LatitudeBorder)
+            {
+                return false;
+            }
+            if (flightPlan.Passengers < 0)
+            {
+                return false;
+            }
+            if (flightPlan.CompanyName == null)
+            {
+                return false;
+            }
+            if (flightPlan.Segments.Count == 0)
+            {
+                return false;
+            }
+            foreach (Segment segment in flightPlan.Segments)
+            {
+                if (segment.Longitude > LongitudeBorder || segment.Longitude < -LongitudeBorder)
+                {
+                    return false;
+                }
+                if (segment.Latitude > LatitudeBorder || segment.Latitude < -LatitudeBorder)
+                {
+                    return false;
+                }
+                if (segment.TimespanSeconds < 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         // POST /api/FlightPlan.
         [HttpPost]
         public ActionResult<string> Post([FromBody] FlightPlan flightPlan)
         {
+            if (!CheckValidationOfFlightPlan(flightPlan))
+            {
+                return BadRequest("");
+            }
             string id =  manager.AddFlightPlan(flightPlan);
             return Ok(id);
         }

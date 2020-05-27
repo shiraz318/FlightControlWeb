@@ -84,7 +84,7 @@ namespace UnitTestFlightControl
 
         public void InsertFlightPlan(FlightPlan flightPlan, string id)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void InsertServer(Server server)
