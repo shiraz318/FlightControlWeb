@@ -18,6 +18,8 @@ namespace FlightControlWeb
     {
         public Startup(IConfiguration configuration)
         {
+            
+
             Configuration = configuration;
         }
 
@@ -54,6 +56,8 @@ namespace FlightControlWeb
                 endpoints.MapControllers();
             });
             DataAccess.InitializeDatabase();
+
+        
         }
     }
 }
