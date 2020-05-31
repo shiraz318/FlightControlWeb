@@ -48,6 +48,10 @@ namespace FlightControlWeb.Models
 			public DateTime DateTime { get; set; }
 
 			public override string ToString() => $"({Latitude}, {Longitude})";
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
 			public override bool Equals(Object other)
 			{
 				Location otherLocation = (Location)other;
@@ -114,6 +118,10 @@ namespace FlightControlWeb.Models
 				}
 				return true;
 			}
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
 
 		}
 
@@ -166,7 +174,10 @@ namespace FlightControlWeb.Models
 
 			return true;
 		}
-
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 	}
 

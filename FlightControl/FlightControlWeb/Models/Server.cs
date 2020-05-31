@@ -16,6 +16,10 @@ namespace FlightControlWeb.Models
 		[Required]
 		[JsonPropertyName("ServerURL")]
 		public string ServerURL { get; set; }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 		public override bool Equals(Object other)
 		{
 			Server otherServer = (Server)other;

@@ -18,7 +18,11 @@ namespace UnitTestFlightControl
 
         public bool DeleteServer(string id)
         {
-            throw new NotImplementedException();
+            if (id.Contains("not_exist"))
+            {
+                return false;
+            }
+            return true;
         }
 
         public FlightPlan GetFlightPlan(string id)
@@ -63,7 +67,11 @@ namespace UnitTestFlightControl
 
         public Server GetServerByIdOfFlight(string id)
         {
-            throw new NotImplementedException();
+            if (id.Contains("not_exist"))
+            {
+                return new Server();
+            }
+            return null;
         }
 
         public List<Server> GetServers()

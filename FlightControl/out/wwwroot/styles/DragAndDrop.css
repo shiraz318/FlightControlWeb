@@ -1,0 +1,66 @@
+﻿#drop-area {
+    font-family: system-ui;
+    background: none;
+}
+
+    #drop-area.highlight {
+        border: 2px dashed #ccc;
+        border-color: purple;
+        visibility: visible;
+        background-image: url(../images/DragandDrop.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+p {
+    margin-top: 0;
+}
+
+.my-form {
+    margin-bottom: 10px;
+}
+.disappear {
+    color:transparent;
+    background-color:transparent;
+    text-emphasis-color:transparent;
+}
+#gallery {
+    margin-top: 10px;
+}
+
+    #gallery img {
+        width: 150px;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+.button {
+    display: inline-block;
+    padding: 20px;
+    background: #ccc;
+    cursor: pointer;
+    border-radius: 20px;
+    border: 20px solid #ccc;
+}
+
+    .button:hover {
+        background: #ddd;
+    }
+
+#fileElem {
+    display: none;
+}
+
+#myImageId {
+    visibility: hidden;
+    height: 247px;
+    width: 100%;
+    margin-left: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+.invisible {
+}

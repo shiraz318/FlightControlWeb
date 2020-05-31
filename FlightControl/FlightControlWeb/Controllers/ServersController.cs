@@ -52,7 +52,7 @@ namespace FlightControlWeb.Controllers
 
         // DELETE: api/servers/{id}
         [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(string id)
+        public ActionResult<string> Delete(string id)
         {
            if (manager.Delete(id))
             {

@@ -15,6 +15,7 @@ namespace FlightControlWeb.Controllers
     {
         public const int LongitudeBorder = 180;
         public const int LatitudeBorder = 90;
+        public const string Valid = "Ok";
         IFlightPlanManager manager;
 
         public FlightPlanController(IFlightPlanManager manager)
@@ -58,55 +59,56 @@ namespace FlightControlWeb.Controllers
         }
 
         // Check the validation of a given flightPlan.
-        private bool CheckValidationOfFlightPlan(FlightPlan flightPlan)
+        private string CheckValidationOfFlightPlan(FlightPlan flightPlan)
         {
             if (flightPlan.InitialLocation.Longitude > LongitudeBorder
                 || flightPlan.InitialLocation.Longitude < -LongitudeBorder)
             {
-                return false;
+                return "Oops! Something Is Wrong. Flight Plan Initial Location Is Invalid";
             }
             if (flightPlan.InitialLocation.Latitude > LatitudeBorder 
                 || flightPlan.InitialLocation.Latitude < -LatitudeBorder)
             {
-                return false;
+                return "Oops! Something Is Wrong. Flight Plan Initial Location Is Invalid";
             }
             if (flightPlan.Passengers < 0)
             {
-                return false;
+                return "Oops! Something Is Wrong. Flight Plan Passenger's Number Is Invalid";
             }
             if (flightPlan.CompanyName == null)
             {
-                return false;
+                return "Oops! Something Is Wrong. Flight Plan Company Name Is Invalid";
             }
             if (flightPlan.Segments.Count == 0)
             {
-                return false;
+                return "Oops! Something Is Wrong. Flight Plan Segments Is Invalid";
             }
             foreach (Segment segment in flightPlan.Segments)
             {
                 if (segment.Longitude > LongitudeBorder || segment.Longitude < -LongitudeBorder)
                 {
-                    return false;
+                    return "Oops! Something Is Wrong. Flight Plan Segment Location Is Invalid";
                 }
                 if (segment.Latitude > LatitudeBorder || segment.Latitude < -LatitudeBorder)
                 {
-                    return false;
+                    return "Oops! Something Is Wrong. Flight Plan Segment Location Is Invalid";
                 }
                 if (segment.TimespanSeconds < 0)
                 {
-                    return false;
+                    return "Oops! Something Is Wrong. Flight Plan Segment Timespan Seconds Is Invalid";
                 }
             }
-            return true;
+            return Valid;
         }
 
         // POST /api/FlightPlan.
         [HttpPost]
         public ActionResult<string> Post([FromBody] FlightPlan flightPlan)
         {
-            if (!CheckValidationOfFlightPlan(flightPlan))
+            string isValid = CheckValidationOfFlightPlan(flightPlan);
+            if (isValid.CompareTo(Valid) != 0)
             {
-                return BadRequest("");
+                return BadRequest(isValid);
             }
             string id =  manager.AddFlightPlan(flightPlan);
             return Ok(id);

@@ -33,5 +33,57 @@ namespace UnitTestFlightControl
                 Assert.AreEqual<Server>(expectedServers[i], actualServers[i]);
             }
         }
+
+        [TestMethod]
+        [DataRow("exists_serverID")]
+        [DataRow("not_exists_serverID")]
+        public void DeleteServerTest(string id)
+        {
+            // Arrange.
+            IDataAccess demoDataAccess = new DemoDataAccess();
+            IServersManager serversManager = new ServersManager(demoDataAccess);
+            ServersController serversController = new ServersController(serversManager);
+
+            // Act.
+            ActionResult<string> actionResult = serversController.Delete(id);
+
+            // Assert.
+            ObjectResult expectedResult;
+            if (demoDataAccess.DeleteServer(id))
+            {
+                expectedResult = new OkObjectResult(id);
+            }
+            else
+            {
+                expectedResult = new NotFoundObjectResult(id);
+            }
+            Assert.IsInstanceOfType(actionResult.Result, expectedResult.GetType());
+        }
+        [TestMethod]
+        [DataRow("exists_serverID")]
+        [DataRow("not_exists_serverID")]
+        public void GetUrlTest(string id)
+        {
+            // Arrange.
+            IDataAccess demoDataAccess = new DemoDataAccess();
+            IServersManager serversManager = new ServersManager(demoDataAccess);
+            ServersController serversController = new ServersController(serversManager);
+
+            // Act.
+            ActionResult<Server> actionResult = serversController.GetUrl(id);
+
+            // Assert.
+            ObjectResult expectedResult;
+            Server server = demoDataAccess.GetServerByIdOfFlight(id);
+            if (server != null)
+            {
+                expectedResult = new OkObjectResult(server);
+            }
+            else
+            {
+                expectedResult = new NotFoundObjectResult(id);
+            }
+            Assert.IsInstanceOfType(actionResult.Result, expectedResult.GetType());
+        }
     }
 }

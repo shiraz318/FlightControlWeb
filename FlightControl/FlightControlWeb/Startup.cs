@@ -64,16 +64,8 @@ namespace FlightControlWeb
 
 /*
  * TODO:
- *
- * may be needs to uninstall the toolbox befor submit.
  * 
  * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
- *  
- *  delete all console.log before submitting.
- *  
- * End points events:
- *
- * invalid json file - no segmnents, and other things.
  * 
  * 
  */
