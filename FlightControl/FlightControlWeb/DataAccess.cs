@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using Microsoft.Data.Sqlite;
@@ -109,16 +108,6 @@ namespace FlightControlWeb
             CloseConncetion();
 
         }
-
-        //public void Create()
-        //{
-        //    using (SqliteConnection db = new SqliteConnection
-        //        (AppDomain.CurrentDomain.BaseDirectory + @"\Database.sqlite"))
-        //    {
-
-
-        //    }
-        //}
 
 
         // Read a single row from the data base.
@@ -316,14 +305,6 @@ namespace FlightControlWeb
 
         }
 
-        //private FlightPlan GetFlightPlanFromServers(string id)
-        //{
-        //    OpenConnection();
-        //    object[] urlObject = ReadFromTableSingleRow("SELECT Url FROM ExternalFlightsTable" +
-        //        " WHERE FlightId = '" + id + "'");
-        //    string url = Convert.ToString(urlObject[0]);
-
-        //}
 
         // Get a FlightPlan by a given id.
         public FlightPlan GetFlightPlan(string id)

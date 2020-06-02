@@ -1,4 +1,6 @@
-﻿let dropArea = document.getElementById("drop-area");
+﻿/* global Alert */
+
+let dropArea = document.getElementById("drop-area");
 
 ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
     dropArea.addEventListener(eventName, preventDefaults, false);
@@ -18,7 +20,7 @@ function preventDefaults(e) {
     });
 
 
-function Highlight(e) {
+function Highlight() {
     dropArea.classList.add("highlight");
     let listItems = document.querySelectorAll("#my-flights-list > li");
     let i = 0;
@@ -31,7 +33,7 @@ function Highlight(e) {
 }
 
 
-function Unhighlight(e) {
+function Unhighlight() {
     dropArea.classList.remove("highlight");
     let listItems = document.querySelectorAll("#my-flights-list > li");
     let i = 0;
@@ -68,7 +70,7 @@ function UploadFile(file) {
     reader.onload = function () {
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-        xhr.addEventListener("readystatechange", function (e) {
+        xhr.addEventListener("readystatechange", function () {
             if (xhr.readyState === 4 && xhr.status !== 201 && xhr.status !== 200) {
                 // Error. Inform the user
                 let message = xhr.response;

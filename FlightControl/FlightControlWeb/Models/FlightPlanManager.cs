@@ -52,7 +52,7 @@ namespace FlightControlWeb.Models
             {
                 string command = url + "/api/FlightPlan/" + id;
                 using var client = new HttpClient();
-                TimeSpan timeout = new TimeSpan(0, 0, 0, 15);
+                TimeSpan timeout = new TimeSpan(0, 0, 0, 50);
                 client.Timeout = timeout;
 
                 string content = await client.GetStringAsync(command);

@@ -1,4 +1,13 @@
-﻿
+﻿/* exported initMap */
+/* global CheckValidityOfFlightPlan */
+/* global ResetFlightDetails */
+/* global Alert */
+/* exported AddMarker */
+/* global DisplayFlightDetails */
+/* exported SetNewPosition */
+/* exported UnDisplayMarkers */
+/* global IsFound */
+
 // Global variables.
 let map;
 let allFlightsPath = {};
@@ -21,7 +30,7 @@ function initMap() {
 }
 
 // Reset a row color.
-function ResetRowsColor(name){
+function ResetRowsColor(name) {
     let listItems = document.querySelectorAll(name);
     let i = 0;
     let size = listItems.length;
@@ -52,14 +61,14 @@ function DisplayPath(id) {
         let icon;
         if (key === id) {
             allFlightsPath[key].setMap(map);
-             icon = { url: clickedImg };
+            icon = { url: clickedImg };
             allFlightsMarker[key].setIcon(icon);
         } else {
             allFlightsPath[key].setMap(null);
             icon = { url: regularImg };
             allFlightsMarker[key].setIcon(icon);
         }
-    }   
+    }
 }
 
 //Segment Iteration.
@@ -91,8 +100,8 @@ function SetPath(id, message) {
         }
     }).fail(function (jqXHR) {
         Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan while" +
-           "setting path.Status: " + jqXHR.status);
-    }); 
+            " setting path.Status: " + jqXHR.status);
+    });
 }
 
 
@@ -101,7 +110,7 @@ function CreatePath(id, isExternal) {
     if (isExternal) {
         // Get the server who own the flight.
         $.getJSON("/api/servers/" + id, (server) => {
-            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
+            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;
             SetPath(id, message);
         }).fail(function (jqXHR) {
             Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = "
@@ -110,11 +119,11 @@ function CreatePath(id, isExternal) {
     }
     else {
         SetPath(id, "/api/FlightPlan/" + id);
-    } 
+    }
 }
 
 // Add a marker on the map for a given flight.
-function AddMarker(flight) {  
+function AddMarker(flight) {
     // Create a new marker.
     let marker = new google.maps.Marker({
         position: new google.maps.LatLng(flight.latitude, flight.longitude),

@@ -81,7 +81,7 @@ namespace FlightControlWeb.Models
             string url = server.ServerURL;
             string command = url + "/api/Flights?relative_to=" + date;
             using var client = new HttpClient();
-            TimeSpan timeout = new TimeSpan(0, 0, 0, 15);
+            TimeSpan timeout = new TimeSpan(0, 0, 0, 50);
             string strResult;
             client.Timeout = timeout;
             try
@@ -98,52 +98,7 @@ namespace FlightControlWeb.Models
 
         }
 
-        //// Get a flights from an external server relative to a given time.
-        //private async Task<List<Flights>> GetRequestFromServer(Server server, DateTime time)
-        //{
-        //    string date = time.ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
-        //    string url = server.ServerURL;
-        //    string command = url + "/api/Flights?relative_to=" + date;
-        //    using var client = new HttpClient();
-        //    TimeSpan timeout = new TimeSpan(0,0,0,15);
-        //    string strResult;
-        //    client.Timeout = timeout;
-        //    try
-        //    {
-        //        strResult = await client.GetStringAsync(command);
-        //    }
-        //    // Server is not responsing in 15 seconds time.
-        //    catch (Exception t)
-        //    {
-        //        string message = t.Message;
-        //        return null;
-        //    }
-        //    try
-        //    {
-        //        List<Flights> flights = new List<Flights>();
-        //        var json = JArray.Parse(strResult);
-        //        int i = 0;
-        //        for (i = 0; i < json.Count; i++)
-        //        {
-        //            Flights flight = new Flights();
-        //            flight.FlightId = json[i]["flight_id"].ToString();
-        //            flight.CompanyName = json[i]["company_name"].ToString();
-        //            flight.Latitude = Convert.ToDouble(json[i]["latitude"]);
-        //            flight.Longitude = Convert.ToDouble(json[i]["longitude"]);
-        //            flight.Passengers = Convert.ToInt32(json[i]["passengers"]);
-        //            flight.DateTime = time;
-        //            flight.IsExternal = true;
-        //            dataAccess.InsertExtenalFlightId(server, flight.FlightId);
-        //            flights.Add(flight);
-        //        }
-        //        return flights;
-        //        // Server response is not a valid json file.
-        //    }catch(Exception t)
-        //    {
-        //        string message = t.Message;
-        //        return null;
-        //    }
-        //}
+        
 
         // Get flights from all the servers in the data base.
         public async Task<FlightsFromServers> GetFlightsFromServers(List<Server> servers,

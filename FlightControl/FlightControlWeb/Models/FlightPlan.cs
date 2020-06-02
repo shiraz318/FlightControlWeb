@@ -43,9 +43,12 @@ namespace FlightControlWeb.Models
 			[Required]
 			[JsonPropertyName("latitude")]
 			public double Latitude { get { return latitude; } set { latitude = value; } }
+			//[Required]
+			//[JsonPropertyName("date_time")]
+			public DateTime DateTime { get; set; }
 			[Required]
 			[JsonPropertyName("date_time")]
-			public DateTime DateTime { get; set; }
+			public string StringDateTime { get { return this.DateTime.ToString("yyyy-MM-ddTHH:mm:ssZ"); } set {this.DateTime = DateTime.Parse(value).ToUniversalTime(); } }
 
 			public override string ToString() => $"({Latitude}, {Longitude})";
 			public override int GetHashCode()

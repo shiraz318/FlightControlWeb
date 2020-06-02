@@ -62,13 +62,6 @@ namespace FlightControlWeb
     }
 }
 
-/*
- * TODO:
- * 
- * do not forget you have a lot of dll files - maybe need to put them together in additional folder.
- * 
- * 
- */
 
 
 

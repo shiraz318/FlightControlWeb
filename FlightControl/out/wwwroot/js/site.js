@@ -1,5 +1,11 @@
-﻿
-setInterval(DisplayFlights,2000);
+﻿/* global RemovwMareker*/
+/* global ResetFlights*/
+/* global DisplayPath*/
+/* global AddMarker*/
+/* global SetNewPosition*/
+/* global UnDisplayMarkers*/
+
+setInterval(DisplayFlights, 2000);
 
 // Global variables.
 let isOnTime = {};
@@ -10,12 +16,6 @@ const deleted = 3;
 const ColorRow = "highlightedRow";
 const LongitudeBorder = 180;
 const LatitudeBorder = 90;
-
-
-// Sleep for ms mili seconds.
-async function Sleep(ms) {
-    await new Promise(r => setTimeout(r, ms));
-}
 
 
 // Reset flight details.
@@ -46,9 +46,6 @@ function EndTime(startTime, segments) {
     });
     let d = new Date(startTime);
     d.setSeconds(d.getSeconds() + duration);
-    let offset = d.getTimezoneOffset();
-    let realOS = offset * -1; 
-    d.setMinutes(d.getMinutes() + realOS);
     let endTime = d.toISOString();
     return endTime;
 }
@@ -56,9 +53,6 @@ function EndTime(startTime, segments) {
 // Calculate the start time using a given time.
 function StartTime(time) {
     let d = new Date(time);
-    let offset = d.getTimezoneOffset();
-    let realOS = offset * -1;
-    d.setMinutes(d.getMinutes() + realOS);
     let startTime = d.toISOString();
     return startTime;
 }
@@ -93,7 +87,7 @@ function FlightPlanDetails(message) {
         }
     }).fail(function (jqXHR) {
         Alert("Oops! Something Is Wrong. Couldn't Get The FlightPlan. Status: " + jqXHR.status);
-    }); 
+    });
 }
 
 // Display the details of a given flight.
@@ -101,20 +95,20 @@ function DisplayFlightDetails(id, isExternal) {
     if (isExternal) {
         // Find the server that own the flight with the given id.
         $.getJSON("/api/servers/" + id, (server) => {
-            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;            
-             // Display the details of the given flight.
+            let message = "/api/FlightPlan?id=" + id + "&url=" + server.ServerURL;
+            // Display the details of the given flight.
             FlightPlanDetails(message);
         }).fail(function (jqXHR) {
             Alert("Oops! Something Is Wrong. Couldn't Get The Sever With Flight Id = " + id
                 + ". Status: " + jqXHR.status);
-        }); 
+        });
     }
     else {
         FlightPlanDetails("/api/FlightPlan/" + id);
     }
     // Color the row that is pressed and reset the other rows color.
     Highlighted(id, "#my-flights-list > li");
-    Highlighted(id, "#external-flights-list > li");  
+    Highlighted(id, "#external-flights-list > li");
 }
 
 // Show an error message.
@@ -133,14 +127,14 @@ function DeleteFlight(id, self) {
     if (self.parent().hasClass(ColorRow)) {
         self.parent().removeClass(ColorRow);
         ResetFlightDetails();
-        ResetFlights(); 
+        ResetFlights();
     }
     // Delete the flight.
     self.parent().fadeOut(600, function () { $(this).remove(); });
     $.ajax({
         url: "/api/Flights/" + id,
         type: "DELETE",
-        success: function (result) {
+        success: function () {
             RemoveRow(id);
             // Remove the matching marker from the map.
             RemovwMareker(id);
@@ -149,18 +143,18 @@ function DeleteFlight(id, self) {
     }).fail(function (jqXHR) {
         Alert("Oops! Something Is Wrong. Couldn't Delete The Flight With Id = " + id
             + ". Status: " + jqXHR.status);
-    }); 
+    });
 }
 
 // Check if a given id's flight is in a given list.
 function IsFound(id, nameOfList) {
-    
+
     let listItems = document.querySelectorAll(nameOfList);
     let j = 0;
     let size = listItems.length;
     let found = false;
     for (j = 0; j < size; j++) {
-         // Get the id of the current flight row.
+        // Get the id of the current flight row.
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
         if (id1 === id) {
             found = true;
@@ -197,7 +191,7 @@ function GetRow(id) {
     j = 0;
     size = listItems.length;
     for (j = 0; j < size; j++) {
-         // Get the id of the current flight row.
+        // Get the id of the current flight row.
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
         if (id1 === id) {
             return listItems[j];
@@ -233,7 +227,7 @@ function RemoveFromFlightList() {
 function DisplayExternal(flight) {
 
     isOnTime[flight.flight_id] = newFlight;
-    let firstColunm = $("<span class="+ "space"+">").text("X");
+    let firstColunm = $("<span class=" + "space" + ">").text("X");
     let newflightCompanyName = $("<span class=" + "flight-company" + ">").
         text(flight.company_name);
     let newflightId = $("<span class=" + "flight-id" + ">").text(flight.flight_id);
@@ -263,7 +257,7 @@ function DisplayExternal(flight) {
         DisplayPath(flight.flight_id);
     });
     // Add a new marker on the map.
-     AddMarker(flight);
+    AddMarker(flight);
 }
 
 // Display a given flight in the internal flight list.
@@ -310,20 +304,20 @@ function RowInMyFlightList(flight) {
     let foundInInternal = IsFound(flight.flight_id, "#my-flights-list > li");
     let foundInExternal = IsFound(flight.flight_id, "#external-flights-list > li");
 
-     // The given flight is a new flight.
+    // The given flight is a new flight.
     if (!(foundInInternal || foundInExternal)) {
         if (flight.is_external) {
             DisplayExternal(flight);
         } else {
-           DisplayInternal(flight);
-        }        
+            DisplayInternal(flight);
+        }
     }
     // The given flight is already in one of the lists.
     else {
         isOnTime[flight.flight_id] = oldFlight;
     }
     // Set the position of the flight.
-    SetNewPosition(flight);   
+    SetNewPosition(flight);
 }
 
 // Check the validity of a given flightPlan.
@@ -406,7 +400,7 @@ function DisplayFlights() {
     // Gets the current date in the requierd format.
     let date = new Date().toISOString();
     let curdate = date.split(".")[0] + "Z";
-
+    console.log(curdate);
     // Get all active flights.
     $.getJSON("/api/Flights?relative_to=" + curdate + "&sync_all", (data) => {
         ResetDictionaryOnTime();
@@ -418,10 +412,10 @@ function DisplayFlights() {
 
     }).fail(function (jqXHR) {
         Alert("Oops! Something Is Wrong. Couldn't Get All Flights Properly. Status: " + jqXHR.status);
-    });     
+    });
 }
 
-$('.alert .close').on('click', function (e) {
+$('.alert .close').on('click', function () {
     $(this).parent().hide();
 });
 
