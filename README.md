@@ -20,7 +20,7 @@ The system is syncronized with other aerial control systems, such that each user
 
 
 ### Note
-In order to activate tha map, you need to write a key in WWWroot/index.html instead of (Enter_Your_Key_Here).  
+In order to activate tha map, you need to write a key in wwwroot/index.html instead of (Enter_Your_Key_Here).  
 To get a key, use this link https://developers.google.com/maps/documentation/javascript/get-api-key
 and follow the instuctions.
 
