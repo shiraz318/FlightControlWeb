@@ -2,7 +2,7 @@
  ## Overview
  In this project we created an aerial control system who monitors active flights and is able to accept new flight plans.  
 The flight plan define the path of the flight and other technical details.  
-The system is syncronized with other aerial control systems, such that each user can keep track of external flights as well of the internal flights.  
+The system is syncronized with other aerial control systems, such that each user can keep track of external flights as well as the internal flights.  
 
 ## How to use
 1. Download the FlightControl folder, and put it inside a zip folder called "FlightControl".  
