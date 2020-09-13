@@ -164,9 +164,8 @@ function RemovwMareker(id) {
 function UnDisplayMarkers() {
 
     for (let key in allFlightsMarker) {
-        if (!allFlightsMarker[key]) {
-            continue;
-        }
+        if (!allFlightsMarker[key]) continue;
+
         // If the marker exists in either lists we keep it. otherwise - delete it.
         let foundInInternal = IsFound(key, "#my-flights-list > li");
         let foundInExternal = IsFound(key, "#external-flights-list > li");

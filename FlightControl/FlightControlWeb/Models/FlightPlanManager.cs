@@ -57,13 +57,11 @@ namespace FlightControlWeb.Models
 
                 string content = await client.GetStringAsync(command);
                 return content;
-                // Server did not responsed in 15 seconds.
-            }catch(Exception t)
+             // Server did not responsed in 50 seconds.
+            }catch
             {
-                string g = t.Message;
                 return null;
             }
-
         }
 
         // Create a FlightPlan object from a json file.
@@ -79,11 +77,10 @@ namespace FlightControlWeb.Models
             flightPlan.InitialLocation = location;
             flightPlan.Passengers = Convert.ToInt32(json["passengers"]);
             List<Segment> segments = new List<Segment>();
-            int i = 0;
             JArray items = (JArray)json["segments"];
             int length = items.Count;
             // Create segments.
-            for (i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
                 double longitude1 = Convert.ToDouble(json["segments"][i]["longitude"]);
                 double latitude1 = Convert.ToDouble(json["segments"][i]["latitude"]);
@@ -100,16 +97,13 @@ namespace FlightControlWeb.Models
         public async Task<FlightPlan> GetFlightPlanFromServer(string id, string url)
         {
             string strResult = await SendRequest(id, url);
-            if (strResult == null)
-            {
-                return null;
-            }
+            if (strResult == null) return null;
             try
             {
                 return CreateFlightPlanFromJson(strResult);
-            } catch(Exception e)
+
+            } catch
             {
-                string message = e.Message;
                 return null;
             }
         }
@@ -127,10 +121,8 @@ namespace FlightControlWeb.Models
         public async Task<FlightPlan> GetFlightPlan(string id)
         {      
             FlightPlan flightPlan = dataAccess.GetFlightPlan(id); ;
-            if (flightPlan != null)
-            {
-                return flightPlan;
-            }
+            if (flightPlan != null) return flightPlan;
+
             Server server = dataAccess.GetServerByIdOfFlight(id);
             if (server != null)
             {

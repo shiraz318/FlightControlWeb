@@ -45,10 +45,8 @@ namespace FlightControlWeb.Models
                 soFar = soFar.AddSeconds(Convert.ToDouble(seg[segmenTimespanSecondE]));
                 int result = DateTime.Compare(requierdTime, soFar);
                 // requierdTime is earlier than soFar
-                if (result < 0)
-                {
-                    return count;
-                }
+                if (result < 0) return count;
+
                 count++;
                 soFarDuration = 
                     soFarDuration.AddSeconds(Convert.ToDouble(seg[segmenTimespanSecondE]));

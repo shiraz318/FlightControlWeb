@@ -13,22 +13,25 @@ namespace FlightControlWeb.Models
 		[Required]
 		[JsonPropertyName("ServerId")]
 		public string ServerId { get ; set; }
+		
 		[Required]
 		[JsonPropertyName("ServerURL")]
+		
 		public string ServerURL { get; set; }
+		
+		// GetHashCode override for Server.
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
+
+		// Equals override for Server.
 		public override bool Equals(Object other)
 		{
 			Server otherServer = (Server)other;
 			if (otherServer.ServerURL.CompareTo(this.ServerURL) == 0)
 			{
-				if (otherServer.ServerId.CompareTo(this.ServerId) == 0)
-				{
-					return true;
-				}
+				if (otherServer.ServerId.CompareTo(this.ServerId) == 0) return true;
 			}
 			return false;
 		}

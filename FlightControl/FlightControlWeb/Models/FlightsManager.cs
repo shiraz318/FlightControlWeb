@@ -21,6 +21,8 @@ namespace FlightControlWeb.Models
         {
             this.dataAccess = dataAccess;
         }
+
+        // FlightsFromServers struct.
         public struct FlightsFromServers
         {
             public FlightsFromServers(List<Flights> flights, bool isError)
@@ -32,7 +34,6 @@ namespace FlightControlWeb.Models
             public List<Flights> FlightsList { get; set; }
             public bool IsError { get; set; }
         }
-
 
         // Delete a Flight from the data base by a given id.
         public bool DeleteFlight(string id)
@@ -67,9 +68,8 @@ namespace FlightControlWeb.Models
                 return flights;
                 // Server response is not a valid json file.
             }
-            catch (Exception t)
+            catch
             {
-                string message = t.Message;
                 return null;
             }
         }
@@ -90,15 +90,12 @@ namespace FlightControlWeb.Models
                 return strResult;
             }
             // Server is not responsing in 15 seconds time.
-            catch (Exception t)
+            catch
             {
-                string message = t.Message;
                 return null;
             }
 
         }
-
-        
 
         // Get flights from all the servers in the data base.
         public async Task<FlightsFromServers> GetFlightsFromServers(List<Server> servers,
@@ -106,28 +103,20 @@ namespace FlightControlWeb.Models
         {
             List<Flights> flights = new List<Flights>();
             bool isError = false;
-            //get flights.
+            // Get flights.
             foreach (Server server in servers.ToList())
             {
                 List<Flights> flights1 = new List<Flights>();
                 string result = await GetRequestFromServer(server, time);
                 // Server did not responded.
-                if (result == null)
-                {
-                    continue;
-                }
+                if (result == null)  continue;
 
                 flights1 = CreateFlightsFromServer(result, time, server);
 
                 // Server response is invalid.
-                if (flights1 == null)
-                {
-                    isError = true;
-                }
-                else
-                {
-                    flights.AddRange(flights1);
-                }
+                if (flights1 == null)  isError = true;
+                else flights.AddRange(flights1);
+
             }
             FlightsFromServers flightsFromServers = new FlightsFromServers(flights, isError);
             return flightsFromServers;
@@ -155,7 +144,6 @@ namespace FlightControlWeb.Models
             }
 
             return flightsFromServersInternal;
-
            
         }
     }

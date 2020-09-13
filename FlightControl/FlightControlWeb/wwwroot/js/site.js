@@ -182,9 +182,7 @@ function GetRow(id) {
     for (j = 0; j < size; j++) {
         // Get the id of the current flight row.
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
-        if (id1 === id) {
-            return listItems[j];
-        }
+        if (id1 === id) return listItems[j];
     }
 
     listItems = document.querySelectorAll("#external-flights-list > li");
@@ -193,9 +191,7 @@ function GetRow(id) {
     for (j = 0; j < size; j++) {
         // Get the id of the current flight row.
         let id1 = listItems[j].getElementsByTagName("span")[2].innerText;
-        if (id1 === id) {
-            return listItems[j];
-        }
+        if (id1 === id) return listItems[j];
     }
 }
 
@@ -263,9 +259,8 @@ function DisplayExternal(flight) {
 // Display a given flight in the internal flight list.
 function DisplayInternal(flight) {
 
-    if (isOnTime[flight.flight_id] === deleted) {
-        return;
-    }
+    if (isOnTime[flight.flight_id] === deleted) return;
+
     isOnTime[flight.flight_id] = newFlight;
     let flightDelete = $("<span class=" + "flight-delete" + ">").text("X");
     let newflightCompanyName = $("<span class=" + "flight-company" + ">").

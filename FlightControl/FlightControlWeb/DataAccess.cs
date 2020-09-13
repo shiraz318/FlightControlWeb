@@ -153,13 +153,10 @@ namespace FlightControlWeb
                 Convert.ToDateTime(initialLocation[initalLocationDateTimeE]);
             int result = DateTime.Compare(requiredTime, flightPlanDateTime);
 
-            // requiredTime is earlier than flightPlanDateTime
-            if (result < 0)
-            {
-                return true;
-            }
-            return false;
+            // requiredTime is earlier than flightPlanDateTime (result < 0)
+            return (result < 0);
         }
+
         // Check if a Flight is already finish flying.
         private bool AlreadyFinished(int timeOfAllFlight, DateTime startTime,
             DateTime requiredTime)
@@ -168,12 +165,8 @@ namespace FlightControlWeb
             DateTime endTime = startTime.Add(duration);
 
             int result = DateTime.Compare(requiredTime, endTime);
-            // requiredTime is later than endTime
-            if (result >= 0)
-            {
-                return true;
-            }
-            return false;
+            // requiredTime is later than endTime (result >= 0)
+            return (result >= 0);
         }
 
         // Create a Flights object.
@@ -192,7 +185,6 @@ namespace FlightControlWeb
         // Get all internal Flights from the data base.
         public List<Flights> GetFlights(DateTime time)
         {
-
             List<Flights> flights = new List<Flights>();
             OpenConnection();
             // Get all Flights's initialLocation.
@@ -230,10 +222,7 @@ namespace FlightControlWeb
             object[] location = new object[query.FieldCount];
             query.GetValues(location);
             // InitialTime is in the future.
-            if (NotStarted(location, time))
-            {
-                return null;
-            }
+            if (NotStarted(location, time)) return null;
 
             // Get the sum of all the timespanSecond of the Flight's segments.
             string command = "SELECT SUM(TimespanSeconds) FROM" +
@@ -242,10 +231,7 @@ namespace FlightControlWeb
 
             // EndTime is in the past.
             if (AlreadyFinished(Convert.ToInt32(sumTime[0]),
-                Convert.ToDateTime(location[initalLocationDateTimeE]), time))
-            {
-                return null;
-            }
+                Convert.ToDateTime(location[initalLocationDateTimeE]), time)) return null;
 
             // If we got here, this flight is currently flying - we need to create
             //and add it to the flying flights.
@@ -272,6 +258,7 @@ namespace FlightControlWeb
             return servers;
 
         }
+
         // Get a Server by a given FlightId.
         public Server GetServerByIdOfFlight(string id)
         {
@@ -282,10 +269,8 @@ namespace FlightControlWeb
             CloseConncetion();
 
              Server server = new Server();
-            if (tempServer[0] == null)
-            {
-                return null;
-            }
+            if (tempServer[0] == null)  return null;
+
             server.ServerId = Convert.ToString(tempServer[0]);
             server.ServerURL = Convert.ToString(tempServer[1]);
             
@@ -415,10 +400,8 @@ namespace FlightControlWeb
         // Delete a Server with the given id.
         public bool DeleteServer(string id)
         {
-            if (!IsExist("ServersTable", "Id", id))
-            {
-                return false;
-            }
+            if (!IsExist("ServersTable", "Id", id)) return false;
+
             OpenConnection();
             SqliteCommand deleteCommand = new SqliteCommand();
             deleteCommand.Connection = conn;
@@ -435,8 +418,6 @@ namespace FlightControlWeb
                 deleteOtherCommand.ExecuteReader();
                 CloseConncetion();
             }
-
-           
             return true;
         }
 
@@ -448,12 +429,8 @@ namespace FlightControlWeb
                 " WHERE " + idColumn + " = '" + id + "'");
             CloseConncetion();
 
-            // id was not found.
-            if (returnValue[0] == null)
-            {
-                return false;
-            }
-            return true;
+            // id was not found - returnValue[0] == null.
+            return (returnValue[0] != null);
         }
 
         // Delete a FlightPlan with the given id.
@@ -462,10 +439,8 @@ namespace FlightControlWeb
             int i = 0;
             bool returnVal = true;
 
-            if (!IsExist("FlightPlanTable", "Id", id))
-            {
-                return false;
-            }
+            if (!IsExist("FlightPlanTable", "Id", id)) return false;
+
             OpenConnection();
             string[] tables = { "FlightPlanTable", "InitialLocationTable", "SegmentsTable" };
 
@@ -485,10 +460,7 @@ namespace FlightControlWeb
             List<object[]> segments)
         {
             FlightPlan flightPlan = new FlightPlan();
-            if (basicData[0] == null)
-            {
-                return null;
-            }
+            if (basicData[0] == null) return null;
 
             flightPlan.Passengers = Convert.ToInt32(basicData[flightPlanPassangersE]);
             flightPlan.CompanyName = Convert.ToString(basicData[flightPlanCompanyNameE]);
@@ -540,10 +512,7 @@ namespace FlightControlWeb
                 delete = new SqliteCommand(com, conn);
                 delete.ExecuteReader();
             // Tables does not exists.
-            } catch(Exception e)
-            {
-                string message = e.Message;
-            }
+            } catch { }
 
         }
         // Open the sqlite connection.
@@ -552,6 +521,7 @@ namespace FlightControlWeb
             mutex.WaitOne();
             conn.Open();
         }
+
         // Close the sqlite connection.
         private void CloseConncetion()
         {

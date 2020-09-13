@@ -17,14 +17,7 @@ namespace FlightControlWeb.Models
 		private Location location = new Location(LongitudeBorder + 1, LatitudeBorder + 1, new DateTime());
 		private List<Segment> segments = new List<Segment>();
 
-
-		[Required]
-		[JsonPropertyName("passengers")]
-		public int Passengers { get { return passengers; } set { passengers = value; } }
-		[Required]
-		[JsonPropertyName("company_name")]
-		public string CompanyName { get; set; }
-
+		// Location struct.
 		public struct Location
 		{
 			private double longitude;
@@ -43,47 +36,39 @@ namespace FlightControlWeb.Models
 			[Required]
 			[JsonPropertyName("latitude")]
 			public double Latitude { get { return latitude; } set { latitude = value; } }
-			//[Required]
-			//[JsonPropertyName("date_time")]
+
 			public DateTime DateTime { get; set; }
 			[Required]
 			[JsonPropertyName("date_time")]
 			public string StringDateTime { get { return this.DateTime.ToString("yyyy-MM-ddTHH:mm:ssZ"); } set {this.DateTime = DateTime.Parse(value).ToUniversalTime(); } }
 
+			// ToString override for Location.
 			public override string ToString() => $"({Latitude}, {Longitude})";
+			
+			// GetHashCode override for Location.
 			public override int GetHashCode()
 			{
 				return base.GetHashCode();
 			}
+			// Equals override for Location.
 			public override bool Equals(Object other)
 			{
 				Location otherLocation = (Location)other;
-				if (this.Latitude != otherLocation.Latitude)
-				{
-					return false;
-				}
-				if (this.Longitude != otherLocation.Longitude)
-				{
-					return false;
-				}
-				if (this.DateTime.CompareTo(otherLocation.DateTime) != 0)
-				{
-					return false;
-				}
+				if (this.Latitude != otherLocation.Latitude) return false;
+				if (this.Longitude != otherLocation.Longitude) return false;
+				if (this.DateTime.CompareTo(otherLocation.DateTime) != 0) return false;
 				
 				return true;
 			}
 		}
 
-		[Required]
-		[JsonPropertyName("initial_location")]
-		public Location InitialLocation { get { return location; } set { location = value; } }
-
+		// Segment struct.
 		public struct Segment
 		{
 			private double longitude;
 			private double latitude;
 			private int timespanSeconds;
+
 			public Segment(double longitudeStruct, double latitudeStruct, int timespanSecondsStruct) : this()
 			{
 				this.longitude = LongitudeBorder + 1;
@@ -103,24 +88,20 @@ namespace FlightControlWeb.Models
 			[JsonPropertyName("timespan_seconds")]
 			public int TimespanSeconds { get { return timespanSeconds; } set { timespanSeconds = value; } }
 
+			// ToString override for Segment.
 			public override string ToString() => $"({Latitude}, {Longitude})";
+			
+			// Equals override for Segment.
 			public override bool Equals(Object other)
 			{
 				Segment otherSegment = (Segment)other;
-				if (this.Latitude != otherSegment.Latitude)
-				{
-					return false;
-				}
-				if (this.Longitude != otherSegment.Longitude)
-				{
-					return false;
-				}
-				if (this.TimespanSeconds != otherSegment.TimespanSeconds)
-				{
-					return false;
-				}
+				if (this.Latitude != otherSegment.Latitude) return false;
+				if (this.Longitude != otherSegment.Longitude) return false;
+				if (this.TimespanSeconds != otherSegment.TimespanSeconds) return false;
 				return true;
 			}
+			
+			// GetHashCode override for Segment.
 			public override int GetHashCode()
 			{
 				return base.GetHashCode();
@@ -129,16 +110,23 @@ namespace FlightControlWeb.Models
 		}
 
 		[Required]
-		[JsonPropertyName("segments")]
-		public List<Segment> Segments
-		{
-			get { return segments; }
-			set { segments = value; }
-		}
+		[JsonPropertyName("passengers")]
+		public int Passengers { get { return passengers; } set { passengers = value; } }
+		
+		[Required]
+		[JsonPropertyName("company_name")]
+		public string CompanyName { get; set; }
 
-		public FlightPlan()
-		{
-		}
+		[Required]
+		[JsonPropertyName("initial_location")]
+		public Location InitialLocation { get { return location; } set { location = value; } }
+
+		[Required]
+		[JsonPropertyName("segments")]
+		public List<Segment> Segments { get { return segments; } set { segments = value; } } 
+
+		public FlightPlan() {}
+
 		public FlightPlan(int passengers, string companyName, Location location, List<Segment> segments)
 		{
 			this.passengers = passengers;
@@ -146,21 +134,15 @@ namespace FlightControlWeb.Models
 			this.InitialLocation = location;
 			this.Segments = segments;
 		}
+		
+		// Equals override for FlightPlan.
 		public override bool Equals(Object other)
 		{
 			FlightPlan otherFlightPlan = (FlightPlan)other;
-			if (this.CompanyName.CompareTo(otherFlightPlan.CompanyName) != 0)
-			{
-				return false;
-			}
-			if (this.Passengers != otherFlightPlan.Passengers)
-			{
-				return false;
-			}
-			if (!(this.InitialLocation.Equals(otherFlightPlan.InitialLocation)))
-			{
-				return false;
-			}
+			if (this.CompanyName.CompareTo(otherFlightPlan.CompanyName) != 0) return false;
+			if (this.Passengers != otherFlightPlan.Passengers) return false;
+			if (!(this.InitialLocation.Equals(otherFlightPlan.InitialLocation))) return false;
+
 			int i = 0;
 			int size = this.Segments.Count <= otherFlightPlan.Segments.Count ?
 				this.Segments.Count : otherFlightPlan.Segments.Count;
@@ -169,14 +151,13 @@ namespace FlightControlWeb.Models
 				Segment thisSegment = this.Segments[i];
 				Segment otherSegment = otherFlightPlan.Segments[i];
 				
-				if (! thisSegment.Equals(otherSegment))
-				{
-					return false;
-				}
+				if (! thisSegment.Equals(otherSegment)) return false;
 			}
 
 			return true;
 		}
+
+		// GetHashCode override for FlightPlan.
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
